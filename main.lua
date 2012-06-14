@@ -27,6 +27,8 @@ if arg[1] == "-server" then
 	if server then
 		while true do
 			connection.runServer(server)
+			text = io.read()
+			print(text)
 		end
 	end
 else
@@ -54,6 +56,7 @@ else
 					local start, ending = msg:find("CLIENTNUMBER")
 					connection.setClientNumber(msg:sub(ending+1, #msg))
 				elseif msg:find("SERVERFULL") == 1 then
+					print("ERROR: Server is full!")
 					return
 				end
 			end
