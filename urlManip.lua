@@ -21,8 +21,8 @@ local function splitLink(inputStr)
 	return url, title
 end
 
-local function findRelevantArea(inputStr)
-	local beginning = inputStr:find("<div id=\"mw%-content%-text\"-")
+local function findRelevantArea( inputStr, contentsStartString )
+	local beginning = inputStr:find( contentsStartString )
 	local ending = #inputStr
 	local curPos = 1
 	local endFound = false
@@ -53,8 +53,8 @@ local function findRelevantArea(inputStr)
 	return inputStr:sub(beginning, curPos)
 end
 
-local function extractAllURLs(inputStr)
-	inputStr = findRelevantArea(inputStr)
+local function extractAllURLs(inputStr, contentsStartString)
+	inputStr = findRelevantArea(inputStr, contentsStartString)
 	local links = {}
 	for s in string.gmatch(inputStr, "<a href=[^>]->") do
 		table.insert(links,{fullStr = s})
@@ -67,11 +67,11 @@ local function extractAllURLs(inputStr)
 	return links
 end
 
-function urlManip.extractURLs(inputStr)
+function urlManip.extractURLs(inputStr, contentsStartString)
 	local urlTable = {}
 	local urlTableFull = {}
 
-	urlTableFull = extractAllURLs(inputStr)
+	urlTableFull = extractAllURLs(inputStr, contentsStartString)
 
 	numberOfFoundLinks = 0
 	doublesFound = 0

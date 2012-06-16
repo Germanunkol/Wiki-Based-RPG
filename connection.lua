@@ -1,8 +1,8 @@
 -- connection of server/client
 
-connection = {}
+local connection = {}
 
-local connectedClients = {}
+connectedClients = {}
 
 local socket = require("socket")
 
@@ -23,6 +23,7 @@ function connection.initServer(host, port, maxConnections)
 	return tcpServer
 end
 
+
 function connection.runServer(tcpServer)
 	
 	local newClient, err = tcpServer:accept()
@@ -32,7 +33,8 @@ function connection.runServer(tcpServer)
 		local clientNumber = 0
 		for i=1, maxPlayers, 1 do
 			if connectedClients[i] == nil then
-				connectedClients[i] = newClient
+				connectedClients[i] = {client = newClient}
+				connectedClients[i].clientNumber = i
 				clientNumber = i
 				break
 			end
@@ -42,15 +44,19 @@ function connection.runServer(tcpServer)
 			newClient:send("CLIENTNUMBER" .. clientNumber .. "\n")
 		else
 			newClient:send("SERVERFULL\n")
+			connectedClients[clientNumber] = nil
+			newClient:close()
 		end
 	end
 	
 	for k, cl in pairs(connectedClients) do
-		local msg, err = cl:receive()
+		local msg, err = cl.client:receive()
 	
 		if msg ~= nil then
 			print("received: " .. msg)
-			cl:send(msg .. " - echo\n")
+			if msg:find( "NAME:" ) == 1 then
+				cl.playerName = msg:sub( 6, #msg )
+			end
 		else
 			print("error: " .. err)
 			if err == "closed" then
@@ -61,7 +67,7 @@ function connection.runServer(tcpServer)
 	end
 end
 
-local clientNumber = nil
+local clientNumber = nil			--client's clientnumber
 
 function connection.initClient(address, port)
 
