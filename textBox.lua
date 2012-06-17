@@ -14,6 +14,7 @@ function textBox.new( xPos, yPos, newLines, newFont, newWidth )
 	newText.colour = {0,0,0}
 	newText.activeLine = 1
 	newText.cursorPos = 0
+	newText.hasChanged = true
 	newText.maxLines = newLines
 	
 	table.insert( fields, newText )
@@ -22,6 +23,7 @@ end
 
 function textBox.clear( text )
 	text.content = "" 		-- let garbage collector do the rest
+	newText.hasChanged = true
 end
 
 function textBox.setColour( text, red, green, blue )
@@ -66,21 +68,22 @@ local function multiline( str, width, font )
 	local runner = 0
 	local partialStr = ""
 	local i = 0
+	local posOfLastSpace
 	repeat
 		if font:getWidth( str:sub(runner, #str) ) > width then
 			partialStr = ""
 			i = 0
 			while font:getWidth( partialStr ) < width do			-- will be a tiny bit longer than width...
-				
+				partialStr = str:sub(runner, runner+i) 
 				i = i + 1
 			end
-			if partialStr:find(" ") ~= nil then
-				while partialStr[#partialStr] ~= " " do
-					i = i - 1
-					partialStr = str:sub( runner, runner + i )
-				end
+			posOfLastSpace = partialStr:match(".*() ")
+			if posOfLastSpace ~= nil then
+				partialStr = str:sub( runner, runner + posOfLastSpace)
+				runner = runner + posOfLastSpace + 1		-- +1 to get rid of space
+			else
+				runner = runner + i
 			end
-			runner = runner + i
 			table.insert( strings, partialStr )
 		else
 			table.insert( strings, str:sub(runner, #str) )
@@ -88,13 +91,17 @@ local function multiline( str, width, font )
 		end
 	
 	until runner == #string
+
+	print ("all strings:")
+	for k, v in pairs(strings) do
+		print(v)
+	end
 	
 	return strings
 end
 
 function textBox.display(dt)
 	cursorBlinkTime = cursorBlinkTime + dt
-	local tbl
 	local linePos
 	if cursorBlinkTime > 1 then cursorBlinkTime = 0 end
 	for k, v in pairs( fields ) do
@@ -103,13 +110,17 @@ function textBox.display(dt)
 		love.graphics.setColor( 0, 0, 0 )
 		love.graphics.setFont( v.font )
 
-		tbl = multiline( v.content, v.width, v.font)
-		v.lines = tbl
-		for k, line in pairs(tbl) do
-			if linePos > #line then
-				linePos = linePos - #line
-			elseif cursorBlinkTime < .5 then
-					love.graphics.print("|", v.x + v.font:getWidth(line:sub(1, linePos))-1, v.y + (k-1)*v.font:getHeight(""))
+		if v.hasChanged then
+			v.lines = multiline( v.content, v.width, v.font)
+			v.hasChanged = false
+		end
+		for k, line in pairs(v.lines) do
+			if v.access then
+				if linePos > #line then
+					linePos = linePos - #line
+				elseif cursorBlinkTime < .5 then
+						love.graphics.print("|", v.x + v.font:getWidth(line:sub(1, linePos))-1, v.y + (k-1)*v.font:getHeight(""))
+				end
 			end
 			love.graphics.print( line, v.x, v.y + (k-1)*v.font:getHeight(""))
 		end
@@ -120,17 +131,18 @@ function textBox.input( key, unicode )
 	print (unicode)
 	print (key)
 	for k, v in pairs( fields ) do
-		if v.access == true and v.content then
+		if v.access == true and v.content then			
+			v.hasChanged = true
 			if unicode > 31 and unicode < 127 then
 				print("max: " .. v.maxLines)
 				print("last" .. v.lines[#v.lines])
 				print("cur" .. #v.lines)
-				if (v.font:getWidth(v.lines[#v.lines]) < v.width or #v.lines < v.maxLines) and #v.lines <= v.maxLines then
+				if (v.font:getWidth(v.lines[#v.lines] .. string.char(unicode)) < v.width or #v.lines < v.maxLines) and #v.lines <= v.maxLines then
 					v.content = v.content:sub(1, v.cursorPos) .. string.char(unicode) .. v.content:sub(v.cursorPos+1, #v.content)
 					v.cursorPos = v.cursorPos + 1
 				end
 			elseif unicode == 8 then
-				if #v.content > 0 then
+				if #v.content:sub(1, v.cursorPos) > 0 then
 					v.content = v.content:sub(1, v.cursorPos-1) .. v.content:sub(v.cursorPos+1, #v.content)
 					v.cursorPos = v.cursorPos-1
 					cursorBlinkTime = 0
@@ -152,18 +164,31 @@ function textBox.input( key, unicode )
 				if #v.content > 0 then
 					v.content = v.content:sub(1, v.cursorPos) .. v.content:sub(v.cursorPos+2, #v.content)
 				end
+			elseif key == "return" then
+				v.access = false
+				if v.returnEvent then
+					v.returnEvent()
+				end
 			end
 		end
 	end
 end
 
+function textBox.setReturnEvent( text, event )
+	text.returnEvent = event
+end
+
+function textBox.getContent( text )
+	return text.content
+end
 
 function textBox.setAccess( text, input )
 	text.access = input
 end
 
-function textBox.addLine( textField, line )
+function textBox.setText( textField, line )
 	textField.content = line
+	newText.hasChanged = true
 end
 
 return textBox

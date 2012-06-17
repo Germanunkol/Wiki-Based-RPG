@@ -4,7 +4,7 @@ local lobby = require("lobby")
 
 local wikiClient = require("wikiClient")
 
-local textBox = require("textBox")
+textBox = require("textBox")
 plname = ""
 
 require("misc")
@@ -12,8 +12,10 @@ require("misc")
 local menu = require("menu")
 
 buttons = require("buttons")
-fontHeader = love.graphics.newFont (25)
-fontMainHeader = love.graphics.newFont (35)
+fontHeader = love.graphics.newFont( 25 )
+fontInputHeader = love.graphics.newFont( 20 )
+fontInput = love.graphics.newFont( 16 )
+fontMainHeader = love.graphics.newFont( 35 )
 
 plName = ""
 
@@ -43,11 +45,9 @@ function love.load(arg)
 		client = connection.initClient("localhost", 3456)
 	end]]--
 	
-	
-	local tB = textBox.new( 15, 30, 2, mainFont, 200 )
-	textBox.addLine( tB, "")
-	textBox.setAccess( tB, 
-	true )
+	local tB = textBox.new( 15, 30, 3, mainFont, 272 )
+	textBox.setText( tB, "test thisisalongerwordthancanbePlaced" )
+	--textBox.setAccess( tB, true )
 	--wikiClient.newWord()
 end
 
@@ -115,7 +115,6 @@ end
 
 
 function startClient()
-	plName = io.read()
 	client = connection.initClient("localhost", 3456)
 	if client then
 		client:send("NAME:" .. plName .. "\n")

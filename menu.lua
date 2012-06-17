@@ -5,6 +5,9 @@ local buttonHeight = 35
 
 local helpString = "Help file not found."			--default, if readme.me is not found
 
+local plNameHeader = nil
+local plNameInputBox = nil
+
 local function exitProgramm()
 	love.event.quit()
 end
@@ -54,11 +57,27 @@ local function serverStart()
 	print("server options started")
 end
 
-local function clientStart()
-	buttons.clear()
-	startClient()
-	print("client options started")
+function clientStart()
+	plName = textBox.getContent( plNameInputBox )
+	if #plName > 1 and plName["1"] ~= " " then
+		buttons.clear()
+		plNameInputBox = textBox.remove( plNameInputBox )
+		plNameHeader = textBox.remove( plNameHeader )
+		startClient()
+	else
+		textBox.setAccess( plNameHeader, true )
+	end
 end
+
+local function clientOptions()
+	buttons.clear()
+	plNameHeader = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-10, 210, 1, fontInputHeader, 200)
+	textBox.setText( plNameHeader, "Enter Playername:" )
+	plNameInputBox = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-5, 230, 1, fontInput, 200)
+	textBox.setAccess( plNameInputBox, true )
+	textBox.setReturnEvent( plNameInputBox, clientStart )
+end
+
 
 function menu.initMainMenu()
 	
@@ -72,7 +91,7 @@ function menu.initMainMenu()
 	love.graphics.setBackgroundColor( 255, 255, 255 )
 	
 	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 200, buttonWidth, buttonHeight, "Start Server", drawButton, highlightButton, serverStart)
-	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 200 + buttonHeight + 10, buttonWidth, buttonHeight, "Start Client", drawButton, highlightButton, clientStart )
+	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 200 + buttonHeight + 10, buttonWidth, buttonHeight, "Start Client", drawButton, highlightButton, clientOptions )
 	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 200 + buttonHeight*2 + 20, buttonWidth, buttonHeight, "Quit", drawButton, highlightButton, exitProgramm )
 	buttons.add( love.graphics.getWidth()-100, love.graphics.getHeight()-40, 90, 25, "Credits", drawButton, highlightButton)
 	buttons.add( 10, love.graphics.getHeight()-40, 110, 25, "Help", drawButton, displayHelp )
