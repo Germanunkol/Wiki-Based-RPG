@@ -4,7 +4,7 @@ Wiki-Based-RPG
 A Text-Based RPG that will work with a Wiki of your choice! Mutliplayer only.
 
 License:
-This game is released under the WTFPL.
+This game is released under the "Do What The Fuck You Want To Public License":
 /* This program is free software. It comes without any warranty, to
  * the extent permitted by applicable law. You can redistribute it
  * and/or modify it under the terms of the Do What The Fuck You Want

@@ -8,14 +8,22 @@ textBox = require("textBox")
 plname = ""
 
 require("misc")
+statusMsg = require("statusMsg")
 
-local menu = require("menu")
+menu = require("menu")
 
 buttons = require("buttons")
-fontHeader = love.graphics.newFont( 25 )
-fontInputHeader = love.graphics.newFont( 20 )
-fontInput = love.graphics.newFont( 16 )
-fontMainHeader = love.graphics.newFont( 35 )
+mainFont = love.graphics.newFont( "AveriaSans-Regular.ttf", 18 )
+buttonFont = love.graphics.newFont( "AveriaSans-Bold.ttf", 18 )
+fontHeader = love.graphics.newFont( "AveriaSans-Bold.ttf", 25 )
+fontInputHeader = love.graphics.newFont( "AveriaSans-Bold.ttf", 20 )
+fontInput = love.graphics.newFont( "AveriaSans-Regular.ttf", 16 )
+fontStatus = love.graphics.newFont( "AveriaSans-Bold.ttf", 16 )
+fontMainHeader = love.graphics.newFont( "AveriaSans-Bold.ttf",40 )
+
+colMainBg = { r=230, g=205, b=174 }
+colBg = { r=149, g=124, b=101 }
+colLobby = { r=241, g=229, b=209 }
 
 plName = ""
 
@@ -32,22 +40,10 @@ local pageSource = ""
 local server
 local client
 
-mainFont = love.graphics.newFont( 14 )
-buttonFont = love.graphics.newFont( 14 )
 
 function love.load(arg)
 	menu.initMainMenu(buttons)
-	love.keyboard.setKeyRepeat( 0.2, 0.03 )
-
-	--[[if arg[2] == "-server" then
-		server = connection.initServer("localhost", 3456, 1)
-	else
-		client = connection.initClient("localhost", 3456)
-	end]]--
-	
-	local tB = textBox.new( 15, 30, 3, mainFont, 272 )
-	textBox.setText( tB, "test thisisalongerwordthancanbePlaced" )
-	--textBox.setAccess( tB, true )
+	love.keyboard.setKeyRepeat( 0.2, 0.03 )	
 	--wikiClient.newWord()
 end
 
@@ -62,28 +58,9 @@ function love.update()
 	timeSinceLastCall = socket.gettime()
 	
 	if server then
-			connection.runServer(server)
+		connection.runServer( server )
 	elseif client then
-		if os.time() - lastSent > 2 and connection.getClientNumber() ~= nil then
-			--local sendStr = "test-" .. connection.getClientNumber().. " " .. math.random(99)
-	
-			--client:send(sendStr .. "\n")
-			--print("sending: " .. sendStr)
-			lastSent = os.time()
-		end
-		
-		msg = client:receive()
-	
-		if msg then
-			print("received: " .. msg)
-			if msg:find("CLIENTNUMBER") == 1 then
-				local start, ending = msg:find("CLIENTNUMBER")
-				connection.setClientNumber(msg:sub(ending+1, #msg))
-			elseif msg:find("SERVERFULL") == 1 then
-				print("ERROR: Server is full!")
-				return
-			end
-		end
+		connection.runClient( client )
 	end
 	
 end
@@ -94,7 +71,9 @@ function love.draw()
 	elseif lobby.active() then
 		lobby.showPlayers()
 	end
-	textBox.display(dt)
+	statusMsg.display( dt )
+	textBox.display( dt )
+	buttons.show()
 end
 
 function love.keypressed(key, unicode)
@@ -115,10 +94,17 @@ end
 
 
 function startClient()
+	statusMsg.new("starting up client...")
 	client = connection.initClient("localhost", 3456)
 	if client then
 		client:send("NAME:" .. plName .. "\n")
+		statusMsg.new("Connected to server.")
 		lobby.init( buttons )
 	end
+end
+
+function startGame()
+	statusMsg.new("Game starting.")
+	print("game Started")
 end
 

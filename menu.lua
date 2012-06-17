@@ -1,7 +1,7 @@
 local menu = {}
 
-local buttonWidth = 200
-local buttonHeight = 35
+buttonWidth = 200
+buttonHeight = 35
 
 local helpString = "Help file not found."			--default, if readme.me is not found
 
@@ -12,28 +12,7 @@ local function exitProgramm()
 	love.event.quit()
 end
 
-local function drawButton( theButton )
-	love.graphics.setColor( 0, 0, 0 , 255)
-	love.graphics.rectangle( "fill", theButton.x, theButton.y, theButton.w, theButton.h )
-	love.graphics.setColor( 170, 180, 180, 255)
-	love.graphics.rectangle( "fill", theButton.x + 1, theButton.y + 1, theButton.w-2, theButton.h-2)
-	love.graphics.setColor( 255, 255, 255 , 255)
-	love.graphics.rectangle( "fill", theButton.x + 3, theButton.y + 3, theButton.w-6, theButton.h-6 )
-	love.graphics.setColor( 0, 0, 0 , 255)
-	love.graphics.print( theButton.label, theButton.x + theButton.w/2 - buttonFont:getWidth(theButton.label)/2, theButton.y + (theButton.h - buttonFont:getHeight())/2)
-end
 
-
-local function highlightButton( theButton )
-	love.graphics.setColor( 0, 0, 0 , 255)
-	love.graphics.rectangle( "fill", theButton.x, theButton.y, theButton.w, theButton.h )
-	love.graphics.setColor( 180, 180, 180, 255)
-	love.graphics.rectangle( "fill", theButton.x + 2, theButton.y + 2, theButton.w-4, theButton.h-4)
-	love.graphics.setColor( 255, 255, 255 , 255)
-	love.graphics.rectangle( "fill", theButton.x + 3, theButton.y + 3, theButton.w-6, theButton.h-6 )
-	love.graphics.setColor( 0, 0, 0 , 255)
-	love.graphics.print( theButton.label, theButton.x + theButton.w/2 - buttonFont:getWidth(theButton.label)/2, theButton.y + (theButton.h - buttonFont:getHeight())/2 )
-end
 
 local function displayHelp( theButton )
 	love.graphics.setColor( 0, 0, 0 , 255)
@@ -62,10 +41,13 @@ function clientStart()
 	if #plName > 1 and plName["1"] ~= " " then
 		buttons.clear()
 		plNameInputBox = textBox.remove( plNameInputBox )
+		plNameInputBox = nil
 		plNameHeader = textBox.remove( plNameHeader )
+		plNameHeader = nil
 		startClient()
 	else
-		textBox.setAccess( plNameHeader, true )
+		textBox.setAccess( plNameInputBox, true )
+		statusMsg.new( "empty name!" )
 	end
 end
 
@@ -78,7 +60,6 @@ local function clientOptions()
 	textBox.setReturnEvent( plNameInputBox, clientStart )
 end
 
-
 function menu.initMainMenu()
 	
 	buttons.clear()
@@ -88,7 +69,7 @@ function menu.initMainMenu()
 		helpString = readmeFile:read("*all")
 	end
 	--love.graphics.setBackgroundColor(150,160,200)
-	love.graphics.setBackgroundColor( 255, 255, 255 )
+	love.graphics.setBackgroundColor( colMainBg.r, colMainBg.g, colMainBg.b )
 	
 	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 200, buttonWidth, buttonHeight, "Start Server", drawButton, highlightButton, serverStart)
 	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 200 + buttonHeight + 10, buttonWidth, buttonHeight, "Start Client", drawButton, highlightButton, clientOptions )
@@ -99,22 +80,18 @@ end
 
 
 function menu.showMainMenu()
+		--love.graphics.line(0, 120, love.graphics.getWidth(), 120)
+		
 	love.graphics.setColor( 0, 0, 0 , 255)
-	love.graphics.rectangle("fill", love.graphics.getWidth()/2-buttonWidth/2-20, 170, buttonWidth + 40, love.graphics.getHeight())
-	love.graphics.setColor( 255,255,255 , 200)
-	love.graphics.rectangle("fill", love.graphics.getWidth()/2-buttonWidth/2-19, 171, buttonWidth + 38, love.graphics.getHeight())
-	love.graphics.setColor( 0, 0, 0 , 255)
-	love.graphics.rectangle("fill", 0, 50, love.graphics.getWidth(), 100)
-	love.graphics.setColor( 255,255,255 , 200)
-	love.graphics.rectangle("fill", 0, 51, love.graphics.getWidth(), 98)
-	love.graphics.setColor( 0, 0, 0 , 255)
+	love.graphics.rectangle("fill", 0, 50, love.graphics.getWidth(), 50)
+	love.graphics.setColor( colBg.r, colBg.g, colBg.g, 255)
+	love.graphics.rectangle("fill", 0, 51, love.graphics.getWidth(), 48)
+	
 	love.graphics.setFont( fontMainHeader )
-	love.graphics.print( "WB-RPG", 70, 70 )
-	buttons.show()
-end
-
-function menu.showChat()
-
+	love.graphics.setColor( colLobby.r,colLobby.g,colLobby.b )
+	love.graphics.print( "WB-RPG", 30, 52 )
+	love.graphics.setFont( mainFont )
+	love.graphics.print( "the Wiki-Based Role Playing Game", 190, 65 )
 end
 
 function menu.handleClick()

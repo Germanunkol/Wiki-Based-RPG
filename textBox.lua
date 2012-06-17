@@ -35,9 +35,11 @@ function textBox.width( text, newWidth)
 end
 
 function textBox.remove( textField )
-	key = tF.findKey( textField )
+	key = textBox.findKey( textField )
+
 	if key ~= nil then			-- if the text field was found, remove it
-		fields.key = nil
+		print("key found: " .. key)
+		fields[key] = nil
 	end
 end
 
@@ -119,7 +121,7 @@ function textBox.display(dt)
 				if linePos > #line then
 					linePos = linePos - #line
 				elseif cursorBlinkTime < .5 then
-						love.graphics.print("|", v.x + v.font:getWidth(line:sub(1, linePos))-1, v.y + (k-1)*v.font:getHeight(""))
+					love.graphics.print("|", v.x + v.font:getWidth(line:sub(1, linePos))-1, v.y + (k-1)*v.font:getHeight(""))
 				end
 			end
 			love.graphics.print( line, v.x, v.y + (k-1)*v.font:getHeight(""))
