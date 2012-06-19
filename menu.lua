@@ -40,7 +40,7 @@ end
 
 function clientStart()
 	if ipInputBox then ipStr = textBox.getContent( ipInputBox ) end
-	if #ipStr == 0 or ipStr == "localhost" or ipStr:find(".?.?.?%..?.?.?%..?.?.?%..?.?.?%.") ~= nil then
+	if #ipStr == 0 or ipStr == "localhost" or ipStr:find(".?.?.?%..?.?.?%..?.?.?%..?.?.?") ~= nil then
 		buttons.clear()
 		plNameInputBox = textBox.remove( plNameInputBox )		-- textBox.remove returns nil upon success.
 		plNameHeader = textBox.remove( plNameHeader )
