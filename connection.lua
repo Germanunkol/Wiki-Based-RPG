@@ -52,11 +52,14 @@ function handleNewClient( newClient )
 		newClient:send("SERVERFULL:\n")
 		connectedClients[clientNumber] = nil
 		newClient:close()
+		newClient = nil
+	end
+	if newClient then
+		statusMsg.new( "New player!" )
 	end
 end
 
 function connection.runServer(tcpServer)		--handle all messages that come from the clients
-	
 	local newClient, err = tcpServer:accept()
 	
 	if newClient ~= nil then
@@ -64,8 +67,8 @@ function connection.runServer(tcpServer)		--handle all messages that come from t
 	end
 	
 	for k, cl in pairs(connectedClients) do
+		cl.client:settimeout(0)
 		local msg, err = cl.client:receive()
-	
 		if msg ~= nil then
 			print("received: " .. msg)
 			if msg:find( "NAME:" ) == 1 then
@@ -85,6 +88,7 @@ function connection.runServer(tcpServer)		--handle all messages that come from t
 					synchronizeClients( cl )
 				end
 				
+			print("end received: " .. msg)
 				
 			end
 		else
@@ -140,6 +144,7 @@ local clientNumber = nil			--client's clientnumber
 
 function connection.initClient(address, port)
 
+	if #ipStr == 0 then ipStr = "localhost" end
 	local tcpClient, err = socket.connect(address, port)
 	
 	if tcpClient == nil then

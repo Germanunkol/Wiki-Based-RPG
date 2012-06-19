@@ -7,12 +7,13 @@ function attempGameStart()
 	for k, cl in pairs( connectedClients ) do
 		numClients = numClients + 1
 		
-		cl.client:send( "GAMESTART:" )
+		cl.client:send( "GAMESTART:\n" )
 	end
 	print("clients found: " .. numClients)
 	if numClients == 0 then
 		statusMsg.new( "Need at least one player!" )
 	else
+		buttons.clear()		-- remove game start button
 		active = false
 		startGame()
 	end
@@ -21,7 +22,9 @@ end
 function lobby.init()
 	active = true
 
-	buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Start Game", drawButton, highlightButton , attempGameStart )
+	if server then
+		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Start Game", drawButton, highlightButton , attempGameStart )
+	end
 end
 
 function lobby.deactivate()

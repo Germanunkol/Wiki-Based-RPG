@@ -38,9 +38,10 @@ function textBox.remove( textField )
 	key = textBox.findKey( textField )
 
 	if key ~= nil then			-- if the text field was found, remove it
-		print("key found: " .. key)
 		fields[key] = nil
 	end
+	
+	return fields[key]
 end
 
 function textBox.show( textField, visibility )
@@ -136,9 +137,6 @@ function textBox.input( key, unicode )
 		if v.access == true and v.content then			
 			v.hasChanged = true
 			if unicode > 31 and unicode < 127 then
-				print("max: " .. v.maxLines)
-				print("last" .. v.lines[#v.lines])
-				print("cur" .. #v.lines)
 				if (v.font:getWidth(v.lines[#v.lines] .. string.char(unicode)) < v.width or #v.lines < v.maxLines) and #v.lines <= v.maxLines then
 					v.content = v.content:sub(1, v.cursorPos) .. string.char(unicode) .. v.content:sub(v.cursorPos+1, #v.content)
 					v.cursorPos = v.cursorPos + 1
@@ -167,9 +165,11 @@ function textBox.input( key, unicode )
 					v.content = v.content:sub(1, v.cursorPos) .. v.content:sub(v.cursorPos+2, #v.content)
 				end
 			elseif key == "return" then
+				print ("return pressed!")
 				v.access = false
 				if v.returnEvent then
 					v.returnEvent()
+					break			-- only allow one textBox to be terminated per Enter-Key-Pressed.
 				end
 			end
 		end
@@ -188,7 +188,7 @@ function textBox.setAccess( text, input )
 	text.access = input
 end
 
-function textBox.setText( textField, line )
+function textBox.setContent( textField, line )
 	textField.content = line
 	newText.hasChanged = true
 end

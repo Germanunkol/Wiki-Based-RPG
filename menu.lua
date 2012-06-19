@@ -7,6 +7,8 @@ local helpString = "Help file not found."			--default, if readme.me is not found
 
 local plNameHeader = nil
 local plNameInputBox = nil
+local ipHeader = nil
+local ipInputBox = nil
 
 local function exitProgramm()
 	love.event.quit()
@@ -37,28 +39,50 @@ local function serverStart()
 end
 
 function clientStart()
-	plName = textBox.getContent( plNameInputBox )
-	if #plName > 1 and plName["1"] ~= " " then
+	if ipInputBox then ipStr = textBox.getContent( ipInputBox ) end
+	if #ipStr == 0 or ipStr == "localhost" or ipStr:find(".?.?.?%..?.?.?%..?.?.?%..?.?.?%.") ~= nil then
 		buttons.clear()
-		plNameInputBox = textBox.remove( plNameInputBox )
-		plNameInputBox = nil
+		plNameInputBox = textBox.remove( plNameInputBox )		-- textBox.remove returns nil upon success.
 		plNameHeader = textBox.remove( plNameHeader )
-		plNameHeader = nil
+		ipHeader = textBox.remove( ipHeader )
+		ipInputBox = textBox.remove( ipInputBox )
 		startClient()
 	else
 		textBox.setAccess( plNameInputBox, true )
-		statusMsg.new( "empty name!" )
+		statusMsg.new( "Invalid IP!" )
 	end
 end
 
-local function clientOptions()
+local function clientInitIpInput()
+	print ("new playername: " .. textBox.getContent( plNameInputBox ) )
+	if plNameInputBox then plName = textBox.getContent( plNameInputBox ) end
+	if #plName > 1 and plName["1"] ~= " " then
+		if plNameInputBox then
+			textBox.setAccess( plNameInputBox, false )
+		end
+		
+		ipHeader = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-10, 260, 1, fontInputHeader, 200)
+		textBox.setContent( ipHeader, "Enter server's IP:" )
+		ipInputBox = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-5, 280, 1, fontInput, 200)
+		textBox.setContent( ipInputBox, ipStr )		-- if there's something already in ip string, then place that text in the input box.
+		textBox.setAccess( ipInputBox, true )
+		textBox.setReturnEvent( ipInputBox, clientStart )
+	else
+		if plNameInputBox then textBox.setAccess( plNameInputBox, true ) end
+		statusMsg.new( "Invalid playername!" )
+	end
+end
+
+local function clientInitPlayernameInput()
 	buttons.clear()
 	plNameHeader = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-10, 210, 1, fontInputHeader, 200)
-	textBox.setText( plNameHeader, "Enter Playername:" )
+	textBox.setContent( plNameHeader, "Enter Playername:" )
 	plNameInputBox = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-5, 230, 1, fontInput, 200)
+	textBox.setContent( plNameInputBox, plName )		-- if player name was already set, place it in the box.
 	textBox.setAccess( plNameInputBox, true )
-	textBox.setReturnEvent( plNameInputBox, clientStart )
+	textBox.setReturnEvent( plNameInputBox, clientInitIpInput )
 end
+
 
 function menu.initMainMenu()
 	
@@ -72,7 +96,7 @@ function menu.initMainMenu()
 	love.graphics.setBackgroundColor( colMainBg.r, colMainBg.g, colMainBg.b )
 	
 	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 200, buttonWidth, buttonHeight, "Start Server", drawButton, highlightButton, serverStart)
-	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 200 + buttonHeight + 10, buttonWidth, buttonHeight, "Start Client", drawButton, highlightButton, clientOptions )
+	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 200 + buttonHeight + 10, buttonWidth, buttonHeight, "Start Client", drawButton, highlightButton, clientInitPlayernameInput )
 	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 200 + buttonHeight*2 + 20, buttonWidth, buttonHeight, "Quit", drawButton, highlightButton, exitProgramm )
 	buttons.add( love.graphics.getWidth()-100, love.graphics.getHeight()-40, 90, 25, "Credits", drawButton, highlightButton)
 	buttons.add( 10, love.graphics.getHeight()-40, 110, 25, "Help", drawButton, displayHelp )

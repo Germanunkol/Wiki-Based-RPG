@@ -1,11 +1,12 @@
 local connection = require("connection")
 
-local lobby = require("lobby")
+lobby = require("lobby")
 
 local wikiClient = require("wikiClient")
 
 textBox = require("textBox")
 plname = ""
+ipStr = ""
 
 require("misc")
 statusMsg = require("statusMsg")
@@ -37,13 +38,13 @@ local foundStartPage = false
 
 local pageSource = ""
 
-local server
-local client
+server = nil		-- server object. When not nil, then connection is established.
+client = nil		-- client object. When not nil, then connection is established.
 
 
 function love.load(arg)
 	menu.initMainMenu(buttons)
-	love.keyboard.setKeyRepeat( 0.2, 0.03 )	
+	love.keyboard.setKeyRepeat( 0.3, 0.03 )	
 	--wikiClient.newWord()
 end
 
@@ -95,7 +96,7 @@ end
 
 function startClient()
 	statusMsg.new("starting up client...")
-	client = connection.initClient("localhost", 3456)
+	client = connection.initClient( ipStr, 3456)
 	if client then
 		client:send("NAME:" .. plName .. "\n")
 		statusMsg.new("Connected to server.")
