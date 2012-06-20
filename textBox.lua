@@ -94,17 +94,12 @@ local function multiline( str, width, font )
 		end
 	
 	until runner == #string
-
-	print ("all strings:")
-	for k, v in pairs(strings) do
-		print(v)
-	end
 	
 	return strings
 end
 
-function textBox.display(dt)
-	cursorBlinkTime = cursorBlinkTime + dt
+function textBox.display()
+	cursorBlinkTime = cursorBlinkTime + love.timer.getDelta()
 	local linePos
 	if cursorBlinkTime > 1 then cursorBlinkTime = 0 end
 	for k, v in pairs( fields ) do
@@ -131,8 +126,6 @@ function textBox.display(dt)
 end
 
 function textBox.input( key, unicode )
-	print (unicode)
-	print (key)
 	for k, v in pairs( fields ) do
 		if v.access == true and v.content then			
 			v.hasChanged = true
@@ -165,7 +158,6 @@ function textBox.input( key, unicode )
 					v.content = v.content:sub(1, v.cursorPos) .. v.content:sub(v.cursorPos+2, #v.content)
 				end
 			elseif key == "return" then
-				print ("return pressed!")
 				v.access = false
 				if v.returnEvent then
 					v.returnEvent()

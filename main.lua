@@ -28,6 +28,8 @@ colLobby = { r=241, g=229, b=209 }
 
 plName = ""
 
+PORT = 23546
+
 local inputStr = ""
 local wordToSearchFor = ""
 local inputNum = 0
@@ -51,19 +53,24 @@ end
 local lastSent = os.time()
 local msg
 
-local backspaceTimer = 0
-local timeSinceLastCall = 0
-local dt
+nextFrameEvent = {}			-- these functions will be called after the next draw call.
+
 function love.update()
-	dt = socket.gettime() - timeSinceLastCall
-	timeSinceLastCall = socket.gettime()
 	
 	if server then
 		connection.runServer( server )
 	elseif client then
 		connection.runClient( client )
 	end
-	
+	-- go through list of functions in nextFrameEvent and if they have waited the set amount of frames, call them.
+	-- This is needed to make sure client connection does not disable status messages, which would otherwise not show (especially the "attempting to connect" message)
+	for k, v in pairs( nextFrameEvent ) do	
+		v.frames = v.frames - 1
+		if v.frames <= 0 then
+			v.func()
+			nextFrameEvent[k] = nil
+		end
+	end
 end
 
 function love.draw()
@@ -72,8 +79,8 @@ function love.draw()
 	elseif lobby.active() then
 		lobby.showPlayers()
 	end
-	statusMsg.display( dt )
-	textBox.display( dt )
+	statusMsg.display()
+	textBox.display()
 	buttons.show()
 end
 
@@ -87,16 +94,14 @@ end
 
 
 function startServer()
-	server = connection.initServer("localhost", 3456, 10)
+	server = connection.initServer("localhost", PORT, 10)
 	if server then
 		lobby.init( buttons )
 	end
 end
 
-
 function startClient()
-	statusMsg.new("starting up client...")
-	client = connection.initClient( ipStr, 3456)
+	client = connection.initClient( ipStr, PORT)
 	if client then
 		client:send("NAME:" .. plName .. "\n")
 		statusMsg.new("Connected to server.")
@@ -109,3 +114,9 @@ function startGame()
 	print("game Started")
 end
 
+function love.quit()
+	if server then
+		print( "closing server" )
+		server:close()
+	end
+end

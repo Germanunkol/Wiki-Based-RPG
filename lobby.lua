@@ -2,7 +2,7 @@ local lobby = {}
 
 local active
 
-function attempGameStart()
+function attemptGameStart()
 	local numClients = 0
 	for k, cl in pairs( connectedClients ) do
 		numClients = numClients + 1
@@ -23,7 +23,7 @@ function lobby.init()
 	active = true
 
 	if server then
-		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Start Game", drawButton, highlightButton , attempGameStart )
+		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Start Game", drawButton, highlightButton , attemptGameStart )
 	end
 end
 

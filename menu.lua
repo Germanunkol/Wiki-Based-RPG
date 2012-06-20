@@ -38,17 +38,20 @@ local function serverStart()
 	print("server options started")
 end
 
-function clientStart()
+function clientFinishedInput()
 	if ipInputBox then ipStr = textBox.getContent( ipInputBox ) end
-	if #ipStr == 0 or ipStr == "localhost" or ipStr:find(".?.?.?%..?.?.?%..?.?.?%..?.?.?") ~= nil then
+	-- if IP is either empty (will get replaced with "localhost") or a valid IP string, then continue
+	local start, ending = ipStr:find("%d?%d?%d%.%d?%d?%d%.%d?%d?%d%.%d?%d?%d");
+	if #ipStr == 0 or ipStr == "localhost" or ( start == 1 and ending == #ipStr ) then
 		buttons.clear()
 		plNameInputBox = textBox.remove( plNameInputBox )		-- textBox.remove returns nil upon success.
 		plNameHeader = textBox.remove( plNameHeader )
 		ipHeader = textBox.remove( ipHeader )
 		ipInputBox = textBox.remove( ipInputBox )
-		startClient()
+		statusMsg.new("attempting to connect...")
+		table.insert( nextFrameEvent, {func = startClient, frames = 2 } )
 	else
-		textBox.setAccess( plNameInputBox, true )
+		textBox.setAccess( ipInputBox, true )
 		statusMsg.new( "Invalid IP!" )
 	end
 end
@@ -66,7 +69,7 @@ local function clientInitIpInput()
 		ipInputBox = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-5, 280, 1, fontInput, 200)
 		textBox.setContent( ipInputBox, ipStr )		-- if there's something already in ip string, then place that text in the input box.
 		textBox.setAccess( ipInputBox, true )
-		textBox.setReturnEvent( ipInputBox, clientStart )
+		textBox.setReturnEvent( ipInputBox, clientFinishedInput )
 	else
 		if plNameInputBox then textBox.setAccess( plNameInputBox, true ) end
 		statusMsg.new( "Invalid playername!" )

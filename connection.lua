@@ -88,8 +88,7 @@ function connection.runServer(tcpServer)		--handle all messages that come from t
 					synchronizeClients( cl )
 				end
 				
-			print("end received: " .. msg)
-				
+				print("end received: " .. msg)
 			end
 		else
 			print("error: " .. err)
@@ -144,9 +143,11 @@ local clientNumber = nil			--client's clientnumber
 
 function connection.initClient(address, port)
 
+		print("starting 5")
 	if #ipStr == 0 then ipStr = "localhost" end
 	local tcpClient, err = socket.connect(address, port)
 	
+		print("starting 6")
 	if tcpClient == nil then
 		print(err)
 		statusMsg.new( err .. "!")
