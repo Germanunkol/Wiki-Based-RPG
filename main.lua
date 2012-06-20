@@ -28,7 +28,7 @@ colLobby = { r=241, g=229, b=209 }
 
 plName = ""
 
-PORT = 23546
+PORT = 3456
 
 local inputStr = ""
 local wordToSearchFor = ""
@@ -94,14 +94,14 @@ end
 
 
 function startServer()
-	server = connection.initServer("localhost", PORT, 10)
+	server = connection.initServer( "localhost", PORT, 10 )
 	if server then
 		lobby.init( buttons )
 	end
 end
 
 function startClient()
-	client = connection.initClient( ipStr, PORT)
+	client = connection.initClient( "localhost", PORT)
 	if client then
 		client:send("NAME:" .. plName .. "\n")
 		statusMsg.new("Connected to server.")

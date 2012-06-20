@@ -59,7 +59,7 @@ function handleNewClient( newClient )
 	end
 end
 
-function connection.runServer(tcpServer)		--handle all messages that come from the clients
+function connection.runServer( tcpServer )		--handle all messages that come from the clients
 	local newClient, err = tcpServer:accept()
 	
 	if newClient ~= nil then
@@ -91,10 +91,12 @@ function connection.runServer(tcpServer)		--handle all messages that come from t
 				print("end received: " .. msg)
 			end
 		else
-			print("error: " .. err)
-			if err == "closed" then
-				connectedClients[k] = nil			-- if connection was closed, remove from table
-				return
+			if err ~= "timeout" then
+				print("error: " .. err)
+				if err == "closed" then
+					connectedClients[k] = nil			-- if connection was closed, remove from table
+					return
+				end
 			end
 		end
 	end
@@ -141,7 +143,7 @@ end
 
 local clientNumber = nil			--client's clientnumber
 
-function connection.initClient(address, port)
+function connection.initClient( address, port )
 
 		print("starting 5")
 	if #ipStr == 0 then ipStr = "localhost" end
