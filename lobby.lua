@@ -3,6 +3,11 @@ local lobby = {}
 local active
 
 function attemptGameStart()
+
+		buttons.clear()		-- remove game start button
+		active = false
+		startGame()
+--[[
 	local numClients = 0
 	for k, cl in pairs( connectedClients ) do
 		numClients = numClients + 1
@@ -17,6 +22,7 @@ function attemptGameStart()
 		active = false
 		startGame()
 	end
+]]--
 end
 
 function lobby.init()

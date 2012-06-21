@@ -11,12 +11,13 @@ function textBox.new( xPos, yPos, newLines, newFont, newWidth )
 	newText.content = ""
 	newText.show = false
 	newText.access = false
-	newText.colour = {0,0,0}
+	newText.colour = {r=0,g=0,b=0}
 	newText.activeLine = 1
 	newText.cursorPos = 0
 	newText.hasChanged = true
 	newText.maxLines = newLines
-	
+	newText.colours = {}	
+
 	table.insert( fields, newText )
 	return( newText )
 end
@@ -27,7 +28,30 @@ function textBox.clear( text )
 end
 
 function textBox.setColour( text, red, green, blue )
-	text.colour = { red, green, blue }
+	text.colour = { r=red, g=green, b=blue }
+	text.colours = {}		--reset all colours
+end
+
+function textBox.setColourStart( text, from, red, green, blue )
+	text.colours[from] = {r=red, g=green, b=blue }
+	text.hasChanged = true
+end
+
+function textBox.getNextColourStart( text, startPos, endPos)
+	print("searching from: " .. startPos .. " to " .. endPos)
+	local result, red, green, blue
+	result = #text.content + 1
+	for k, col in pairs(text.colours) do
+		if k > startPos and k < result and k <= endPos then
+			result = k
+			red,green,blue = col.r, col.g, col.b
+		end
+	end
+	if result ~= #text.content+1 then
+		return result, red, green, blue
+	else
+		return nil
+	end
 end
 
 function textBox.width( text, newWidth)
@@ -66,13 +90,27 @@ end
 
 local cursorBlinkTime = 0
 
-local function multiline( str, width, font )
-	local strings = {}
+local function multiline( text, width, font )
+	local str = text.content
+	local lines = {}
+	local colouredStrings = {}
 	local runner = 0
 	local partialStr = ""
 	local i = 0
 	local posOfLastSpace
+	local lineRunner
+	local beginningOfLine
+	local lineID = 0
+	local newRed, newGreen, newBlue = text.colour.r, text.colour.g, text.colour.b
+	local curRed, curGreen, curBlue = text.colour.r, text.colour.g, text.colour.b
+	local xOffset = 0
+		print("new:")
 	repeat
+		local strings = {}
+		beginningOfLine = runner
+		lineID = lineID + 1
+		--strings = {full=""}
+		table.insert( lines, strings )		-- each line holds multiple, coloured strings, plus one called "full" with the full line.
 		if font:getWidth( str:sub(runner, #str) ) > width then
 			partialStr = ""
 			i = 0
@@ -83,44 +121,100 @@ local function multiline( str, width, font )
 			posOfLastSpace = partialStr:match(".*() ")
 			if posOfLastSpace ~= nil then
 				partialStr = str:sub( runner, runner + posOfLastSpace)
-				runner = runner + posOfLastSpace + 1		-- +1 to get rid of space
+				runner = runner + posOfLastSpace		-- +1 to get rid of space
 			else
 				runner = runner + i
 			end
-			table.insert( strings, partialStr )
+			strings.full = partialStr
+
+			--table.insert( colouredStrings, { s=partialStr, x=0, r=math.random(255), g=128, b= 128 }
+			--table.insert( colouredStrings,  )
 		else
-			table.insert( strings, str:sub(runner, #str) )
-			runner = #string
+			strings.full = str:sub(runner, #str)
+			--table.insert( lines, { full= })
+			--table.insert( colouredStrings, { s=str:sub(runner, #str), x=0, r=math.random(255), g=128, b= 128 })
+			runner = #str + 1
 		end
+
+		lineRunner = 0
+		strID = 0
+		xOffset = 0
+		print("full line: " .. strings.full)
+		while lineRunner <= #strings.full do		-- go through the entire new line
+			start, newRed, newGreen, newBlue = textBox.getNextColourStart( text, beginningOfLine+lineRunner,beginningOfLine+#strings.full )
+			print(start)
+			print(newRed)
+			print("lineRunner " .. lineRunner)
+			if start then
+				print("start@ " .. start)
+				strings[strID] = {s=strings.full:sub(lineRunner, start-1-beginningOfLine), r=curRed, g=curGreen,b=curBlue, x=xOffset }
+				lineRunner = start-beginningOfLine
+				xOffset = xOffset + font:getWidth(strings[strID].s)
+				print("new line runner: " .. lineRunner)
+			else
+				print("#strings.full@ " ..  #strings.full)
+				--print("#strings.full@ " ..  #strings.full)
+				strings[strID] = {s=strings.full:sub(lineRunner, #strings.full), r=curRed, g=curGreen,b=curBlue,x=xOffset}
+				lineRunner = #strings.full + 1
+			end
+			print("strings[strID].s: " .. strings[strID].s)
+			if start then curRed,curGreen,curBlue = newRed,newGreen,newBlue end
+			strID = strID + 1
+		end
+		--[[
+		print("printing strings:")
+		for k, v in pairs(strings) do
+			if k == "full" then print(k .. ": " .. v)
+			else print(k .. ": " .. v.s)
+			end
+		end]]--
+	until runner > #str
 	
-	until runner == #string
-	
-	return strings
+	return lines
 end
 
 function textBox.display()
 	cursorBlinkTime = cursorBlinkTime + love.timer.getDelta()
 	local linePos
 	if cursorBlinkTime > 1 then cursorBlinkTime = 0 end
-	for k, v in pairs( fields ) do
+	for key, v in pairs( fields ) do
 		linePos = v.cursorPos
 		
-		love.graphics.setColor( 0, 0, 0 )
+		love.graphics.setColor( v.colour.r, v.colour.g, v.colour.b )
 		love.graphics.setFont( v.font )
 
 		if v.hasChanged then
-			v.lines = multiline( v.content, v.width, v.font)
+			
+			local runner = 0
+			textBox.setColour( v, 0,0,0)
+			while v.content:find("server", runner) do
+				runner = v.content:find("server", runner) + 1
+				textBox.setColourStart(v, runner-1, 128, 128, 255 )
+				textBox.setColourStart(v, runner+6, 0, 0, 0 )
+			end
+
+			v.lines = multiline( v, v.width, v.font)
 			v.hasChanged = false
 		end
 		for k, line in pairs(v.lines) do
 			if v.access then
-				if linePos > #line then
-					linePos = linePos - #line
+				if linePos > #line.full then
+					linePos = linePos - #line.full
 				elseif cursorBlinkTime < .5 then
-					love.graphics.print("|", v.x + v.font:getWidth(line:sub(1, linePos))-1, v.y + (k-1)*v.font:getHeight(""))
+					love.graphics.print("|", v.x + v.font:getWidth(line.full:sub(1, linePos))-1, v.y + (k-1)*v.font:getHeight())
 				end
 			end
-			love.graphics.print( line, v.x, v.y + (k-1)*v.font:getHeight(""))
+			--love.graphics.print( line.full, v.x, v.y + (k-1)*v.font:getHeight())
+		end
+		for k, line in pairs( v.lines ) do
+			for id, linePart in pairs( line ) do
+				if id ~= "full" then
+					love.graphics.setColor( linePart.r, linePart.g, linePart.b, 255 )
+					love.graphics.print( linePart.s, v.x + linePart.x, v.y + (k-1)*v.font:getHeight())
+				else
+--					print( linePart)
+				end
+			end
 		end
 	end
 end
@@ -130,7 +224,7 @@ function textBox.input( key, unicode )
 		if v.access == true and v.content then			
 			v.hasChanged = true
 			if unicode > 31 and unicode < 127 then
-				if (v.font:getWidth(v.lines[#v.lines] .. string.char(unicode)) < v.width or #v.lines < v.maxLines) and #v.lines <= v.maxLines then
+				if (v.font:getWidth(v.lines[#v.lines].full .. string.char(unicode)) < v.width or #v.lines < v.maxLines) and #v.lines <= v.maxLines then
 					v.content = v.content:sub(1, v.cursorPos) .. string.char(unicode) .. v.content:sub(v.cursorPos+1, #v.content)
 					v.cursorPos = v.cursorPos + 1
 				end

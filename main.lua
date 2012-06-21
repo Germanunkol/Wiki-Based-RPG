@@ -43,11 +43,14 @@ local pageSource = ""
 server = nil		-- server object. When not nil, then connection is established.
 client = nil		-- client object. When not nil, then connection is established.
 
-
 function love.load(arg)
 	menu.initMainMenu(buttons)
 	love.keyboard.setKeyRepeat( 0.3, 0.03 )	
 	--wikiClient.newWord()
+
+	tb = textBox.new(10, 220, 5, fontInput, 200)
+	textBox.setAccess( tb, true )
+	textBox.setColour( tb, 30, 0, 0, 128 )
 end
 
 local lastSent = os.time()
@@ -63,7 +66,8 @@ function love.update()
 		connection.runClient( client )
 	end
 	-- go through list of functions in nextFrameEvent and if they have waited the set amount of frames, call them.
-	-- This is needed to make sure client connection does not disable status messages, which would otherwise not show (especially the "attempting to connect" message)
+	-- This is needed to make sure client connection does not disable status messages, which would otherwise not show
+	-- (especially the "attempting to connect" message)
 	for k, v in pairs( nextFrameEvent ) do	
 		v.frames = v.frames - 1
 		if v.frames <= 0 then
@@ -91,7 +95,6 @@ end
 function love.mousepressed()
 	menu.handleClick()
 end
-
 
 function startServer()
 	server = connection.initServer( "localhost", PORT, 10 )
