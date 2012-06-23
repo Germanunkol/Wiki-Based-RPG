@@ -1,4 +1,4 @@
-local connection = require("Scripts/connection")
+connection = require("Scripts/connection")
 
 lobby = require("Scripts/lobby")
 
@@ -16,7 +16,7 @@ menu = require("Scripts/menu")
 buttons = require("Scripts/buttons")
 
 game = require("Scripts/game")
---[[
+
 mainFont = love.graphics.newFont( "Fonts/AveriaSans-Regular.ttf", 18 )
 buttonFont = love.graphics.newFont( "Fonts/AveriaSans-Bold.ttf", 18 )
 fontHeader = love.graphics.newFont( "Fonts/AveriaSans-Bold.ttf", 25 )
@@ -24,15 +24,6 @@ fontInputHeader = love.graphics.newFont( "Fonts/AveriaSans-Bold.ttf", 20 )
 fontInput = love.graphics.newFont( "Fonts/AveriaSans-Regular.ttf", 16 )
 fontStatus = love.graphics.newFont( "Fonts/AveriaSans-Bold.ttf", 16 )
 fontMainHeader = love.graphics.newFont( "Fonts/AveriaSans-Bold.ttf",40 )
-]]--
-
-mainFont = love.graphics.newFont( 18 )
-buttonFont = love.graphics.newFont( 18 )
-fontHeader = love.graphics.newFont( 25 )
-fontInputHeader = love.graphics.newFont( 20 )
-fontInput = love.graphics.newFont( 16 )
-fontStatus = love.graphics.newFont( 16 )
-fontMainHeader = love.graphics.newFont( 40 )
 
 colMainBg = { r=230, g=205, b=174 }
 colBg = { r=149, g=124, b=101 }
@@ -55,16 +46,6 @@ function love.load(arg)
 	love.keyboard.setKeyRepeat( 0.3, 0.03 )	
 	--wikiClient.newWord()
 	--wikiClient.nextWord()
-	titleStr = ""
-	fullTitle = "schrödinger"
-	buttonFont:getWidth( fullTitle )
-	j = 0
-	while buttonFont:getWidth( titleStr ) < buttonWidth-20 and #titleStr < #fullTitle do
-		print(titleStr.. " " .. buttonFont:getWidth( titleStr ))
-		titleStr = fullTitle:sub( 1, j )
-		print("new: " .. titleStr)
-		j = j+1
-	end
 	--tb = textBox.new( 10, 10, 5, fontInput, 25)
 	--textBox.setAccess ( tb , true )
 end

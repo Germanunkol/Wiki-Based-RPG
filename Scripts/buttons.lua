@@ -10,7 +10,7 @@ function button.clear()
 	end
 end
 
-function button.add(newX, newY, newWidth, newHeight, newLabel, functionOff, functionHover, newEvent)
+function button.add( newX, newY, newWidth, newHeight, newLabel, functionOff, functionHover, newEvent, newArgument )
 	local newButton = {}
 	newButton.x = newX
 	newButton.y = newY
@@ -21,6 +21,7 @@ function button.add(newX, newY, newWidth, newHeight, newLabel, functionOff, func
 	newButton.drawNormal = functionOff
 	newButton.drawHover = functionHover
 	newButton.event = newEvent
+	newButton.argument = newArgument 	-- passed to event
 	table.insert( buttons, newButton )
 end
 
@@ -52,7 +53,7 @@ function button.handleClick()
 	for key, button in pairs( buttons ) do
 		if mouseOver( button ) then
 			if button.event then
-				button.event()
+				button.event( button.argument )
 			end
 			return
 		end

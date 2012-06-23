@@ -23,7 +23,6 @@ function connection.initServer(host, port, maxConnections)
 	return tcpServer
 end
 
-
 -- Send playernames, stats etc:
 local function synchronizeClients( newClient )
 	for k, cl in pairs( connectedClients ) do
@@ -48,6 +47,9 @@ function handleNewClient( newClient )
 	
 	if clientNumber <= maxPlayers and clientNumber ~= 0 then
 		newClient:send("CLIENTNUMBER:" .. clientNumber .. "\n")
+		if startingWord then 
+			newClient:send("STARTWORD:" .. startingWord .. "\n")
+		end
 	else
 		newClient:send("SERVERFULL:\n")
 		connectedClients[clientNumber] = nil
@@ -56,6 +58,12 @@ function handleNewClient( newClient )
 	end
 	if newClient then
 		statusMsg.new( "New player!" )
+	end
+end
+
+function connection.serverBroadcast( msg )
+	for k, cl in pairs( connectedClients ) do
+		cl.client:send(msg)
 	end
 end
 
@@ -132,11 +140,17 @@ function connection.runClient( client )				--handle all messages that come from 
 				table.insert( connectedClients, {playerName=msg:sub(ending+1, #msg)} )
 			end
 			
+			start, ending = msg:find( "STARTWORD:" )
+			if start == 1 then
+				startingWord = msg:sub(11, #msg)
+			end
+			
 			start, ending = msg:find( "GAMESTART:" )
 			if start == 1 then
 				lobby.deactivate()
 				game.init()
 			end
+			
 		end
 	end
 end

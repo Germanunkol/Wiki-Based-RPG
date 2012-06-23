@@ -29,31 +29,45 @@ local firstWordInputBox
 local firstWordHeaderBox
 local multipleFoundHeaderBox
 
-function firstWordSet()
-	print( "match: " .. textBox.getContent( firstWordInputBox ):match( "[%d%a%s]+" ) )
-	if textBox.getContent( firstWordInputBox ):match( "[%d%a%s]+" ) == textBox.getContent( firstWordInputBox ) then
-		statusMsg.new( "Looking up word..." )
-		local found, multiple, urlTable = wikiClient.newWord( textBox.getContent( firstWordInputBox ) )
-		if multiple == true then
-			statusMsg.new( "Multiple articles found" )
-			textBox.setContent( firstWordHeaderBox, "Did you mean..." )
+local found, multiple, urlTable
 
+function chooseWord( k )
+	
+	startingWord = urlTable[k].title
+	connection.serverBroadcast("STARTWORD:" .. startingWord .. "\n")
+	
+	choosingFirstWord = false
+	textBox.remove( firstWordInputBox )
+	firstWordInputBox = nil
+	textBox.remove( firstWordHeaderBox )
+	firstWordHeaderBox = nil		
+	buttons.clear()
+	buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Start Game", drawButton, highlightButton , attemptGameStart )
+end
+
+function firstWordSet()
+	if textBox.getContent( firstWordInputBox ):match( "[%d%a%s]+" ) == textBox.getContent( firstWordInputBox ) then
+		found, multiple, urlTable = wikiClient.newWord( textBox.getContent( firstWordInputBox ) )
+		if multiple == true then
+			statusMsg.new( "Multiple articles found. Choose one." )
+			textBox.setContent( firstWordHeaderBox, "Did you mean..." )
+			local fieldWidth = love.graphics.getWidth()/2-70
 			local i = 0
 			local j
 			local titleStr = 0
 			for k, v in pairs( urlTable ) do
 				if i < 7 then
 					titleStr = ""
-					j = love.graphics.print("full: " .. #v.title, 20, 20)
-					while buttonFont:getWidth( titleStr ) < buttonWidth-20 and #titleStr < #v.title do
-						print(titleStr.. " " .. buttonFont:getWidth( titleStr ))
-						titleStr = v.title:sub( 1, j )
-						j = j+1
+					for char in v.title:gfind("([%z\1-\127\194-\244][\128-\191]*)") do
+						titleStr = titleStr .. char
+						if buttonFont:getWidth( titleStr ) >= fieldWidth-30 then
+							 break
+						end
 					end
-					if #titleStr < #v.title then
+					if titleStr ~= v.title then
 						titleStr = titleStr .. "..."
 					end
-					buttons.add( love.graphics.getWidth()/2+20, 130 + i*(buttonHeight+2), buttonWidth, buttonHeight/2+10, titleStr, drawButton, highlightButton , nil )
+					buttons.add( love.graphics.getWidth()/2+20, 140 + i*(buttonHeight-2), fieldWidth, buttonHeight/2+10, titleStr, drawButton, highlightButton , chooseWord, k )
 				end
 				i = i+1
 			end
@@ -69,7 +83,8 @@ function firstWordSet()
 		end
 
 		startingWord = textBox.getContent( firstWordInputBox )
-
+		connection.serverBroadcast("STARTWORD:" .. startingWord .. "\n")
+		
 		choosingFirstWord = false
 		textBox.remove( firstWordInputBox )
 		firstWordInputBox = nil
@@ -83,20 +98,31 @@ function firstWordSet()
 	end
 end
 
-function inputFirstWord()
-	if choosingFirstWord == false then
-		choosingFirstWord = true
+function startFirstWordSet()
+	statusMsg.new( "Looking up word..." )	
+	table.insert( nextFrameEvent, {func = firstWordSet, frames = 2 } ) --make sure message is drawn before calling the event
+end
 
-		if firstWordHeaderBox == nil then
-			firstWordHeaderBox = textBox.new( love.graphics.getWidth()/2+20, 110, 2, fontInputHeader, 300 )
-		end
-		textBox.setContent( firstWordHeaderBox, "Where will you story start?" )
-		if firstWordInputBox == nil then
-			firstWordInputBox = textBox.new( love.graphics.getWidth()/2+25, 130, 1, fontInput, 200 )
-		end
-		textBox.setAccess( firstWordInputBox, true )
-		textBox.setReturnEvent( firstWordInputBox, firstWordSet )
+function inputFirstWord()
+	if choosingFirstWord == true then
+		textBox.remove( firstWordInputBox )
+		firstWordInputBox = nil
+		textBox.remove( firstWordHeaderBox )
+		firstWordHeaderBox = nil
+		buttons.clear()
+		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, "Choose first Word", drawButton, highlightButton , inputFirstWord )
 	end
+	choosingFirstWord = true
+
+	if firstWordHeaderBox == nil then
+		firstWordHeaderBox = textBox.new( love.graphics.getWidth()/2+20, 110, 2, fontInputHeader, 300 )
+	end
+	textBox.setContent( firstWordHeaderBox, "Where will you story start?" )
+	if firstWordInputBox == nil then
+		firstWordInputBox = textBox.new( love.graphics.getWidth()/2+25, 130, 1, fontInput, 200 )
+	end
+	textBox.setAccess( firstWordInputBox, true )
+	textBox.setReturnEvent( firstWordInputBox, startFirstWordSet )
 end
 
 function lobby.init()

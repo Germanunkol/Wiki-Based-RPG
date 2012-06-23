@@ -1,4 +1,3 @@
-
 local statusMsg = {}
 
 local curStatusMsg = ""
@@ -9,7 +8,6 @@ function statusMsg.new( msg )
 	statusMsgTimer = 0
 	curStatusMsg = msg
 end
-
 
 function statusMsg.display()
 	statusMsgTimer = statusMsgTimer + love.timer.getDelta()
