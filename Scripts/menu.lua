@@ -17,13 +17,13 @@ end
 
 
 local function displayHelp( theButton )
-	love.graphics.setColor( 0, 0, 0 , 255)
+	--love.graphics.setColor( 0, 0, 0 , 255)
 	width = love.graphics.getWidth()
 	height = theButton.y+theButton.h - 10
-	love.graphics.rectangle( "fill", theButton.x, 10, width-20, height )
-	love.graphics.setColor( 180, 180, 180, 255)
+	--love.graphics.rectangle( "fill", theButton.x, 10, width-20, height )
+	love.graphics.setColor( colBg.r,colBg.g,colBg.b , 255)
 	love.graphics.rectangle( "fill", theButton.x+1, 11, width-22, height-2)
-	love.graphics.setColor( 255, 255, 255 , 255)
+	love.graphics.setColor( colLobby.r, colLobby.g, colLobby.g)
 	love.graphics.rectangle( "fill",  theButton.x+3, 13, width-26, height-6)
 	love.graphics.setColor( 0, 0, 0 , 255)
 	love.graphics.printf( helpString, 20, 20, width-40, "left")
@@ -67,6 +67,7 @@ local function clientInitIpInput()
 		ipHeader = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-10, 260, 1, fontInputHeader, 200)
 		textBox.setContent( ipHeader, "Enter server's IP:" )
 		ipInputBox = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-5, 280, 1, fontInput, 200)
+		textBox.setColour( ipInputBox, colTextInput.r, colTextInput.g, colTextInput.b )
 		textBox.setContent( ipInputBox, ipStr )		-- if there's something already in ip string, then place that text in the input box.
 		textBox.setAccess( ipInputBox, true )
 		textBox.setReturnEvent( ipInputBox, clientFinishedInput )
@@ -81,6 +82,8 @@ local function clientInitPlayernameInput()
 	plNameHeader = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-10, 210, 1, fontInputHeader, 200)
 	textBox.setContent( plNameHeader, "Enter Playername:" )
 	plNameInputBox = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-5, 230, 1, fontInput, 200)
+	textBox.setColour( plNameInputBox, colTextInput.r, colTextInput.g, colTextInput.b )
+	
 	textBox.setContent( plNameInputBox, plName )		-- if player name was already set, place it in the box.
 	textBox.setAccess( plNameInputBox, true )
 	textBox.setReturnEvent( plNameInputBox, clientInitIpInput )
@@ -109,8 +112,8 @@ end
 function menu.showMainMenu()
 		--love.graphics.line(0, 120, love.graphics.getWidth(), 120)
 		
-	love.graphics.setColor( 0, 0, 0 , 255)
-	love.graphics.rectangle("fill", 0, 50, love.graphics.getWidth(), 50)
+	--love.graphics.setColor( 0, 0, 0 , 255)
+	--love.graphics.rectangle("fill", 0, 50, love.graphics.getWidth(), 50)
 	love.graphics.setColor( colBg.r, colBg.g, colBg.g, 255)
 	love.graphics.rectangle("fill", 0, 51, love.graphics.getWidth(), 48)
 	

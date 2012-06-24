@@ -18,7 +18,9 @@ function connection.initServer(host, port, maxConnections)
 		print("server: " .. tcpServer:getsockname())
 	end
 	
-	tcpServer:settimeout(0)
+	if tcpServer then
+		tcpServer:settimeout(0)
+	end
 	
 	return tcpServer
 end
@@ -38,23 +40,30 @@ function handleNewClient( newClient )
 	local clientNumber = 0
 	for i=1, maxPlayers, 1 do
 		if connectedClients[i] == nil then
-			connectedClients[i] = { client = newClient }
+			connectedClients[i] = { client = newClient, playerName = "" }
 			connectedClients[i].clientNumber = i
 			clientNumber = i
 			break
 		end
 	end
 	
-	if clientNumber <= maxPlayers and clientNumber ~= 0 then
-		newClient:send("CLIENTNUMBER:" .. clientNumber .. "\n")
-		if startingWord then 
-			newClient:send("STARTWORD:" .. startingWord .. "\n")
-		end
-	else
-		newClient:send("SERVERFULL:\n")
+	if game.active() then
+		newClient:send("ERROR:NOTINLOBBY:\n")
 		connectedClients[clientNumber] = nil
 		newClient:close()
 		newClient = nil
+	else
+		if clientNumber <= maxPlayers and clientNumber ~= 0 then
+			newClient:send("CLIENTNUMBER:" .. clientNumber .. "\n")
+			if startingWord then 
+				newClient:send("STARTWORD:" .. startingWord .. "\n")
+			end
+		else
+			newClient:send("ERROR:SERVERFULL\n")
+			connectedClients[clientNumber] = nil
+			newClient:close()
+			newClient = nil
+		end
 	end
 	if newClient then
 		statusMsg.new( "New player!" )
@@ -66,6 +75,8 @@ function connection.serverBroadcast( msg )
 		cl.client:send(msg)
 	end
 end
+
+local start, ending
 
 function connection.runServer( tcpServer )		--handle all messages that come from the clients
 	local newClient, err = tcpServer:accept()
@@ -97,6 +108,12 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 				end
 				
 				print("end received: " .. msg)
+			else			
+				start, ending = msg:find( "ACTION:" )
+				if start == 1 then
+					game.receiveAction( msg:sub(ending+1, #msg) )
+					connection.serverBroadcast( msg )
+				end
 			end
 		else
 			if err ~= "timeout" then
@@ -112,7 +129,7 @@ end
 
 function connection.runClient( client )				--handle all messages that come from the server
 	msg = client:receive()
-	local start, ending
+
 	if msg then
 		print("received: " .. msg)
 		
@@ -125,6 +142,11 @@ function connection.runClient( client )				--handle all messages that come from 
 			elseif msg:find( "ERROR:NAMETAKEN" ) == 1 then
 				print( "Name alread exists!" )
 				statusMsg.new( "Name alread exists!" )
+				menu.initMainMenu()
+				return
+			elseif msg:find( "ERROR:NOTINLOBBY" ) == 1 then
+				print( "Server's game has already started!" )
+				statusMsg.new( "Can't join: Game has already started!" )
 				menu.initMainMenu()
 				return
 			end
@@ -149,6 +171,16 @@ function connection.runClient( client )				--handle all messages that come from 
 			if start == 1 then
 				lobby.deactivate()
 				game.init()
+			end
+			
+			start, ending = msg:find( "STORY:" )
+			if start == 1 then
+				game.receiveStory( msg:sub(ending+1, #msg) )
+			end
+			
+			start, ending = msg:find( "ACTION:" )
+			if start == 1 then
+				game.receiveAction( msg:sub(ending+1, #msg) )
 			end
 			
 		end

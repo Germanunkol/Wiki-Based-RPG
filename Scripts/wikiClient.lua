@@ -1,4 +1,4 @@
-local wikiClient = {}
+	local wikiClient = {}
 
 local http = require("socket.http")
 local urlManipulation = require("Scripts/urlManip")
@@ -6,11 +6,13 @@ local urlManipulation = require("Scripts/urlManip")
 http.TIMEOUT = 10
 
 local WIKI_NOARTICLE = "<div id=\"mw%-content%-text\"><div class=\"noarticletext\">"
+local WIKI_DELETEDPAGE = "<div id=\"mw%-content%-text\"><div class=\"mw%-warning%-with%-logexcerpt\">"
 local WIKI_STARTOFCONTENTS = "<div id=\"mw%-content%-text\"-"
-local WIKI_URL = "http://de.wikipedia.org"
+local WIKI_URL = "http://en.wikipedia.org"
 local WIKI_DISAMBIGUATION = "[D,d]isambig[^\"]*%.svg%.png"
 
-local fullURL = "http://de.wikipedia.org/wiki/Penghu"
+
+local fullURL = ""
 
 local urlTable = nil
 
@@ -22,7 +24,11 @@ function wikiClient.newWord( wordToSearchFor )
 	urlTable = nil
 	local foundStartPage, multipleFound = false, false
 
-	if string.find(pageSource, WIKI_NOARTICLE) == nil then
+	if pageSource == nil then
+		statusMsg.new("Error connecting. Please retry.")
+		return nil
+	end
+	if string.find(pageSource, WIKI_NOARTICLE) == nil and string.find(pageSource, WIKI_DELETEDPAGE) == nil then
 	--//upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Disambig-dark.svg/28px-Disambig-dark.svg.png
 
 		-- check if there is the disambig symbol on the page. If yes, then there's disambiguations of the name

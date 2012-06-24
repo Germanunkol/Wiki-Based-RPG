@@ -4,6 +4,9 @@ lobby = require("Scripts/lobby")
 
 wikiClient = require("Scripts/wikiClient")
 
+server = nil		-- server object. When not nil, then connection is established.
+client = nil		-- client object. When not nil, then connection is established.
+
 textBox = require("Scripts/textBox")
 plname = ""
 ipStr = ""
@@ -26,9 +29,12 @@ fontStatus = love.graphics.newFont( "Fonts/AveriaSans-Bold.ttf", 16 )
 fontMainHeader = love.graphics.newFont( "Fonts/AveriaSans-Bold.ttf",40 )
 
 colMainBg = { r=230, g=205, b=174 }
-colBg = { r=149, g=124, b=101 }
+colBg = { r=139, g=104, b=71 }
 colLobby = { r=241, g=229, b=209 }
-colTextInput = { r=255, g=249, b=229 }
+colTextInput = { r=100, g=100, b=100 }
+colWikiWord = { r=20, g=64, b=160 }
+colStory = { r=100, g=100, b=100 }
+colAction = { r=0, g=0, b=0 }
 
 plName = ""
 
@@ -37,8 +43,6 @@ PORT = 3456
 
 local pageSource = ""
 
-server = nil		-- server object. When not nil, then connection is established.
-client = nil		-- client object. When not nil, then connection is established.
 
 
 function love.load(arg)

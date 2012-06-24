@@ -112,10 +112,14 @@ local function multiline( text, width, font )
 		if font:getWidth( str:sub(runner, #str) ) > width then
 			partialStr = ""
 			i = 0
-			while font:getWidth( partialStr ) < width do			-- will be a tiny bit longer than width...
-				partialStr = str:sub(runner, runner+i) 
+			for char in str:gfind("([%z\1-\127\194-\244][\128-\191]*)", runner) do
+				partialStr = partialStr .. char
+				if font:getWidth( partialStr ) >= width or char == "\n" then
+					 break
+				end
 				i = i + 1
 			end
+			
 			posOfLastSpace = partialStr:match(".*() ")
 			if posOfLastSpace ~= nil then
 				partialStr = str:sub( runner, runner + posOfLastSpace)
@@ -174,15 +178,6 @@ function textBox.display()
 		love.graphics.setFont( v.font )
 
 		if v.hasChanged then
-			
-			local runner = 0
-			textBox.setColour( v, 0,0,0)
-			while v.content:find("server", runner) do
-				runner = v.content:find("server", runner) + 1
-				textBox.setColourStart(v, runner-1, 128, 128, 255 )
-				textBox.setColourStart(v, runner+6, 0, 0, 0 )
-			end
-
 			v.lines = multiline( v, v.width, v.font)
 			v.hasChanged = false
 		end
@@ -266,7 +261,7 @@ end
 
 function textBox.setContent( textField, line )
 	textField.content = line
-	newText.hasChanged = true
+	textField.hasChanged = true
 end
 
 return textBox

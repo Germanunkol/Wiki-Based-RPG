@@ -4,11 +4,7 @@ local active
 local choosingFirstWord = false
 
 function attemptGameStart()
-	--[[buttons.clear()		-- remove game start button
-	active = false
-	game.init()
 
-]]--
 	local numClients = 0
 	for k, cl in pairs( connectedClients ) do
 		numClients = numClients + 1
@@ -16,13 +12,13 @@ function attemptGameStart()
 		cl.client:send( "GAMESTART:\n" )
 	end
 	print("clients found: " .. numClients)
-	if numClients == 0 then
+	--if numClients == 0 then
 		statusMsg.new( "Need at least one player!" )
-	else
+	--else
 		buttons.clear()		-- remove game start button
 		active = false
 		game.init()
-	end
+	--end
 end
 
 local firstWordInputBox
@@ -43,6 +39,7 @@ function chooseWord( k )
 	firstWordHeaderBox = nil		
 	buttons.clear()
 	buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Start Game", drawButton, highlightButton , attemptGameStart )
+	statusMsg.new( "Starting word set." )
 end
 
 function firstWordSet()
@@ -84,6 +81,7 @@ function firstWordSet()
 
 		startingWord = textBox.getContent( firstWordInputBox )
 		connection.serverBroadcast("STARTWORD:" .. startingWord .. "\n")
+		statusMsg.new( "Starting word set." )
 		
 		choosingFirstWord = false
 		textBox.remove( firstWordInputBox )
@@ -117,9 +115,10 @@ function inputFirstWord()
 	if firstWordHeaderBox == nil then
 		firstWordHeaderBox = textBox.new( love.graphics.getWidth()/2+20, 110, 2, fontInputHeader, 300 )
 	end
-	textBox.setContent( firstWordHeaderBox, "Where will you story start?" )
+	textBox.setContent( firstWordHeaderBox, "What will the story be about?" )
 	if firstWordInputBox == nil then
 		firstWordInputBox = textBox.new( love.graphics.getWidth()/2+25, 130, 1, fontInput, 200 )
+		textBox.setColour( firstWordInputBox, colTextInput.r, colTextInput.g, colTextInput.b )
 	end
 	textBox.setAccess( firstWordInputBox, true )
 	textBox.setReturnEvent( firstWordInputBox, startFirstWordSet )
@@ -142,22 +141,24 @@ function lobby.active()
 end
 
 function lobby.showPlayers()
-	love.graphics.setColor( 0, 0, 0 , 255)
-	love.graphics.rectangle("fill", 0, 50, love.graphics.getWidth(), 50)
 	love.graphics.setColor( colBg.r, colBg.g, colBg.g, 255)
 	love.graphics.rectangle("fill", 0, 51, love.graphics.getWidth(), 48)
 	
-	love.graphics.setColor( colLobby.r,colLobby.g,colLobby.b )
+	love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b )
 	love.graphics.setFont( fontHeader )
-	love.graphics.print( "Players:", 70, 65 )
+	love.graphics.print( "Heroes:", 70, 65 )
 	if startingWord then
-		love.graphics.setColor( colBg.r, colBg.g, colBg.g, 255)
-		love.graphics.print( startingWord, (love.graphics.getWidth() - fontHeader:getWidth(startingWord))/2, 20 )
+	love.graphics.setFont( buttonFont )
+	love.graphics.setColor( 0,0,0 )
+	love.graphics.print( "A story of ", (love.graphics.getWidth() - fontHeader:getWidth(startingWord))/2-buttonFont:getWidth("A story of ") , 24 )
+	love.graphics.setFont( fontHeader )
+	love.graphics.setColor( colWikiWord.r,colWikiWord.g,colWikiWord.b )
+	love.graphics.print( startingWord, (love.graphics.getWidth() - fontHeader:getWidth(startingWord))/2, 20 )
 	end
 	
 	for k, v in pairs( connectedClients ) do
-		love.graphics.setColor( 0, 0, 0 , 255)
-		love.graphics.rectangle("fill", 0, 110 + 50*(k-1), love.graphics.getWidth(), 35)
+		--love.graphics.setColor( 0, 0, 0 , 255)
+		--love.graphics.rectangle("fill", 0, 110 + 50*(k-1), love.graphics.getWidth(), 35)
 		love.graphics.setColor( colLobby.r, colLobby.g, colLobby.g, 255)
 		love.graphics.rectangle("fill", 0, 111 + 50*(k-1), love.graphics.getWidth(), 33)
 		love.graphics.setColor( 0, 0, 0 , 255)
@@ -166,8 +167,8 @@ function lobby.showPlayers()
 	end
 
 	if choosingFirstWord then
-		love.graphics.setColor( 0, 0, 0 , 255)
-		love.graphics.rectangle("fill", love.graphics.getWidth()/2, 100, love.graphics.getWidth()/2-30, love.graphics.getHeight()/2)
+		--love.graphics.setColor( 0, 0, 0 , 255)
+		--love.graphics.rectangle("fill", love.graphics.getWidth()/2, 100, love.graphics.getWidth()/2-30, love.graphics.getHeight()/2)
 		love.graphics.setColor( colLobby.r, colLobby.g, colLobby.g, 255)
 		love.graphics.rectangle("fill", love.graphics.getWidth()/2+1, 100, love.graphics.getWidth()/2-32, love.graphics.getHeight()/2-1)
 	end
