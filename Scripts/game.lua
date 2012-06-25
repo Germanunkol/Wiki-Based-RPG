@@ -23,10 +23,12 @@ local gameTextBox = nil
 
 local waitForPlayerActions = false
 local waitForPlayerActionsTimer = 0
+local playersHaveReplied = 0
 
 function game.sendStory()
 	local str = textBox.getContent( gameInputBox )
 	if #str > 0 then
+		playersHaveReplied = 0
 		connection.serverBroadcast( "STORY:" .. str .. "\n")
 		game.receiveStory( str )
 		textBox.setContent( gameInputBox, "" )
@@ -55,20 +57,25 @@ end
 
 function game.receiveAction( msg )
 	if gameTextBox then
-		textBox.setColourStart( gameTextBox, #textBox.getContent( gameTextBox ) + 1, colAction.r, colAction.g, colAction.b )
+		if server then
+			playersHaveReplied = playersHaveReplied + 1
+		end
+		print("@ " .. #textBox.getContent( gameTextBox ) + 1)
+		if not client then textBox.setColourStart( gameTextBox, #textBox.getContent( gameTextBox ) + 1, colAction.r, colAction.g, colAction.b )
+		end
 		textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .. "\n" .. msg )
 	end
 end
 
 function game.receiveStory( msg )
 	if gameTextBox then
-		textBox.setColourStart( gameTextBox, #textBox.getContent( gameTextBox ) + 1, colStory.r, colStory.g, colStory.b )
+		--textBox.setColourStart( gameTextBox, #textBox.getContent( gameTextBox ) + 1, colStory.r, colStory.g, colStory.b )
 		textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .. "\n" .. msg )
 		if client then
 			waitForPlayerActions = true
 			waitForPlayerActionsTimer = 0
 			textBox.setContent( gameInputBox, "" )
-			textBox.setAccess( gameInputBox, true )
+			textBox.setAccess( gameInputBox, true, true )
 			textBox.setContent( gameActionTextBox, "What would you like to do? 60" )
 			textBox.setReturnEvent( gameInputBox, game.sendAction )
 		end
@@ -90,8 +97,8 @@ function game.show()
 	if server and waitForPlayerActions then
 		waitForPlayerActionsTimer = waitForPlayerActionsTimer + love.timer.getDelta()
 		textBox.setContent( gameActionTextBox, "Waiting for heroes to reply..." .. math.floor(60-waitForPlayerActionsTimer))
-		if waitForPlayerActionsTimer >= 10 then
-			textBox.setAccess( gameInputBox, true )	
+		if waitForPlayerActionsTimer >= 2 or playersHaveReplied >= connection.getPlayers() then
+			textBox.setAccess( gameInputBox, true, true )	
 			textBox.setContent( gameActionTextBox, "Continue the story.")
 			textBox.setColour( gameActionTextBox, 0, 0, 0 )
 			waitForPlayerActions = false
@@ -133,7 +140,7 @@ function game.init()
 		textBox.setContent( gameActionTextBox, "Start the story. Use \"" .. startingWord .. "\" in your text." )
 		textBox.setColourStart( gameActionTextBox, #"Start the story. Use \""+1 , colWikiWord.r, colWikiWord.g, colWikiWord.b )
 		textBox.setColourStart( gameActionTextBox, #"Start the story. Use \"" + #startingWord + 1 , 0,0,0 )
-		textBox.setAccess( gameInputBox, true )
+		textBox.setAccess( gameInputBox, true, true )
 		textBox.setReturnEvent( gameInputBox, game.sendStory )
 	else
 		textBox.setContent( gameActionTextBox, "Waiting for server to beginn story..." )

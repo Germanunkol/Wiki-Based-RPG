@@ -255,8 +255,11 @@ function textBox.getContent( text )
 	return text.content
 end
 
-function textBox.setAccess( text, input )
+function textBox.setAccess( text, input, resetCursor )
 	text.access = input
+	if resetCursor then
+		text.cursorPos = 0
+	end
 end
 
 function textBox.setContent( textField, line )

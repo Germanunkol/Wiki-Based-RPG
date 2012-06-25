@@ -7,6 +7,7 @@ connectedClients = {}
 local socket = require("socket")
 
 local maxPlayers = 0
+local numOfPlayers = 0
 
 function connection.initServer(host, port, maxConnections)
 
@@ -27,11 +28,13 @@ end
 
 -- Send playernames, stats etc:
 local function synchronizeClients( newClient )
+	numOfPlayers = 0
 	for k, cl in pairs( connectedClients ) do
 		cl.client:send("NEWPLAYER:" .. newClient.playerName .. "\n")
 		if	cl ~= newClient then
 			newClient.client:send("NEWPLAYER:" .. cl.playerName .. "\n")
 		end
+		numOfPlayers = numOfPlayers + 1
 	end
 end
 
@@ -71,9 +74,15 @@ function handleNewClient( newClient )
 end
 
 function connection.serverBroadcast( msg )
+	numOfPlayers = 0
 	for k, cl in pairs( connectedClients ) do
 		cl.client:send(msg)
+		numOfPlayers = numOfPlayers + 1
 	end
+end
+
+function connection.getPlayers()
+	return numOfPlayers
 end
 
 local start, ending
