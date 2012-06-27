@@ -76,7 +76,8 @@ end
 function connection.serverBroadcast( msg )
 	numOfPlayers = 0
 	for k, cl in pairs( connectedClients ) do
-		cl.client:send(msg)
+		print("broadcast " .. cl.playerName .. " " .. numOfPlayers)
+		cl.client:send(msg .. "\n")
 		numOfPlayers = numOfPlayers + 1
 	end
 end
@@ -120,8 +121,8 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 			else			
 				start, ending = msg:find( "ACTION:" )
 				if start == 1 then
-					game.receiveAction( msg:sub(ending+1, #msg) )
-					connection.serverBroadcast( msg )
+					game.receiveAction( cl.playerName .. ": " .. msg:sub(ending+1, #msg) )
+					connection.serverBroadcast( "ACTION:" .. cl.playerName .. ": " .. msg:sub(ending+1, #msg) )
 				end
 			end
 		else

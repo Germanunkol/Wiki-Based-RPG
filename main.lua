@@ -50,7 +50,7 @@ function love.load(arg)
 	love.keyboard.setKeyRepeat( 0.3, 0.03 )	
 	--wikiClient.newWord()
 	--wikiClient.nextWord()
-	--tb = textBox.new( 10, 10, 5, fontInput, 25)
+	--tb = textBox.new( 10, 10, 5, fontInput, 75)
 	--textBox.setAccess ( tb , true )
 end
 
@@ -84,13 +84,19 @@ function love.draw()
 	elseif game.active() then
 		game.show()
 	end
-	textBox.display()
+	--textBox.display()
 	buttons.show()
 	statusMsg.display()
 end
 
+local inputRead
 function love.keypressed(key, unicode)
-	textBox.input( key, unicode )
+	inputRead = textBox.input( key, unicode )
+	if not inputRead then		--input has not been put into a chat box: use input as command
+		if string.char(unicode) == "c" and game.active() then
+			chat.start()
+		end
+	end
 end
 
 function love.mousepressed()

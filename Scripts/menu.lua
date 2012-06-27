@@ -122,6 +122,11 @@ function menu.showMainMenu()
 	love.graphics.print( "WB-RPG", 30, 52 )
 	love.graphics.setFont( mainFont )
 	love.graphics.print( "the Wiki-Based Role Playing Game", 190, 65 )
+	
+	textBox.display( plNameHeader )
+	textBox.display( plNameInputBox )
+	textBox.display( ipHeader )
+	textBox.display( ipInputBox )
 end
 
 function menu.handleClick()

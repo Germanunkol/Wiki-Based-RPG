@@ -147,14 +147,17 @@ function lobby.showPlayers()
 	love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b )
 	love.graphics.setFont( fontHeader )
 	love.graphics.print( "Heroes:", 70, 65 )
+	
+	
 	if startingWord then
-	love.graphics.setFont( buttonFont )
-	love.graphics.setColor( 0,0,0 )
-	love.graphics.print( "A story of ", (love.graphics.getWidth() - fontHeader:getWidth(startingWord))/2-buttonFont:getWidth("A story of ") , 24 )
-	love.graphics.setFont( fontHeader )
-	love.graphics.setColor( colWikiWord.r,colWikiWord.g,colWikiWord.b )
-	love.graphics.print( startingWord, (love.graphics.getWidth() - fontHeader:getWidth(startingWord))/2, 20 )
+		love.graphics.setFont( buttonFont )
+		love.graphics.setColor( 0,0,0 )
+		love.graphics.print( "A story of ", (love.graphics.getWidth() - fontHeader:getWidth(startingWord))/2-buttonFont:getWidth("A story of ") , 24 )
+		love.graphics.setFont( fontHeader )
+		love.graphics.setColor( colWikiWord.r,colWikiWord.g,colWikiWord.b )
+		love.graphics.print( startingWord, (love.graphics.getWidth() - fontHeader:getWidth(startingWord))/2, 20 )
 	end
+	
 	
 	for k, v in pairs( connectedClients ) do
 		--love.graphics.setColor( 0, 0, 0 , 255)
@@ -170,7 +173,9 @@ function lobby.showPlayers()
 		--love.graphics.setColor( 0, 0, 0 , 255)
 		--love.graphics.rectangle("fill", love.graphics.getWidth()/2, 100, love.graphics.getWidth()/2-30, love.graphics.getHeight()/2)
 		love.graphics.setColor( colLobby.r, colLobby.g, colLobby.g, 255)
-		love.graphics.rectangle("fill", love.graphics.getWidth()/2+1, 100, love.graphics.getWidth()/2-32, love.graphics.getHeight()/2-1)
+		love.graphics.rectangle("fill", love.graphics.getWidth()/2+1, 100, love.graphics.getWidth()/2-32, love.graphics.getHeight()/2-1)	
+		textBox.display( firstWordInputBox )
+		textBox.display( firstWordHeaderBox )
 	end
 end
 
