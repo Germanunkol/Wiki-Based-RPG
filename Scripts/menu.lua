@@ -49,7 +49,7 @@ function clientFinishedInput()
 		ipHeader = textBox.remove( ipHeader )
 		ipInputBox = textBox.remove( ipInputBox )
 		statusMsg.new("attempting to connect...")
-		table.insert( nextFrameEvent, {func = startClient, frames = 2 } )
+		table.insert( nextFrameEvent, { func = startClient, frames = 2 } )
 	else
 		textBox.setAccess( ipInputBox, true )
 		statusMsg.new( "Invalid IP!" )
@@ -69,6 +69,7 @@ local function clientInitIpInput()
 		ipInputBox = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-5, 280, 1, fontInput, 200)
 		textBox.setColour( ipInputBox, colTextInput.r, colTextInput.g, colTextInput.b )
 		textBox.setContent( ipInputBox, ipStr )		-- if there's something already in ip string, then place that text in the input box.
+		textBox.moveCursorToEnd( ipInputBox )
 		textBox.setAccess( ipInputBox, true )
 		textBox.setReturnEvent( ipInputBox, clientFinishedInput )
 	else
@@ -85,6 +86,7 @@ local function clientInitPlayernameInput()
 	textBox.setColour( plNameInputBox, colTextInput.r, colTextInput.g, colTextInput.b )
 	
 	textBox.setContent( plNameInputBox, plName )		-- if player name was already set, place it in the box.
+	textBox.moveCursorToEnd( plNameInputBox )
 	textBox.setAccess( plNameInputBox, true )
 	textBox.setReturnEvent( plNameInputBox, clientInitIpInput )
 end

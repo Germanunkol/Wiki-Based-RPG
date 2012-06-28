@@ -73,8 +73,8 @@ function urlManip.extractURLs(inputStr, contentsStartString)
 
 	urlTableFull = extractAllURLs(inputStr, contentsStartString)
 
-	numberOfFoundLinks = 0
-	doublesFound = 0
+	local numberOfFoundLinks = 0
+	local doublesFound = 0
 
 	for key, value in pairs(urlTableFull) do
 		if value.url and value.title and not value.url:find(":") then
@@ -101,7 +101,7 @@ function urlManip.extractURLs(inputStr, contentsStartString)
 		table.insert(urlTable, v)
 	end
 	
-	return urlTable
+	return urlTable, numberOfFoundLinks, doublesFound
 end
 
 function urlManip.log(str)

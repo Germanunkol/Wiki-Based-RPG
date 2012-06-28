@@ -31,7 +31,7 @@ end
 function textBox.setVisibleLines( text, from, num )
 	text.showStartLine = math.max(from+1, 1)
 	text.showOnlyPart = num			-- -1 because the for loop is inclusive.
-	print("showing lines from " .. text.showStartLine .. " to " .. text.showOnlyPart)
+	--print("showing lines from " .. text.showStartLine .. " to " .. text.showOnlyPart)
 end
 
 function textBox.setLineColour( text, line, red, green, blue)
@@ -129,6 +129,13 @@ end
 local absCursorPos
 local inputUsed 		-- true, if input was put into some text box.
 
+function textBox.moveCursorToEnd( text )
+	if text.lines[text.cursorLine] then
+		text.cursorPos = #text.lines[text.cursorLine]
+	end
+	text.cursorBlinkTime = 0
+end
+
 function textBox.input( key, unicode )
 	inputUsed = false
 	for k, v in pairs( fields ) do
@@ -186,6 +193,12 @@ function textBox.input( key, unicode )
 					v.returnEvent()
 					break			-- only allow one textBox to be terminated per Enter-Key-Pressed.
 				end
+			elseif key == "escape" then
+				if v.escapeEvent then
+					v.access = false
+					v.escapeEvent()
+					break			-- only allow one textBox to be terminated per ESC-Key-Pressed.
+				end
 			end
 			splitIntoLines( v )
 			correctCursorPos( v )
@@ -212,11 +225,11 @@ end
 function textBox.setReturnEvent( text, event )
 	text.returnEvent = event
 end
-
-
-function textBox.getContent( text )
-	return text.content
+function textBox.setEscapeEvent( text, event )
+	text.escapeEvent = event
 end
+
+
 
 
 function textBox.numLines( text )
@@ -250,6 +263,9 @@ function textBox.setContent( textField, line )
 	return #textField.lines
 end
 
+function textBox.getContent( text )
+	return text.content
+end
 
 function textBox.getFont( text )
 	return text.font

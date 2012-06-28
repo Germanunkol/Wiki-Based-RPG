@@ -1,4 +1,4 @@
-	local wikiClient = {}
+local wikiClient = {}
 
 local http = require("socket.http")
 local urlManipulation = require("Scripts/urlManip")
@@ -10,17 +10,27 @@ local WIKI_DELETEDPAGE = "<div id=\"mw%-content%-text\"><div class=\"mw%-warning
 local WIKI_STARTOFCONTENTS = "<div id=\"mw%-content%-text\"-"
 local WIKI_URL = "http://en.wikipedia.org"
 local WIKI_DISAMBIGUATION = "[D,d]isambig[^\"]*%.svg%.png"
-
+local numberOfChoices = 5
 
 local fullURL = ""
 
 local urlTable = nil
 
+function wikiClient.testConnection()
+	pageSource = http.request(WIKI_URL)
+	if pageSource == nil then
+		table.insert( nextFrameEvent, {func = statusMsg.new, frames = 2, arg = "Could not connect to wiki. Is your internet connection on?" } )
+		return false
+	else
+		testingConnection = false
+		return true
+	end
+end
+
 function wikiClient.newWord( wordToSearchFor )	
 	fullURL = WIKI_URL .. "/wiki/" .. wordToSearchFor
 	print ("Loading URL: " .. fullURL)
 	pageSource = http.request(fullURL)
---	print (pageSource)
 	urlTable = nil
 	local foundStartPage, multipleFound = false, false
 
@@ -51,43 +61,37 @@ function wikiClient.newWord( wordToSearchFor )
 end
 
 
-function wikiClient.nextWord()
-	-- main loop:
-	repeat
-		urlManipulation.log(fullURL)
-		pageSource = http.request(fullURL)
+function wikiClient.nextWord()		-- choose a few random links from the wiki source page of the current word
+	urlManipulation.log(fullURL)
+	pageSource = http.request(fullURL)
 
-		local urlTable = urlManipulation.extractURLs(pageSource, WIKI_STARTOFCONTENTS)
+	local urlTable, numberOfFoundLinks, doublesFound = urlManipulation.extractURLs(pageSource, WIKI_STARTOFCONTENTS)
 
+	print("Found " .. numberOfFoundLinks .. " wiki-internal urls")
+	print("Found " .. numberOfFoundLinks - doublesFound.. " unique wiki-internal urls")
 
-		print("Found " .. numberOfFoundLinks .. " wiki-internal urls")
-		print("Found " .. numberOfFoundLinks - doublesFound.. " unique wiki-internal urls")
-	
-		chosenURLs = {}
-		math.randomseed(os.time())
-		for i = 1,math.min(numberOfChoices, numberOfFoundLinks - doublesFound),1 do
-			index = #chosenURLs + 1
-			chosenURLs[index] = math.random(numberOfFoundLinks-doublesFound - i)
-			for k, v in pairs(chosenURLs) do
-				if k ~= i then
-					if chosenURLs[index] >= v then chosenURLs[index] = chosenURLs[index] + 1 end
-				end
+	chosenURLIndecies = {}
+	chosenURLs = {}
+	math.randomseed(os.time())
+	for i = 1,math.min(numberOfChoices, numberOfFoundLinks - doublesFound),1 do
+		index = #chosenURLIndecies + 1
+		chosenURLIndecies[index] = math.random(numberOfFoundLinks-doublesFound - i)	--randomly choose url in table.
+		for k, v in pairs(chosenURLIndecies) do			--remove doubles?
+			if k ~= i then
+				if chosenURLIndecies[index] >= v then chosenURLIndecies[index] = chosenURLIndecies[index] + 1 end
 			end
-				print("(" .. index .. ") " .. urlTable[chosenURLs[index] ].title .. ", " .. urlTable[chosenURLs[index] ].url)
 		end
+		--print("(" .. index .. ") " .. urlTable[chosenURLIndecies[index] ].title .. ", " .. urlTable[chosenURLIndecies[index] ].url)
+		table.insert( chosenURLs, { title = urlTable[chosenURLIndecies[index] ].title, url=urlTable[chosenURLIndecies[index] ].url } )
+	end
 	
-		repeat
-			print("Choose URL (or q to exit):")
-			io.flush()
-			inputStr = io.read()
-			inputNum = tonumber(inputStr)
-			if inputNum ~= nil then inputNum = math.floor(inputNum) end	-- round to lower integer
-		until inputStr == "q" or inputStr == "Q" or (inputNum ~= nil and inputNum >= 1 and inputNum <= numberOfChoices)
-	
-		if inputStr ~= "q" and inputStr ~= "Q" then
-			fullURL = WIKI_URL .. urlTable[chosenURLs[inputNum] ].url
-		end
-until inputStr == "q"
+	return chosenURLs
+	--fullURL = WIKI_URL .. urlTable[chosenURLs[inputNum] ].url
+end
+
+function wikiClient.setNewURL( newURL )
+	fullURL = WIKI_URL .. newURL
+	print("Next url: " .. fullURL)
 end
 
 return wikiClient

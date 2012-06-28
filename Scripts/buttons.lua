@@ -40,9 +40,9 @@ function button.show()
 	love.graphics.setFont( buttonFont )
 	love.graphics.setLine( 3, "smooth" )
 	for key, button in pairs( buttons ) do
-		if mouseOver( button ) then
+		if mouseOver( button ) and button.drawHover then
 			button.drawHover( button )
-		else
+		elseif button.drawNormal then
 			button.drawNormal( button )
 		end
 	end

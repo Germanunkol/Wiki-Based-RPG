@@ -73,8 +73,8 @@ function firstWordSet()
 
 			--textBox.setAccess( firstWordInputBox, true )
 			return
-		elseif found == false then
-			statusMsg.new( "No wiki article found. Try something else." )
+		elseif found == nil or found == false then
+			statusMsg.new( "No wiki article found. Try another word or connect to the internet." )
 			textBox.setAccess( firstWordInputBox, true )
 			return
 		end

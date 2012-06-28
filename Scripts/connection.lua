@@ -76,7 +76,6 @@ end
 function connection.serverBroadcast( msg )
 	numOfPlayers = 0
 	for k, cl in pairs( connectedClients ) do
-		print("broadcast " .. cl.playerName .. " " .. numOfPlayers)
 		cl.client:send(msg .. "\n")
 		numOfPlayers = numOfPlayers + 1
 	end
@@ -118,11 +117,17 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 				end
 				
 				print("end received: " .. msg)
-			else			
+			else	
 				start, ending = msg:find( "ACTION:" )
 				if start == 1 then
 					game.receiveAction( cl.playerName .. ": " .. msg:sub(ending+1, #msg) )
 					connection.serverBroadcast( "ACTION:" .. cl.playerName .. ": " .. msg:sub(ending+1, #msg) )
+				end
+				
+				start, ending = msg:find( "CHAT:" )
+				if start == 1 then
+					chat.receive( cl.playerName.. ": " .. msg:sub(ending+1, #msg) )
+					connection.serverBroadcast("CHAT:" .. cl.playerName.. ": " .. msg:sub(ending+1, #msg))
 				end
 			end
 		else
@@ -137,24 +142,27 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 	end
 end
 
-function connection.runClient( client )				--handle all messages that come from the server
-	msg = client:receive()
+function connection.runClient( cl )				--handle all messages that come from the server
+	msg = cl:receive()
 
 	if msg then
 		print("received: " .. msg)
 		
 		if msg:find("ERROR:") == 1 then
 			if msg:find( "ERROR:SERVERFULL" ) == 1 then
+				client = nil
 				print( "ERROR: Server is full!" )
 				statusMsg.new( "Server is full!" )
 				menu.initMainMenu()
 				return
 			elseif msg:find( "ERROR:NAMETAKEN" ) == 1 then
+				client = nil
 				print( "Name alread exists!" )
 				statusMsg.new( "Name alread exists!" )
 				menu.initMainMenu()
 				return
 			elseif msg:find( "ERROR:NOTINLOBBY" ) == 1 then
+				client = nil
 				print( "Server's game has already started!" )
 				statusMsg.new( "Can't join: Game has already started!" )
 				menu.initMainMenu()
@@ -191,6 +199,11 @@ function connection.runClient( client )				--handle all messages that come from 
 			start, ending = msg:find( "ACTION:" )
 			if start == 1 then
 				game.receiveAction( msg:sub(ending+1, #msg) )
+			end
+			
+			start, ending = msg:find( "CHAT:" )
+			if start == 1 then
+				chat.receive( msg:sub(ending+1, #msg) )
 			end
 			
 		end
