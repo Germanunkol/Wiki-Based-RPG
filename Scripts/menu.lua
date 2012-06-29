@@ -21,7 +21,7 @@ local function displayHelp( theButton )
 	width = love.graphics.getWidth()
 	height = theButton.y+theButton.h - 10
 	--love.graphics.rectangle( "fill", theButton.x, 10, width-20, height )
-	love.graphics.setColor( colBg.r,colBg.g,colBg.b , 255)
+	love.graphics.setColor( colBorder.r,colBorder.g,colBorder.b , 255)
 	love.graphics.rectangle( "fill", theButton.x+1, 11, width-22, height-2)
 	love.graphics.setColor( colLobby.r, colLobby.g, colLobby.g)
 	love.graphics.rectangle( "fill",  theButton.x+3, 13, width-26, height-6)
@@ -56,6 +56,16 @@ function clientFinishedInput()
 	end
 end
 
+function abortClientConnecting()
+	buttons.clear()
+	plNameInputBox = textBox.remove( plNameInputBox )		-- textBox.remove returns nil upon success.
+	plNameHeader = textBox.remove( plNameHeader )
+	ipHeader = textBox.remove( ipHeader )
+	ipInputBox = textBox.remove( ipInputBox )
+	statusMsg.new("Aborted.")
+	menu.initMainMenu()
+end
+
 local function clientInitIpInput()
 	print ("new playername: " .. textBox.getContent( plNameInputBox ) )
 	if plNameInputBox then plName = textBox.getContent( plNameInputBox ) end
@@ -72,11 +82,13 @@ local function clientInitIpInput()
 		textBox.moveCursorToEnd( ipInputBox )
 		textBox.setAccess( ipInputBox, true )
 		textBox.setReturnEvent( ipInputBox, clientFinishedInput )
+		textBox.setEscapeEvent( ipInputBox, abortClientConnecting )
 	else
 		if plNameInputBox then textBox.setAccess( plNameInputBox, true ) end
 		statusMsg.new( "Invalid playername!" )
 	end
 end
+
 
 local function clientInitPlayernameInput()
 	buttons.clear()
@@ -85,10 +97,12 @@ local function clientInitPlayernameInput()
 	plNameInputBox = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-5, 230, 1, fontInput, 200)
 	textBox.setColour( plNameInputBox, colTextInput.r, colTextInput.g, colTextInput.b )
 	
+	
 	textBox.setContent( plNameInputBox, plName )		-- if player name was already set, place it in the box.
 	textBox.moveCursorToEnd( plNameInputBox )
 	textBox.setAccess( plNameInputBox, true )
 	textBox.setReturnEvent( plNameInputBox, clientInitIpInput )
+	textBox.setEscapeEvent( plNameInputBox, abortClientConnecting )
 end
 
 
@@ -116,7 +130,7 @@ function menu.showMainMenu()
 		
 	--love.graphics.setColor( 0, 0, 0 , 255)
 	--love.graphics.rectangle("fill", 0, 50, love.graphics.getWidth(), 50)
-	love.graphics.setColor( colBg.r, colBg.g, colBg.g, 255)
+	love.graphics.setColor( colBorder.r, colBorder.g, colBorder.g, 255)
 	love.graphics.rectangle("fill", 0, 51, love.graphics.getWidth(), 48)
 	
 	love.graphics.setFont( fontMainHeader )
@@ -129,10 +143,6 @@ function menu.showMainMenu()
 	textBox.display( plNameInputBox )
 	textBox.display( ipHeader )
 	textBox.display( ipInputBox )
-end
-
-function menu.handleClick()
-	buttons.handleClick()
 end
 
 

@@ -4,6 +4,8 @@ local active = false
 
 local REPLYTIME = 90
 
+local NUMBER_OF_NEW_WORDS = 3
+
 local gameAreaX = 0
 local gameAreaY = 0
 local gameAreaWidth = 0
@@ -27,16 +29,14 @@ local waitForPlayerActions = false
 local waitForPlayerActionsTimer = 0
 local playersHaveReplied = 0
 
-local curGameWord = ""
-
 local inventoryFieldHeader
 
 local function scrollGameBox()
 	local linesFittingOnScreen
 	if textBox.getAccess( gameInputBox ) then
-		linesFittingOnScreen = math.floor( (gameAreaHeight - gameInputAreaHeight)/textBox.getFont( gameTextBox ):getHeight() )
+		linesFittingOnScreen = math.floor( (gameAreaHeight - gameInputAreaHeight)/textBox.getFont( gameTextBox ):getHeight() ) - 1
 	else
-		linesFittingOnScreen = math.floor( gameAreaHeight/textBox.getFont( gameTextBox ):getHeight() )
+		linesFittingOnScreen = math.floor( gameAreaHeight/textBox.getFont( gameTextBox ):getHeight() ) - 1
 	end
 	textBox.setVisibleLines( gameTextBox, textBox.numLines( gameTextBox )-linesFittingOnScreen, linesFittingOnScreen )
 end
@@ -46,17 +46,40 @@ local chosenURLs
 function chooseNextWord( index )
 	if chosenURLs then
 		nextWordChosen = true
+		
+		-- change colour of last curGameWord:
+		textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWord.r, colHighlightWikiWord.g, colHighlightWikiWord.b )
 		curGameWord = chosenURLs[index].title
+		local start, ending = curGameWord:find( "%(.*%)" )
+		if start then
+		--print("found: " .. curGameWord:sub(start, ending))
+			curGameWord = curGameWord:sub( 1, start-1 ) .. curGameWord:sub( ending+1, #curGameWord )
+			while curGameWord:sub( #curGameWord, #curGameWord )  == " " do		--don't allow trailing spaces
+				curGameWord = curGameWord:sub( 1, #curGameWord-1 )
+			end
+			if #curGameWord == 0 then
+				curGameWord = chosenURLs[index].title
+			end
+		end
+		
 		statusMsg.new( "Chose: \"" .. curGameWord .."\"")
+		
+		connection.serverBroadcast("CURWORD:" .. curGameWord .. "\n")
+		
+		textBox.highlightClearAll( gameInputBox )
+		textBox.highlightText( gameInputBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
+		textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
+		
 		wikiClient.setNewURL( chosenURLs[index].url )
 		buttons.clear()
-		buttons.add( gameAreaX, gameAreaY, gameAreaWidth, gameAreaHeight, "", nil, nil, gameAreaClicked )
-		buttons.add( chatAreaX, chatAreaY, chatAreaWidth, chatAreaHeight, "", nil, nil, chatAreaClicked )
+		game.setNewWordButtons()
+		game.setButtons()
 		textBox.setContent( inventoryFieldHeader, "" )
 		if waitForPlayerActions == false then 
 			textBox.setContent( gameStatusBox, "Continue the story. Use \"" .. curGameWord .. "\" in your text.")
 			if chat.getActive() == false then
 				textBox.setAccess( gameInputBox, true, true )
+				scrollGameBox()
 			end
 		end
 		chosenURLs = nil
@@ -66,12 +89,12 @@ end
 function game.serverChooseNextWord()
 
 	chosenURLs = wikiClient.nextWord()
-	statusMsg.new("How should the story continue?")
 	textBox.setContent( inventoryFieldHeader, "Choose your path..." )
 	if chosenURLs then
 		local i = 0
 		local j
 		local titleStr = 0
+		
 		for k, v in pairs( chosenURLs ) do							-- show all possible Words that server can choose as buttons.
 			print(k .. ": " .. v.title .. " @ " .. v.url)
 			if i < 5 then
@@ -85,14 +108,88 @@ function game.serverChooseNextWord()
 				if titleStr ~= v.title then
 					titleStr = titleStr .. "..."
 				end
-				buttons.add( chatAreaX, chatAreaY+chatAreaHeight+30+i*(buttonHeight-2), chatAreaWidth, buttonHeight/2+10, titleStr, drawButton, highlightButton, chooseNextWord, k )
+				buttons.add( chatAreaX, chatAreaY+chatAreaHeight+35+i*(buttonHeight-5), chatAreaWidth, buttonHeight/2+10, titleStr, drawButton, highlightButton, chooseNextWord, k )
 			end
 			i = i+1
 		end
-		
 	else
 		print("ERROR: Uhm... no urls found...?")
 	end
+end
+
+function game.clientReceiveNewWord( word )
+	if startingWord == nil or not game.active() then
+		startingWord = word
+	else
+		--change colour of previous words:
+		if gameTextBox then
+			textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWord.r, colHighlightWikiWord.g, colHighlightWikiWord.b)
+		end
+	end
+	curGameWord = word
+	if gameTextBox then
+		textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
+	end
+end
+
+function game.chooseNewStartWord()
+	NUMBER_OF_NEW_WORDS = NUMBER_OF_NEW_WORDS-1
+	
+	chat.setAccess( false )
+	textBox.setAccess( gameInputBox, false )
+	scrollGameBox()
+	
+	wikiClient.inputFirstWord( chatAreaX, chatAreaY+chatAreaHeight+10, chatAreaWidth, gameAreaHeight - chatAreaHeight-20, game.newWordSet, "Choose new direction:")
+	
+	--game.setNewWordButtons()
+end
+
+function game.setNewWordButtons()
+	buttons.clear()
+	for i = 1,NUMBER_OF_NEW_WORDS,1 do
+		buttons.add( chatAreaX+25*(i-1), gameAreaY + gameAreaHeight-25, 25,25, tostring(i), drawButton, highlightButton, game.chooseNewStartWord)
+	end	
+	
+	game.setButtons()
+end
+
+function game.newWordSet( word )
+	nextWordChosen = true
+		
+	-- change colour of last curGameWord:
+	textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWord.r, colHighlightWikiWord.g, colHighlightWikiWord.b )
+	curGameWord = word
+	local start, ending = curGameWord:find( "%(.*%)" )
+	if start then
+	--print("found: " .. curGameWord:sub(start, ending))
+		curGameWord = curGameWord:sub( 1, start-1 ) .. curGameWord:sub( ending+1, #curGameWord )
+		while curGameWord:sub( #curGameWord, #curGameWord )  == " " do		--don't allow trailing spaces
+			curGameWord = curGameWord:sub( 1, #curGameWord-1 )
+		end
+		if #curGameWord == 0 then
+			curGameWord = chosenURLs[index].title
+		end
+	end
+	
+	connection.serverBroadcast("CURWORD:" .. curGameWord .. "\n")
+	
+	textBox.highlightClearAll( gameInputBox )
+	textBox.highlightText( gameInputBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
+	textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
+	
+	buttons.clear()
+	game.setNewWordButtons()
+	game.setupButtons()
+	textBox.setContent( inventoryFieldHeader, "" )
+	if waitForPlayerActions == false then 
+		textBox.setContent( gameStatusBox, "Continue the story. Use \"" .. curGameWord .. "\" in your text.")
+		if chat.getActive() == false then
+			textBox.setAccess( gameInputBox, true, true )
+			scrollGameBox()
+		end
+	end
+	
+	statusMsg.new( "New word set." )
 end
 
 function game.inputEscape()
@@ -111,9 +208,13 @@ function game.sendStory()
 		waitForPlayerActions = true
 		waitForPlayerActionsTimer = 0
 		nextWordChosen = false
+		statusMsg.new("Loading...")
 		table.insert( nextFrameEvent, {func = game.serverChooseNextWord, frames = 2 } )
+		table.insert( nextFrameEvent, {func = statusMsg.new, frames = 3, arg = "How should the story continue?" } )
+		textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
 	else
 		textBox.setAccess( gameInputBox, true )
+		scrollGameBox()
 		statusMsg.new("Write something first!")
 	end
 	scrollGameBox()
@@ -130,6 +231,7 @@ function game.sendAction( )
 		waitForPlayerActions = false
 	else
 		textBox.setAccess( gameInputBox, true )
+		scrollGameBox()
 		statusMsg.new("Write something first!")	
 	end
 	scrollGameBox()
@@ -158,6 +260,7 @@ function game.receiveStory( msg )
 			waitForPlayerActionsTimer = 0
 			if chat.getActive() == false then
 				textBox.setAccess( gameInputBox, true )
+				scrollGameBox()
 			end
 			textBox.setContent( gameStatusBox, "What would you like to do?" )
 			textBox.setReturnEvent( gameInputBox, game.sendAction )
@@ -167,7 +270,7 @@ function game.receiveStory( msg )
 end
 
 function game.show()
-	love.graphics.setColor( colBg.r, colBg.g, colBg.b )
+	love.graphics.setColor( colBorder.r, colBorder.g, colBorder.b )
 	love.graphics.rectangle( "fill",gameAreaX, gameAreaY, gameAreaWidth, gameAreaHeight)
 	love.graphics.rectangle( "fill",chatAreaX, chatAreaY, chatAreaWidth, chatAreaHeight)
 	love.graphics.setColor( colMainBg.r, colMainBg.g, colMainBg.b )
@@ -216,7 +319,9 @@ function game.show()
 	end
 end
 
+
 function gameAreaClicked()
+	if wikiClient.getFirstWordActive() or textBox.getAccess( gameInputBox ) then return end
 	if server then
 		if waitForPlayerActions then
 			statusMsg.new( "Give the heroes some time to reply!" )
@@ -225,11 +330,13 @@ function gameAreaClicked()
 		else
 			chat.setAccess( false )
 			textBox.setAccess( gameInputBox, true )
+			scrollGameBox()
 		end
 	elseif client then
 		if waitForPlayerActions then
 			chat.setAccess( false )
 			textBox.setAccess( gameInputBox, true )
+			scrollGameBox()
 		else
 			statusMsg.new( "Story has not yet been written!" )
 		end
@@ -237,8 +344,10 @@ function gameAreaClicked()
 end
 
 function chatAreaClicked()
+	if wikiClient.getFirstWordActive() or chat.getActive() then return end
 	chat.setAccess( true )
 	textBox.setAccess( gameInputBox, false )
+	scrollGameBox()
 end
 
 function game.init()
@@ -262,15 +371,18 @@ function game.init()
 	gameTextBox = textBox.new( gameAreaX + 5, gameAreaY + 5, math.floor(gameAreaHeight/fontInput:getHeight()) , fontInput, gameAreaWidth - 15)
 	textBox.setEscapeEvent( gameInputBox, game.inputEscape )		--called when "escape" is pressed during input
 	
-	inventoryFieldHeader = textBox.new( chatAreaX+2, chatAreaY+chatAreaHeight+10, 1, fontInputHeader, 300 )
-	--textBox.setMaxVisibleLines( gameInputBox, math.floor(gameInputAreaHeight/fontInput:getHeight()) )
+	textBox.highlightText( gameTextBox, startingWord, colHighlightWikiWordNew.r,colHighlightWikiWordNew.g,colHighlightWikiWordNew.b )
 	
-	buttons.add( gameAreaX, gameAreaY, gameAreaWidth, gameAreaHeight, "", nil, nil, gameAreaClicked )
-	buttons.add( chatAreaX, chatAreaY, chatAreaWidth, chatAreaHeight, "", nil, nil, chatAreaClicked )
+	inventoryFieldHeader = textBox.new( chatAreaX+2, chatAreaY+chatAreaHeight+8, 1, fontInputHeader, 300 )
+	--textBox.setMaxVisibleLines( gameInputBox, math.floor(gameInputAreaHeight/fontInput:getHeight()) )
+	buttons.clear()
+	game.setButtons()
 	
 	gameStatusBox = textBox.new( gameAreaX + 5, 12, 2 , fontInputHeader, love.graphics.getWidth() - gameAreaX*2)
 	
 	chat.init( chatAreaX+10, chatAreaY+10, math.floor(chatAreaHeight/fontChat:getHeight()), fontChat, chatAreaWidth-20 )
+	
+	game.setNewWordButtons()
 	
 	if server then
 		curGameWord = startingWord		-- the current game's word will be the word the server chose as start word
@@ -280,9 +392,26 @@ function game.init()
 		textBox.setAccess( gameInputBox, true, true )
 		scrollGameBox()
 		textBox.setReturnEvent( gameInputBox, game.sendStory )
+		textBox.highlightText( gameInputBox, curGameWord, colHighlightWikiWord.r, colHighlightWikiWord.g, colHighlightWikiWord.b )
 	else
 		textBox.setContent( inventoryFieldHeader, "Inventory" )
 		textBox.setContent( gameStatusBox, "Waiting for server to beginn story..." )
+	end
+end
+
+function game.setButtons()
+	buttons.add( gameAreaX, gameAreaY, gameAreaWidth, gameAreaHeight, "", nil, nil, gameAreaClicked )
+	buttons.add( chatAreaX, chatAreaY, chatAreaWidth, chatAreaHeight, "", nil, nil, chatAreaClicked )
+	buttons.add( gameAreaX+gameAreaWidth-90, gameAreaY + gameAreaHeight + 2, 45, 20, "up", drawButton, highlightButton, textBox.scrollUp, gameTextBox )
+	buttons.add( gameAreaX+gameAreaWidth-45, gameAreaY + gameAreaHeight + 2, 45, 20, "down", drawButton, highlightButton, textBox.scrollDown, gameTextBox )
+	buttons.add( chatAreaX+chatAreaWidth-90, chatAreaY - 22, 45, 20, "up", drawButton, highlightButton, textBox.scrollUp, chatBox )
+	buttons.add( chatAreaX+chatAreaWidth-45, chatAreaY - 22, 45, 20, "down", drawButton, highlightButton, textBox.scrollDown, chatBox )
+end
+
+function game.receiveServerMessage( msg )
+	if gameTextBox then
+		textBox.setLineColour( gameTextBox,  textBox.numLines( gameTextBox ) + 1, colServerMsg.r, colServerMsg.g, colServerMsg.b )
+		textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .."(" .. msg .. ")\n")
 	end
 end
 

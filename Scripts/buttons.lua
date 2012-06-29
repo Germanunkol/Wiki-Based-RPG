@@ -26,9 +26,19 @@ function button.add( newX, newY, newWidth, newHeight, newLabel, functionOff, fun
 end
 
 
+function button.debug()
+print("debugging buttons: ")
+	for key, button in pairs( buttons ) do
+		print(button)
+		print(button.label)
+		print(button.x)
+		print(button.y)
+	end
+end
+
 
 local function mouseOver( theButton )		--check if the mouse is over the (rectangular) button
-	x, y = love.mouse.getPosition()
+	local x, y = love.mouse.getPosition()
 	if x > theButton.x and x < theButton.x + theButton.w and y > theButton.y and y < theButton.y + theButton.h then
 		return true
 	end

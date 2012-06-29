@@ -59,7 +59,7 @@ function handleNewClient( newClient )
 		if clientNumber <= maxPlayers and clientNumber ~= 0 then
 			newClient:send("CLIENTNUMBER:" .. clientNumber .. "\n")
 			if startingWord then 
-				newClient:send("STARTWORD:" .. startingWord .. "\n")
+				newClient:send("CURWORD:" .. startingWord .. "\n")
 			end
 		else
 			newClient:send("ERROR:SERVERFULL\n")
@@ -134,7 +134,12 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 			if err ~= "timeout" then
 				print("error: " .. err)
 				if err == "closed" then
+					local clientName = cl.playerName
 					connectedClients[k] = nil			-- if connection was closed, remove from table
+					connection.serverBroadcast("CLIENTLEFT:".. clientName)
+					if game.active() then
+						game.receiveServerMessage( clientName .. " has left the game." )
+					end
 					return
 				end
 			end
@@ -173,37 +178,63 @@ function connection.runClient( cl )				--handle all messages that come from the 
 			start, ending = msg:find( "CLIENTNUMBER:" )
 			if start == 1 then
 				connection.setClientNumber( msg:sub(ending+1, #msg) )
+				return
 			end
 			
 			start, ending = msg:find( "NEWPLAYER:" )
 			if start == 1 then
 				table.insert( connectedClients, {playerName=msg:sub(ending+1, #msg)} )
+				return
 			end
 			
-			start, ending = msg:find( "STARTWORD:" )
+			start, ending = msg:find( "CURWORD:" )
 			if start == 1 then
-				startingWord = msg:sub(11, #msg)
+				game.clientReceiveNewWord( msg:sub(ending+1, #msg) )
+				return
 			end
 			
 			start, ending = msg:find( "GAMESTART:" )
 			if start == 1 then
 				lobby.deactivate()
 				game.init()
+				return
 			end
 			
 			start, ending = msg:find( "STORY:" )
 			if start == 1 then
 				game.receiveStory( msg:sub(ending+1, #msg) )
+				return
 			end
 			
 			start, ending = msg:find( "ACTION:" )
 			if start == 1 then
 				game.receiveAction( msg:sub(ending+1, #msg) )
+				return
 			end
 			
 			start, ending = msg:find( "CHAT:" )
 			if start == 1 then
 				chat.receive( msg:sub(ending+1, #msg) )
+				return
+			end
+			
+			start, ending = msg:find( "SERVERSHUTDOWN:" )
+			if start == 1 then
+				if game.active() then
+					game.receiveServerMessage("Server closed game.")
+				else
+					cl:close()
+					lobby.deactivate()
+					menu.initMainMenu()
+					statusMsg.new("Server closed game!")
+				end
+				return
+			end
+			
+			start, ending = msg:find( "CLIENTLEFT:" )
+			if start == 1 then
+				game.receiveServerMessage( msg:sub(ending+1, #msg) .. " has left the game." )
+				return
 			end
 			
 		end

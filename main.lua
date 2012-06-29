@@ -13,6 +13,8 @@ client = nil		-- client object. When not nil, then connection is established.
 textBox = require("Scripts/textBox")
 plName = ""
 ipStr = ""
+startingWord = nil
+curGameWord = ""
 
 require("Scripts/misc")
 statusMsg = require("Scripts/statusMsg")
@@ -33,18 +35,22 @@ fontMainHeader = love.graphics.newFont( "Fonts/AveriaSans-Bold.ttf",40 )
 fontChat = love.graphics.newFont( "Fonts/AveriaSans-Bold.ttf",14 )
 
 colMainBg = { r=230, g=195, b=174 }
-colBg = { r=139, g=104, b=71 }
+colBorder = { r=139, g=104, b=71 }
 colLobby = { r=241, g=229, b=209 }
+colServerMsg = { r=255,g=120,b=80}
 colTextInput = { r=100, g=100, b=100 }
 colWikiWord = { r=20, g=64, b=160 }
 colStory = { r=100, g=80, b=60 }
 colAction = { r=0, g=0, b=0 }
+colHighlightWikiWord = { r=200, g=225, b=170 }
+colHighlightWikiWordNew = { r=225, g=250, b=190 }
+
 
 nextFrameEvent = {}			-- these functions will be called after the next draw call.
 testingConnection = 0
 
 function love.load(arg)
-	menu.initMainMenu(buttons)
+	menu.initMainMenu()
 	love.keyboard.setKeyRepeat( 0.3, 0.03 )
 	testingConnection = true
 	table.insert( nextFrameEvent, {func = wikiClient.testConnection, frames = 2 } )
@@ -53,6 +59,7 @@ function love.load(arg)
 	--wikiClient.nextWord()
 	--tb = textBox.new( 10, 10, 5, fontInput, 75)
 	--textBox.setAccess ( tb , true )
+	--textBox.hightlightText( tb, "server" )
 end
 
 local lastSent = os.time()
@@ -81,9 +88,9 @@ end
 
 function love.draw()
 	if testingConnection then
-		love.graphics.setFont( mainFont )
+		love.graphics.setFont( fontStatus )
 		love.graphics.setColor( 0,0,0,255 )
-		love.graphics.print( "Loading\nAttempting to connect to wiki...", 10, 20 )
+		love.graphics.print( "Loading. Attempting to connect to wiki...", (love.graphics.getWidth()-fontStatus:getWidth("Loading. Attempting to connect to wiki..."))/2, love.graphics.getHeight()-30 )
 	else
 		if not server and not client then
 			menu.showMainMenu()
@@ -93,9 +100,16 @@ function love.draw()
 			game.show()
 		end
 		--textBox.display()
+		if wikiClient.getFirstWordActive() then
+			wikiClient.displayFirstWordChoosing()
+		end
 		buttons.show()
 		statusMsg.display()
+
+		
 	end
+	
+	--textBox.display( tb )
 end
 
 local inputRead
@@ -116,7 +130,7 @@ function love.keypressed(key, unicode)
 end
 
 function love.mousepressed()
-	menu.handleClick()
+	buttons.handleClick()
 end
 
 
@@ -140,6 +154,7 @@ end
 function love.quit()
 	if server then
 		print( "closing server" )
+		connection.serverBroadcast("SERVERSHUTDOWN:")
 		server:close()
 	end
 end
