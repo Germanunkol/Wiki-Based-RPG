@@ -402,10 +402,10 @@ end
 function game.setButtons()
 	buttons.add( gameAreaX, gameAreaY, gameAreaWidth, gameAreaHeight, "", nil, nil, gameAreaClicked )
 	buttons.add( chatAreaX, chatAreaY, chatAreaWidth, chatAreaHeight, "", nil, nil, chatAreaClicked )
-	buttons.add( gameAreaX+gameAreaWidth-90, gameAreaY + gameAreaHeight + 2, 45, 20, "up", drawButton, highlightButton, textBox.scrollUp, gameTextBox )
-	buttons.add( gameAreaX+gameAreaWidth-45, gameAreaY + gameAreaHeight + 2, 45, 20, "down", drawButton, highlightButton, textBox.scrollDown, gameTextBox )
-	buttons.add( chatAreaX+chatAreaWidth-90, chatAreaY - 22, 45, 20, "up", drawButton, highlightButton, textBox.scrollUp, chatBox )
-	buttons.add( chatAreaX+chatAreaWidth-45, chatAreaY - 22, 45, 20, "down", drawButton, highlightButton, textBox.scrollDown, chatBox )
+	buttons.add( gameAreaX+gameAreaWidth-100, gameAreaY + gameAreaHeight, 50, 20, "up", drawButton, highlightButton, textBox.scrollUp, gameTextBox )
+	buttons.add( gameAreaX+gameAreaWidth-50, gameAreaY + gameAreaHeight, 50, 20, "down", drawButton, highlightButton, textBox.scrollDown, gameTextBox )
+	buttons.add( chatAreaX+chatAreaWidth-100, chatAreaY - 20, 50, 20, "up", drawButton, highlightButton, textBox.scrollUp, chatBox )
+	buttons.add( chatAreaX+chatAreaWidth-50, chatAreaY - 20, 50, 20, "down", drawButton, highlightButton, textBox.scrollDown, chatBox )
 end
 
 function game.receiveServerMessage( msg )

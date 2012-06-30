@@ -78,7 +78,7 @@ function wikiClient.nextWord()		-- choose a few random links from the wiki sourc
 	chosenURLIndecies = {}
 	chosenURLs = {}
 	math.randomseed(os.time())
-	for i = 1,math.min(numberOfChoices, numberOfFoundLinks - doublesFound),1 do
+	for i = 1,math.min(numberOfChoices, numberOfFoundLinks - doublesFound-1),1 do
 		index = #chosenURLIndecies + 1
 		chosenURLIndecies[index] = math.random(numberOfFoundLinks-doublesFound - i)	--randomly choose url in table.
 		for k, v in pairs(chosenURLIndecies) do			--remove doubles?

@@ -57,9 +57,16 @@ function love.load(arg)
 	
 	--wikiClient.newWord()
 	--wikiClient.nextWord()
-	--tb = textBox.new( 10, 10, 5, fontInput, 75)
+	--tb = textBox.new( 10, 200, 5, fontInput, 75)
 	--textBox.setAccess ( tb , true )
-	--textBox.hightlightText( tb, "server" )
+	--textBox.highlightText( tb, "server" )
+	--print(string.find("this is a test", ".* "))
+	i = 1
+	while string.find( "this is ä test", "([%z\1-\127\194-\244][\128-\191]*)", i) do
+		a,b,c = string.find( "this is ä test", "([%z\1-\127\194-\244][\128-\191]*)", i)
+		print(i, a,b,c,#c)
+		i = i + #c
+	end
 end
 
 local lastSent = os.time()

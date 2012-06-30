@@ -58,11 +58,11 @@ end
 function textBox.setLineColour( text, line, red, green, blue)
 	text.colours[line] = { r=red, g=green, b=blue }
 end
-
-local function splitIntoLines( text )
+--[[
+local function splitIntoLines( text )		-- will calculate line breaks for the text
 	text.lines = {}
 	local partialStr = ""
-	for char in text.content:gfind("([%z\1-\127\194-\244][\128-\191]*)") do
+	for char in text.content:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- go through entire text
 		if text.font:getWidth( partialStr .. char ) >= text.width or char == "\n" then
 			text.lines[#text.lines+1] = partialStr
 			partialStr = ""
@@ -71,6 +71,48 @@ local function splitIntoLines( text )
 			partialStr = partialStr .. char
 		end
 	end
+	if text.font:getWidth( partialStr .. char ) > text.width then 
+		string.gfind(partialStr, ".* [^ ]*")
+	end
+	if partialStr ~= "" then
+		text.lines[#text.lines+1] = partialStr
+	end
+	if text.lines[1] == nil then
+		text.lines[1] = ""
+	end
+	text.hasChanged = false
+end]]--
+
+
+local function splitIntoLines( text )		-- will calculate line breaks for the text
+	text.lines = {}
+	local partialStr = ""
+	
+					print("length: " .. #text.content)
+	local i = 1
+	local lineNum, start, ending
+	while i <= #text.content do
+		start, ending,char = text.content:find("([%z\1-\127\194-\244][\128-\191]*)", i)
+		if start then
+			if text.font:getWidth( partialStr .. char ) >= text.width or char == "\n" then
+				if char ~= "\n" then
+					start, ending = partialStr:find( ".* " )		-- look for spaces.
+					if start then		--if spaces found, cut the string there.
+						i = i - (#partialStr - ending)-1
+						partialStr = partialStr:sub( start, ending )
+						char = ""
+					end
+				end
+				text.lines[#text.lines+1] = partialStr
+				partialStr = ""
+			end
+			if char ~= "\n" then
+				partialStr = partialStr .. char
+			end
+		end
+		i = i + #char
+	end
+
 	if partialStr ~= "" then
 		text.lines[#text.lines+1] = partialStr
 	end
@@ -79,6 +121,7 @@ local function splitIntoLines( text )
 	end
 	text.hasChanged = false
 end
+
 
 function textBox.highlightText( text, word, red, green, blue )
 	if #word > 0 then
