@@ -110,7 +110,8 @@ local function splitIntoLines( text )		-- will calculate line breaks for the tex
 				partialStr = partialStr .. char
 			end
 		end
-		i = i + #char
+		print(i)
+		i = i + math.max(#char, 1)
 	end
 
 	if partialStr ~= "" then

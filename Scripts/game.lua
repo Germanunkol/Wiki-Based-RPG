@@ -246,6 +246,7 @@ function game.receiveAction( msg )
 
 		textBox.setLineColour( gameTextBox,  textBox.numLines( gameTextBox ) +1, colAction.r, colAction.g, colAction.b )
 		textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) ..  msg .. "\n")
+		
 	end
 	scrollGameBox()
 end
@@ -255,6 +256,7 @@ function game.receiveStory( msg )
 		--textBox.setColourStart( gameTextBox, #textBox.getContent( gameTextBox ) + 1, colStory.r, colStory.g, colStory.b )
 		textBox.setLineColour( gameTextBox,  textBox.numLines( gameTextBox ) + 1, colStory.r, colStory.g, colStory.b )
 		textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .."Story: " .. msg .. "\n")
+
 		if client then
 			waitForPlayerActions = true
 			waitForPlayerActionsTimer = 0
