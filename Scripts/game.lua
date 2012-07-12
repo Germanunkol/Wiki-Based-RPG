@@ -179,7 +179,7 @@ function game.newWordSet( word )
 	
 	buttons.clear()
 	game.setNewWordButtons()
-	game.setupButtons()
+	game.setButtons()
 	textBox.setContent( inventoryFieldHeader, "" )
 	if waitForPlayerActions == false then 
 		textBox.setContent( gameStatusBox, "Continue the story. Use \"" .. curGameWord .. "\" in your text.")
@@ -404,10 +404,11 @@ end
 function game.setButtons()
 	buttons.add( gameAreaX, gameAreaY, gameAreaWidth, gameAreaHeight, "", nil, nil, gameAreaClicked )
 	buttons.add( chatAreaX, chatAreaY, chatAreaWidth, chatAreaHeight, "", nil, nil, chatAreaClicked )
-	buttons.add( gameAreaX+gameAreaWidth-100, gameAreaY + gameAreaHeight, 50, 20, "up", drawButton, highlightButton, textBox.scrollUp, gameTextBox )
-	buttons.add( gameAreaX+gameAreaWidth-50, gameAreaY + gameAreaHeight, 50, 20, "down", drawButton, highlightButton, textBox.scrollDown, gameTextBox )
-	buttons.add( chatAreaX+chatAreaWidth-100, chatAreaY - 20, 50, 20, "up", drawButton, highlightButton, textBox.scrollUp, chatBox )
-	buttons.add( chatAreaX+chatAreaWidth-50, chatAreaY - 20, 50, 20, "down", drawButton, highlightButton, textBox.scrollDown, chatBox )
+	buttons.add( gameAreaX+gameAreaWidth-100, gameAreaY + gameAreaHeight, 50, 20, "Up", drawButton, highlightButton, textBox.scrollUp, gameTextBox )
+	buttons.add( gameAreaX+gameAreaWidth-50, gameAreaY + gameAreaHeight, 50, 20, "Down", drawButton, highlightButton, textBox.scrollDown, gameTextBox )
+	buttons.add( chatAreaX+chatAreaWidth-100, chatAreaY - 20, 50, 20, "Up", drawButton, highlightButton, textBox.scrollUp, chatBox )
+	buttons.add( chatAreaX+chatAreaWidth-50, chatAreaY - 20, 50, 20, "Down", drawButton, highlightButton, textBox.scrollDown, chatBox )
+	buttons.add( love.graphics.getWidth()-100, love.graphics.getHeight()-40, 90, 25, "Export", drawButton, highlightButton, export.toMarkdownFile, gameTextBox )
 end
 
 function game.receiveServerMessage( msg )

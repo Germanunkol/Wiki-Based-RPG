@@ -1,4 +1,5 @@
 connection = require("Scripts/connection")
+export = require("Scripts/export")
 
 lobby = require("Scripts/lobby")
 
@@ -52,13 +53,17 @@ testingConnection = 0
 
 function love.load(arg)
 
+	export.init()
 	menu.initMainMenu()
 	love.keyboard.setKeyRepeat( 0.3, 0.03 )
 	testingConnection = true
 	table.insert( nextFrameEvent, {func = wikiClient.testConnection, frames = 2 } )
 	--wikiClient.newWord()
 	--wikiClient.nextWord()
-	--tb = textBox.new( 10, 200, 5, fontInput, 75)
+	tb = textBox.new( 10, 200, 5, fontInput, 75)
+	textBox.setContent( tb, "this\nis some\ntext")
+	startingWord = "TestWord"
+	export.toMarkdownFile(tb)
 	--textBox.setAccess ( tb , true )
 	--textBox.highlightText( tb, "server" )
 	--print(string.find("this is a test", ".* "))

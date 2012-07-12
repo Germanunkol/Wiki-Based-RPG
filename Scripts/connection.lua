@@ -91,6 +91,7 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 	local newClient, err = tcpServer:accept()
 	
 	if newClient ~= nil then
+		print("someone's trying to join")
 		handleNewClient( newClient )
 	end
 	

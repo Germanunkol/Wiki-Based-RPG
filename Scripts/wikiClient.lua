@@ -8,7 +8,7 @@ http.TIMEOUT = 10
 local WIKI_NOARTICLE = "<div id=\"mw%-content%-text\"><div class=\"noarticletext\">"
 local WIKI_DELETEDPAGE = "<div id=\"mw%-content%-text\"><div class=\"mw%-warning%-with%-logexcerpt\">"
 local WIKI_STARTOFCONTENTS = "<div id=\"mw%-content%-text\"-"
-local WIKI_URL = "http://de.wikipedia.org"
+local WIKI_URL = "http://en.wikipedia.org"
 local WIKI_DISAMBIGUATION = "[D,d]isambig[^\"]*%.svg%.png"
 local numberOfChoices = 5
 
