@@ -268,14 +268,16 @@ function connection.initClient( address, port )
 
 		print("starting 5")
 	if #ipStr == 0 then ipStr = "localhost" end
-	local tcpClient, err = socket.connect(address, port)
-	
+	local master = socket.tcp()
+	master:settimeout(10)
+	local tcpClient, err = master:connect(address, port)
 		print("starting 6")
 	if tcpClient == nil then
 		print(err)
 		statusMsg.new( err .. "!")
 		menu.initMainMenu()
 	else
+		tcpClient = master
 		tcpClient:settimeout(10)
 	end
 		
