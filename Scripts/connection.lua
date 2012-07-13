@@ -20,7 +20,7 @@ function connection.initServer(host, port, maxConnections)
 	end
 	
 	if tcpServer then
-		tcpServer:settimeout(5)
+		tcpServer:settimeout(1)
 	end
 	
 	return tcpServer
@@ -92,11 +92,11 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 	
 	if newClient ~= nil then
 		print("someone's trying to join")
+		newClient:settimeout(1)
 		handleNewClient( newClient )
 	end
 	
 	for k, cl in pairs(connectedClients) do
-		cl.client:settimeout(10)
 		local msg, err = cl.client:receive()
 		if msg ~= nil then
 			print("received: " .. msg)
@@ -268,17 +268,14 @@ function connection.initClient( address, port )
 
 		print("starting 5")
 	if #ipStr == 0 then ipStr = "localhost" end
-	local master = socket.tcp()
-	master:settimeout(10)
-	local tcpClient, err = master:connect(address, port)
+	local tcpClient, err = socket.connect(address, port)
 		print("starting 6")
 	if tcpClient == nil then
 		print(err)
 		statusMsg.new( err .. "!")
 		menu.initMainMenu()
 	else
-		tcpClient = master
-		tcpClient:settimeout(10)
+		tcpClient:settimeout(1)
 	end
 		
 	return tcpClient
