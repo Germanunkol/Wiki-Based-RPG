@@ -29,11 +29,13 @@ function scrollChat()
 		linesFittingOnScreen = math.floor( h/textBox.getFont( chatBox ):getHeight() - 1 )
 	end
 	textBox.setVisibleLines( chatBox, textBox.numLines( chatBox )-linesFittingOnScreen, linesFittingOnScreen )
+	print(textBox.numLines( chatBox )-linesFittingOnScreen, linesFittingOnScreen)
 end
 
 function chat.receive( msg )
 	if chatInputBox then
 		textBox.setContent( chatBox, textBox.getContent( chatBox ) .. msg .. "\n")
+		
 		scrollChat()
 	end
 end
@@ -49,7 +51,6 @@ function chat.send()
 			chat.receive( "Server: " .. textBox.getContent( chatInputBox ) )
 		end
 		textBox.setContent( chatInputBox, "" )
-		scrollChat()
 	end
 end
 
@@ -66,7 +67,7 @@ function chat.init( xPos, yPos, lines, font, width)
 	x, y, f, w, h = xPos, yPos, font, width, font:getHeight()*lines
 	hInput = math.floor( h/3 )
 	chatBox = textBox.new( xPos, yPos, lines, font, width )
-	chatInputBox = textBox.new( xPos, yPos + 2*hInput, 2*hInput/font:getHeight(), font, width )
+	chatInputBox = textBox.new( xPos, yPos + 2*hInput, math.floor(hInput/font:getHeight()), font, width )
 	textBox.setReturnEvent( chatInputBox, chat.send )
 	textBox.setEscapeEvent( chatInputBox, chat.escape )
 end
@@ -75,7 +76,7 @@ function chat.show()
 	textBox.display( chatBox )
 	if active then
 		love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b )
-		love.graphics.rectangle( "fill",x, y + 2*hInput, w, hInput-20)
+		love.graphics.rectangle( "fill",x, y + 2*hInput, w, hInput-5)
 		textBox.display( chatInputBox )
 	end
 end

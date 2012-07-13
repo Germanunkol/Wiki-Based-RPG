@@ -39,6 +39,8 @@ local function scrollGameBox()
 		linesFittingOnScreen = math.floor( gameAreaHeight/textBox.getFont( gameTextBox ):getHeight() ) - 1
 	end
 	textBox.setVisibleLines( gameTextBox, textBox.numLines( gameTextBox )-linesFittingOnScreen, linesFittingOnScreen )
+
+	print(textBox.numLines( gameTextBox )-linesFittingOnScreen, linesFittingOnScreen )
 end
 
 local chosenURLs
@@ -63,8 +65,6 @@ function chooseNextWord( index )
 		end
 		
 		statusMsg.new( "Chose: \"" .. curGameWord .."\"")
-		
-		connection.serverBroadcast("CURWORD:" .. curGameWord .. "\n")
 		
 		textBox.highlightClearAll( gameInputBox )
 		textBox.highlightText( gameInputBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
@@ -200,6 +200,7 @@ function game.sendStory()
 	local str = textBox.getContent( gameInputBox )
 	if #str > 0 then
 		playersHaveReplied = 0
+		connection.serverBroadcast("CURWORD:" .. curGameWord .. "\n")		--send the current wiki word along, so that it can be highlighted on the players' side.
 		connection.serverBroadcast( "STORY:" .. str .. "\n")
 		game.receiveStory( str )
 		textBox.setContent( gameInputBox, "" )
@@ -220,10 +221,66 @@ function game.sendStory()
 	scrollGameBox()
 end
 
+function minimum( posStart1, posStart2, posEnd1, posEnd2 )
+	if posStart1 and posStart2 then
+		if posStart1 < posStart2 then
+			return posStart1, posEnd1
+		else
+			return posStart2, posEnd2
+		end
+	elseif posStart1 then
+		return posStart1, posEnd1
+	elseif posStart2 then
+		return posStart2, posEnd2
+	else
+		return nil, nil
+	end
+end
+
+
+local actionStrings = {}
+
+function insertAction( newStr )
+	if newStr:find("/do") == 1 then
+		actionStrings[#actionStrings+1] = { typ="do", str=newStr:sub(4, #newStr) }
+	elseif newStr:find("/say") == 1 then
+		actionStrings[#actionStrings+1] = { typ="say", str=newStr:sub(5, #newStr) }
+	elseif newStr:find("/use") == 1 then
+		actionStrings[#actionStrings+1] = { typ="use", str=newStr:sub(5, #newStr) }
+	else
+		actionStrings[#actionStrings+1] = { typ="say", str=newStr }		--if no command is found, use the whole string as a say command
+	end
+end
+
+
 function game.sendAction( )
 	local str = textBox.getContent( gameInputBox )
 	if #str > 0 then
-		client:send( "ACTION:" .. str .. "\n")
+
+		actionStrings = {}		--reset previously sent actions
+		--the following code splits the string at the different commands (/do, /say and later /use)
+		local posStart1, posEnd1 = str:find( "/say" )
+		local posStart2, posEnd2 = str:find( "/do" )
+		local posStart, posEnd, posStartNew, posEndNew
+		posStart, posEnd = minimum( posStart1, posStart2, posEnd1, posEnd2 )
+
+		while posStart do
+			posStart1, posEnd1 = str:find( "/say", posStart+1 )
+			posStart2, posEnd2 = str:find( "/do", posStart+1 )
+			posStartNew, posEndNew = minimum( posStart1, posStart2, posEnd1, posEnd2 )
+			if posStartNew then
+				--print(str:sub(posStart, posStartNew-1))
+				insertAction( str:sub(posStart, posStartNew-1) )
+			else
+				insertAction( str:sub(posStart, #str) )
+			end
+			posStart, posEnd = posStartNew, posEndNew
+		end
+
+		for key, string in ipairs(actionStrings) do
+			client:send( "ACTION:" .. string.typ .. string.str .. "\n")
+		end
+
 		--game.receiveAction( plName .. ": " .. str )
 		textBox.setContent( gameInputBox, "" )
 		textBox.setContent( gameStatusBox, "Waiting for story..." )
@@ -237,14 +294,19 @@ function game.sendAction( )
 	scrollGameBox()
 end
 
-function game.receiveAction( msg )
+function game.receiveAction( msg, typ)
 	if gameTextBox then
 		if server then
 			playersHaveReplied = playersHaveReplied + 1
 		end
-		--textBox.setColourStart( gameTextBox, #textBox.getContent( gameTextBox ) + 1, colAction.r, colAction.g, colAction.b )
 
-		textBox.setLineColour( gameTextBox,  textBox.numLines( gameTextBox ) +1, colAction.r, colAction.g, colAction.b )
+		if typ == "do" then
+			textBox.setLineColour( gameTextBox,  textBox.numLines( gameTextBox ) +1, colAction.r, colAction.g, colAction.b )
+		elseif typ == "say" then
+			textBox.setLineColour( gameTextBox,  textBox.numLines( gameTextBox ) +1, colSpeech.r, colSpeech.g, colSpeech.b )
+		elseif typ == "use" then
+			textBox.setLineColour( gameTextBox,  textBox.numLines( gameTextBox ) +1, colUse.r, colUse.g, colUse.b )
+		end
 		textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) ..  msg .. "\n")
 		
 	end
@@ -321,7 +383,6 @@ function game.show()
 	end
 end
 
-
 function gameAreaClicked()
 	if wikiClient.getFirstWordActive() or textBox.getAccess( gameInputBox ) then return end
 	if server then
@@ -382,7 +443,7 @@ function game.init()
 	
 	gameStatusBox = textBox.new( gameAreaX + 5, 12, 2 , fontInputHeader, love.graphics.getWidth() - gameAreaX*2)
 	
-	chat.init( chatAreaX+10, chatAreaY+10, math.floor(chatAreaHeight/fontChat:getHeight()), fontChat, chatAreaWidth-20 )
+	chat.init( chatAreaX+10, chatAreaY+10, math.floor(chatAreaHeight/fontChat:getHeight()) - 1, fontChat, chatAreaWidth-20 )
 	
 	game.setNewWordButtons()
 	
@@ -399,6 +460,13 @@ function game.init()
 		textBox.setContent( inventoryFieldHeader, "Inventory" )
 		textBox.setContent( gameStatusBox, "Waiting for server to beginn story..." )
 	end
+
+	local helpFile = io.open( "Help/game.txt", "r" )
+	if helpFile then
+		helpString = helpFile:read( "*all" )
+		helpFile:close()
+	end
+
 end
 
 function game.setButtons()
@@ -408,7 +476,7 @@ function game.setButtons()
 	buttons.add( gameAreaX+gameAreaWidth-50, gameAreaY + gameAreaHeight, 50, 20, "Down", drawButton, highlightButton, textBox.scrollDown, gameTextBox )
 	buttons.add( chatAreaX+chatAreaWidth-100, chatAreaY - 20, 50, 20, "Up", drawButton, highlightButton, textBox.scrollUp, chatBox )
 	buttons.add( chatAreaX+chatAreaWidth-50, chatAreaY - 20, 50, 20, "Down", drawButton, highlightButton, textBox.scrollDown, chatBox )
-	buttons.add( love.graphics.getWidth()-100, love.graphics.getHeight()-40, 90, 25, "Export", drawButton, highlightButton, export.toMarkdownFile, gameTextBox )
+	buttons.add( love.graphics.getWidth()-100, love.graphics.getHeight()-40, 90, 25, "Export", drawButton, highlightButton, export.toHtmlFile, gameTextBox )
 end
 
 function game.receiveServerMessage( msg )

@@ -87,8 +87,6 @@ end]]--
 local function splitIntoLines( text )		-- will calculate line breaks for the text
 	text.lines = {}
 	local partialStr = ""
-	
-					print("length: " .. #text.content)
 	local i = 1
 	local lineNum, start, ending
 	while i <= #text.content do
@@ -110,7 +108,6 @@ local function splitIntoLines( text )		-- will calculate line breaks for the tex
 				partialStr = partialStr .. char
 			end
 		end
-		print(i)
 		i = i + math.max(#char, 1)
 	end
 
@@ -391,11 +388,14 @@ function textBox.numLines( text )
 	end
 end
 
-function textBox.setAccess( text, input, resetCursor )
+function textBox.setAccess( text, input, resetCursor, endCursor )
 	text.access = input
 	if resetCursor then
 		text.cursorPos = 0
 		text.cursorLine = 1
+	end
+	if endCursor then
+		text.cursorPos = #text.content
 	end
 end
 

@@ -55,6 +55,13 @@ function lobby.init()
 	if server then
 		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, "Choose first Word", drawButton, highlightButton , lobby.inputFirstWord )
 	end
+
+	local helpFile = io.open( "Help/lobby.txt", "r" )
+	if helpFile then
+		helpString = helpFile:read( "*all" )
+		helpFile:close()
+	end
+
 end
 
 function lobby.deactivate()

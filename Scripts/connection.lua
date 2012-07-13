@@ -119,10 +119,20 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 				
 				print("end received: " .. msg)
 			else	
-				start, ending = msg:find( "ACTION:" )
+				start, ending = msg:find( "ACTION:do" )
 				if start == 1 then
-					game.receiveAction( cl.playerName .. ": " .. msg:sub(ending+1, #msg) )
-					connection.serverBroadcast( "ACTION:" .. cl.playerName .. ": " .. msg:sub(ending+1, #msg) )
+					game.receiveAction( cl.playerName .. ": " .. msg:sub(ending+1, #msg), "do" )
+					connection.serverBroadcast( "ACTION:do" .. cl.playerName .. " " .. msg:sub(ending+1, #msg) )
+				end
+				start, ending = msg:find( "ACTION:say" )
+				if start == 1 then
+					game.receiveAction( cl.playerName .. ": " .. msg:sub(ending+1, #msg), "say" )
+					connection.serverBroadcast( "ACTION:say" .. cl.playerName .. ": \"" .. msg:sub(ending+1, #msg) .. "\"")
+				end
+				start, ending = msg:find( "ACTION:use" )
+				if start == 1 then
+					game.receiveAction( cl.playerName .. ": " .. msg:sub(ending+1, #msg), "use" )
+					connection.serverBroadcast( "ACTION:use" .. cl.playerName .. ": " .. msg:sub(ending+1, #msg) )
 				end
 				
 				start, ending = msg:find( "CHAT:" )
@@ -207,9 +217,19 @@ function connection.runClient( cl )				--handle all messages that come from the 
 				return
 			end
 			
-			start, ending = msg:find( "ACTION:" )
+			start, ending = msg:find( "ACTION:do" )
 			if start == 1 then
-				game.receiveAction( msg:sub(ending+1, #msg) )
+				game.receiveAction( msg:sub(ending+1, #msg), "do" )
+				return
+			end
+			start, ending = msg:find( "ACTION:say" )
+			if start == 1 then
+				game.receiveAction( msg:sub(ending+1, #msg), "say" )
+				return
+			end
+			start, ending = msg:find( "ACTION:use" )
+			if start == 1 then
+				game.receiveAction( msg:sub(ending+1, #msg), "use" )
 				return
 			end
 			

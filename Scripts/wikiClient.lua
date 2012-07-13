@@ -27,6 +27,10 @@ function wikiClient.testConnection()
 	end
 end
 
+function wikiClient.getWikiURL()
+	return WIKI_URL
+end
+
 function wikiClient.newWord( wordToSearchFor )	
 	fullURL = WIKI_URL .. "/wiki/" .. wordToSearchFor
 	print ("Loading URL: " .. fullURL)
@@ -46,9 +50,9 @@ function wikiClient.newWord( wordToSearchFor )
 		if start then
 			urlTable = urlManipulation.extractURLs( pageSource, WIKI_STARTOFCONTENTS )
 			
-			for k, v in pairs(urlTable) do
+			--[[for k, v in pairs(urlTable) do
 				print("(" .. k .. ") " .. v.title .. ", " .. v.url)
-			end
+			end]]--
 
 			print("Multiple Entries for '" .. wordToSearchFor .. "' found.")
 			multipleFound = true
