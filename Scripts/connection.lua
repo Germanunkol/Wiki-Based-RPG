@@ -11,7 +11,7 @@ local numOfPlayers = 0
 
 function connection.initServer(host, port, maxConnections)
 
-	local tcpServer = socket.bind(host, 3456, maxConnections)
+	local tcpServer = socket.bind(host, port, maxConnections)
 	maxPlayers = maxConnections
 	if tcpServer == nil then
 		print(err)
@@ -20,7 +20,7 @@ function connection.initServer(host, port, maxConnections)
 	end
 	
 	if tcpServer then
-		tcpServer:settimeout(0)
+		tcpServer:settimeout(5)
 	end
 	
 	return tcpServer
@@ -96,7 +96,7 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 	end
 	
 	for k, cl in pairs(connectedClients) do
-		cl.client:settimeout(0)
+		cl.client:settimeout(10)
 		local msg, err = cl.client:receive()
 		if msg ~= nil then
 			print("received: " .. msg)
@@ -276,7 +276,7 @@ function connection.initClient( address, port )
 		statusMsg.new( err .. "!")
 		menu.initMainMenu()
 	else
-		tcpClient:settimeout(0)
+		tcpClient:settimeout(10)
 	end
 		
 	return tcpClient

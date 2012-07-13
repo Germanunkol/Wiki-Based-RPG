@@ -6,7 +6,7 @@ lobby = require("Scripts/lobby")
 wikiClient = require("Scripts/wikiClient")
 
 --THIS PORT MUST BE FORWARDED ON YOUR ROUTER FOR INTERNET PLAY!
-PORT = 3456
+PORT = 8080
 
 server = nil		-- server object. When not nil, then connection is established.
 client = nil		-- client object. When not nil, then connection is established.
@@ -56,7 +56,7 @@ testingConnection = 0
 
 
 function love.load(arg)
-
+	love.graphics.setCaption( "Wiki-Based RPG" )
 	export.init()
 	menu.initMainMenu()
 	love.keyboard.setKeyRepeat( 0.3, 0.03 )
@@ -146,7 +146,7 @@ end
 
 
 function startServer()
-	server = connection.initServer( "localhost", PORT, 10 )
+	server = connection.initServer( "*", PORT, 10 )
 	if server then
 		lobby.init( buttons )
 	end
