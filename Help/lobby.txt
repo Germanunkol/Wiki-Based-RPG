@@ -1,0 +1,4 @@
+Wait for all players to join.
+
+Server:
+Choose a first word. This word will be the one where the story beginns (or what the story is about). If you're unsure, you can try "Room", "Chest", "Monster", or "Dungeon". Or anything else, really. If there's no Wiki-Entry found for the word, it'll tell you so.
