@@ -263,7 +263,9 @@ function game.sendAction( )
 		local posStart2, posEnd2 = str:find( "/do" )
 		local posStart, posEnd, posStartNew, posEndNew
 		posStart, posEnd = minimum( posStart1, posStart2, posEnd1, posEnd2 )
-
+		if posStart == nil then
+			insertAction( "/say " .. str )		-- if no command was used, assume /say.
+		end
 		while posStart do
 			posStart1, posEnd1 = str:find( "/say", posStart+1 )
 			posStart2, posEnd2 = str:find( "/do", posStart+1 )
