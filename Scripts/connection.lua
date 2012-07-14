@@ -119,8 +119,8 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 			else	
 				start, ending = msg:find( "ACTION:do" )
 				if start == 1 then
-					game.receiveAction( cl.playerName .. ": " .. msg:sub(ending+1, #msg), "do" )
-					connection.serverBroadcast( "ACTION:do" .. cl.playerName .. " " .. msg:sub(ending+1, #msg) )
+					game.receiveAction( cl.playerName  .. msg:sub(ending+1, #msg), "do" )
+					connection.serverBroadcast( "ACTION:do" .. cl.playerName .. msg:sub(ending+1, #msg) )
 				end
 				start, ending = msg:find( "ACTION:say" )
 				if start == 1 then
