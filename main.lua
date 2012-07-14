@@ -1,3 +1,5 @@
+
+socket = require("socket")
 connection = require("Scripts/connection")
 export = require("Scripts/export")
 

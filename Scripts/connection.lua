@@ -4,23 +4,22 @@ local connection = {}
 
 connectedClients = {}
 
-local socket = require("socket")
-
 local maxPlayers = 0
 local numOfPlayers = 0
 
 function connection.initServer(host, port, maxConnections)
 
-	local tcpServer = socket.bind(host, port, maxConnections)
+	local tcpServer = socket.bind(host, port)
 	maxPlayers = maxConnections
 	if tcpServer == nil then
 		print(err)
 	else
-		print("server: " .. tcpServer:getsockname())
+		local addr, p = tcpServer:getsockname()
+		print("Server initialized @: " .. add .. ":" .. p)
 	end
 	
 	if tcpServer then
-		tcpServer:settimeout(1)
+		tcpServer:settimeout(0)
 	end
 	
 	return tcpServer
@@ -92,7 +91,7 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 	
 	if newClient ~= nil then
 		print("someone's trying to join")
-		newClient:settimeout(1)
+		newClient:settimeout(0)
 		handleNewClient( newClient )
 	end
 	
@@ -275,7 +274,7 @@ function connection.initClient( address, port )
 		statusMsg.new( err .. "!")
 		menu.initMainMenu()
 	else
-		tcpClient:settimeout(1)
+		tcpClient:settimeout(0)
 	end
 		
 	return tcpClient
