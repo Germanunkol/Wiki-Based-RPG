@@ -155,7 +155,7 @@ function startServer()
 end
 
 function startClient()
-	client = connection.initClient( "localhost", PORT)
+	client = connection.initClient( ipStr, PORT)
 	if client then
 		client:send("NAME:" .. plName .. "\n")
 		statusMsg.new("Connected to server.")

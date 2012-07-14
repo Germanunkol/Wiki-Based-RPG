@@ -8,14 +8,13 @@ local maxPlayers = 0
 local numOfPlayers = 0
 
 function connection.initServer(host, port, maxConnections)
-
 	local tcpServer = socket.bind(host, port)
 	maxPlayers = maxConnections
 	if tcpServer == nil then
 		print(err)
 	else
 		local addr, p = tcpServer:getsockname()
-		print("Server initialized @: " .. add .. ":" .. p)
+		print("Server initialized @: " .. addr .. ":" .. p)
 	end
 	
 	if tcpServer then
@@ -265,10 +264,9 @@ local clientNumber = nil			--client's clientnumber
 
 function connection.initClient( address, port )
 
-		print("starting 5")
-	if #ipStr == 0 then ipStr = "localhost" end
+	if #address == 0 then address = "localhost" end
 	local tcpClient, err = socket.connect(address, port)
-		print("starting 6")
+
 	if tcpClient == nil then
 		print(err)
 		statusMsg.new( err .. "!")
