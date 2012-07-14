@@ -244,7 +244,11 @@ function insertAction( newStr )
 	if newStr:find("/do") == 1 then
 		actionStrings[#actionStrings+1] = { typ="do", str=newStr:sub(4, #newStr) }
 	elseif newStr:find("/say") == 1 then
-		actionStrings[#actionStrings+1] = { typ="say", str=newStr:sub(5, #newStr) }
+		if newStr:sub(5,5) == " " then
+			actionStrings[#actionStrings+1] = { typ="say", str=newStr:sub(6, #newStr) }	--remove first character if it's a space
+		else
+			actionStrings[#actionStrings+1] = { typ="say", str=newStr:sub(5, #newStr) }
+		end
 	elseif newStr:find("/use") == 1 then
 		actionStrings[#actionStrings+1] = { typ="use", str=newStr:sub(5, #newStr) }
 	else
