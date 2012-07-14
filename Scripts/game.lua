@@ -72,7 +72,7 @@ function chooseNextWord( index )
 		
 		wikiClient.setNewURL( chosenURLs[index].url )
 		buttons.clear()
-		game.setNewWordButtons()
+		if server then game.setNewWordButtons() end
 		game.setButtons()
 		textBox.setContent( inventoryFieldHeader, "" )
 		if waitForPlayerActions == false then 
@@ -141,7 +141,6 @@ function game.chooseNewStartWord()
 	
 	wikiClient.inputFirstWord( chatAreaX, chatAreaY+chatAreaHeight+10, chatAreaWidth, gameAreaHeight - chatAreaHeight-20, game.newWordSet, "Choose new direction:")
 	
-	--game.setNewWordButtons()
 end
 
 function game.setNewWordButtons()
@@ -178,7 +177,7 @@ function game.newWordSet( word )
 	textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
 	
 	buttons.clear()
-	game.setNewWordButtons()
+	if server then game.setNewWordButtons() end
 	game.setButtons()
 	textBox.setContent( inventoryFieldHeader, "" )
 	if waitForPlayerActions == false then 
@@ -451,9 +450,10 @@ function game.init()
 	
 	chat.init( chatAreaX+10, chatAreaY+10, math.floor(chatAreaHeight/fontChat:getHeight()) - 1, fontChat, chatAreaWidth-20 )
 	
-	game.setNewWordButtons()
+	
 	
 	if server then
+		game.setNewWordButtons()
 		curGameWord = startingWord		-- the current game's word will be the word the server chose as start word
 		textBox.setContent( gameStatusBox, "Start the story. Use \"" .. startingWord .. "\" in your text." )
 		textBox.setColourStart( gameStatusBox, #"Start the story. Use \""+1 , colWikiWord.r, colWikiWord.g, colWikiWord.b )
