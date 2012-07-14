@@ -35,7 +35,7 @@ function textBox.setVisibleLines( text, from, num )
 	text.showStartLine = math.max(from+1, 1)
 	text.showOnlyPart = num
 	if text.showOnlyPart and text.showStartLine then
-		print("showing lines from " .. text.showStartLine .. " to " .. text.showOnlyPart )
+		print("showing lines from " .. text.showStartLine .. " to " .. text.showStartLine .. "+" ..text.showOnlyPart )
 	end
 end
 
