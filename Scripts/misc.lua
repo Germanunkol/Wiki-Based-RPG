@@ -25,3 +25,16 @@ function highlightButton( theButton )
 	love.graphics.setColor( 0, 0, 0 , 255)
 	love.graphics.print( theButton.label, theButton.x + theButton.w/2 - buttonFont:getWidth(theButton.label)/2, theButton.y + (theButton.h - buttonFont:getHeight())/2 )
 end
+
+function getClientColour( ID )
+	if ID == 1 then
+		return 255,0,0
+	elseif ID == 2 then
+		return 255,255,0
+	elseif ID == 3 then
+		return 0,0,255
+	elseif ID == 4 then
+		return 0,255,255
+	end
+	return 0,0,0
+end

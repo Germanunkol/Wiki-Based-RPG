@@ -28,9 +28,9 @@ end
 local function synchronizeClients( newClient )
 	numOfPlayers = 0
 	for k, cl in pairs( connectedClients ) do
-		cl.client:send("NEWPLAYER:" .. newClient.playerName .. "\n")
+		cl.client:send("NEWPLAYER:" .. newClient.clientNumber .. newClient.playerName .. "\n")
 		if	cl ~= newClient then
-			newClient.client:send("NEWPLAYER:" .. cl.playerName .. "\n")
+			newClient.client:send("NEWPLAYER:" .. newClient.clientNumber .. cl.playerName .. "\n")
 		end
 		numOfPlayers = numOfPlayers + 1
 	end
@@ -119,18 +119,23 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 			else	
 				start, ending = msg:find( "ACTION:do" )
 				if start == 1 then
-					game.receiveAction( cl.playerName  .. msg:sub(ending+1, #msg), "do" )
+					game.receiveAction( cl.playerName  .. msg:sub(ending+1, #msg), "do", cl.clientNumber)
 					connection.serverBroadcast( "ACTION:do" .. cl.playerName .. msg:sub(ending+1, #msg) )
 				end
 				start, ending = msg:find( "ACTION:say" )
 				if start == 1 then
-					game.receiveAction( cl.playerName .. ": \"" .. msg:sub(ending+1, #msg) .. "\"", "say" )
+					game.receiveAction( cl.playerName .. ": \"" .. msg:sub(ending+1, #msg) .. "\"", "say", cl.clientNumber )
 					connection.serverBroadcast( "ACTION:say" .. cl.playerName .. ": \"" .. msg:sub(ending+1, #msg) .. "\"")
 				end
 				start, ending = msg:find( "ACTION:use" )
 				if start == 1 then
-					game.receiveAction( cl.playerName .. ": " .. msg:sub(ending+1, #msg), "use" )
+					game.receiveAction( cl.playerName .. ": " .. msg:sub(ending+1, #msg), "use", cl.clientNumber )
 					connection.serverBroadcast( "ACTION:use" .. cl.playerName .. ": " .. msg:sub(ending+1, #msg) )
+				end
+				start, ending = msg:find( "ACTION:skip" )
+				if start == 1 then
+					game.receiveAction( "", "skip", cl.clientNumber )
+					--connection.serverBroadcast( "ACTION:skip" .. cl.playerName .. ": " .. msg:sub(ending+1, #msg) )
 				end
 				
 				start, ending = msg:find( "CHAT:" )
@@ -192,7 +197,7 @@ function connection.runClient( cl )				--handle all messages that come from the 
 			
 			start, ending = msg:find( "NEWPLAYER:" )
 			if start == 1 then
-				table.insert( connectedClients, {playerName=msg:sub(ending+1, #msg)} )
+				table.insert( connectedClients, {playerName=msg:sub(ending+2, #msg), clientNumber=tonumber( msg:sub(ending+1, ending+1) ) } )
 				return
 			end
 			

@@ -148,7 +148,7 @@ end
 
 
 function startServer()
-	server = connection.initServer( "*", PORT, 10 )
+	server = connection.initServer( "*", PORT, 4 )
 	if server then
 		lobby.init( buttons )
 	end

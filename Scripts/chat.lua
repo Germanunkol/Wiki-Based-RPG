@@ -36,7 +36,7 @@ function chat.receive( msg )
 	if chatInputBox then
 		textBox.setContent( chatBox, textBox.getContent( chatBox ) .. msg .. "\n")
 		
-		scrollChat()
+		table.insert( nextFrameEvent, {func = scrollChat, frames = 2} )		
 	end
 end
 

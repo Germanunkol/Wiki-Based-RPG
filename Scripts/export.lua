@@ -46,17 +46,17 @@ function export.toHtmlFile( text )
 		file = love.filesystem.newFile( fileName )
 		if file:open( 'w' ) then
 			file:write("<h2>" .. startingWord .. "</h2>")
-			file:write("<font color=\"grey\">(A story influenced by Randomness and " .. wikiClient.getWikiURL() .. ")</font><br /><br />")
+			file:write("<font color=\"grey\">(A story influenced by randomness and " .. wikiClient.getWikiURL() .. ")</font><br /><br />")
 			local stringToWrite = "\n" .. text.content
 			
 			local s, e
 			for k, v in pairs( text.highlightWords ) do
-				s, e = stringToWrite:find( v.w, 1, true)
+				s, e = stringToWrite:upper():find( v.w:upper(), 1, true)
 				while s do
 					print(v.w .. " found at:".. s .. "," .. e)
 					stringToWrite = stringToWrite:sub(1, s-1) .. "<b>" .. stringToWrite:sub(s,e) .. "</b>" .. stringToWrite:sub(e+1, #stringToWrite)
 print(stringToWrite)
-					s, e = stringToWrite:find( v.w, e+7, true)
+					s, e = stringToWrite:upper():find( v.w:upper(), e+7, true)
 				end
 			end
 

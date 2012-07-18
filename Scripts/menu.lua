@@ -29,6 +29,7 @@ local function displayHelp( theButton )
 	love.graphics.setColor( colLobby.r, colLobby.g, colLobby.g)
 	love.graphics.rectangle( "fill",  theButton.x+3, 13, width-26, height-6)
 	love.graphics.setColor( 0, 0, 0 , 255)
+	love.graphics.setFont( fontStatus )
 	love.graphics.printf( helpString, 20, 20, width-40, "left")
 
 	highlightButton ( theButton )	-- also display button

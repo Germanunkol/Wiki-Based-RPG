@@ -2,7 +2,7 @@ local game = {}
 
 local active = false
 
-local REPLYTIME = 90
+local REPLYTIME = 180
 
 local NUMBER_OF_NEW_WORDS = 3
 
@@ -28,6 +28,7 @@ local gameTextBox = nil
 local waitForPlayerActions = false
 local waitForPlayerActionsTimer = 0
 local playersHaveReplied = 0
+local playersHaveRepliedTable ={}
 
 local inventoryFieldHeader
 
@@ -198,20 +199,27 @@ end
 function game.sendStory()
 	local str = textBox.getContent( gameInputBox )
 	if #str > 0 then
-		playersHaveReplied = 0
-		connection.serverBroadcast("CURWORD:" .. curGameWord .. "\n")		--send the current wiki word along, so that it can be highlighted on the players' side.
-		connection.serverBroadcast( "STORY:" .. str .. "\n")
-		game.receiveStory( str )
-		textBox.setContent( gameInputBox, "" )
-		textBox.setContent( gameStatusBox, "Waiting for heroes to reply..." )
-		textBox.setColour( gameStatusBox, 0, 0, 0 )
-		waitForPlayerActions = true
-		waitForPlayerActionsTimer = 0
-		nextWordChosen = false
-		statusMsg.new("Loading...")
-		table.insert( nextFrameEvent, {func = game.serverChooseNextWord, frames = 2 } )
-		table.insert( nextFrameEvent, {func = statusMsg.new, frames = 3, arg = "How should the story continue?" } )
-		textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
+		if str:upper():find( curGameWord:upper() ) then
+			playersHaveReplied = 0
+			playersHaveRepliedTable = {}
+			connection.serverBroadcast("CURWORD:" .. curGameWord .. "\n")		--send the current wiki word along, so that it can be highlighted on the players' side.
+			connection.serverBroadcast( "STORY:" .. str .. "\n")
+			game.receiveStory( str )
+			textBox.setContent( gameInputBox, "" )
+			textBox.setContent( gameStatusBox, "Waiting for heroes to reply..." )
+			textBox.setColour( gameStatusBox, 0, 0, 0 )
+			waitForPlayerActions = true
+			waitForPlayerActionsTimer = 0
+			nextWordChosen = false
+			statusMsg.new("Loading...")
+			table.insert( nextFrameEvent, {func = game.serverChooseNextWord, frames = 2 } )
+			table.insert( nextFrameEvent, {func = statusMsg.new, frames = 3, arg = "How should the story continue?" } )
+			textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
+		else
+			textBox.setAccess( gameInputBox, true )
+			scrollGameBox()
+			statusMsg.new("You must use '" .. curGameWord .. "' in your Text!")
+		end
 	else
 		textBox.setAccess( gameInputBox, true )
 		scrollGameBox()
@@ -250,38 +258,44 @@ function insertAction( newStr )
 		end
 	elseif newStr:find("/use") == 1 then
 		actionStrings[#actionStrings+1] = { typ="use", str=newStr:sub(5, #newStr) }
+	elseif newStr:find("/skip") then
+		actionStrings[#actionStrings+1] = { typ="skip", str = "" }
 	else
 		actionStrings[#actionStrings+1] = { typ="say", str=newStr }		--if no command is found, use the whole string as a say command
 	end
 end
-
 
 function game.sendAction( )
 	local str = textBox.getContent( gameInputBox )
 	if #str > 0 then
 
 		actionStrings = {}		--reset previously sent actions
-		--the following code splits the string at the different commands (/do, /say and later /use)
-		local posStart1, posEnd1 = str:find( "/say" )
-		local posStart2, posEnd2 = str:find( "/do" )
-		local posStart, posEnd, posStartNew, posEndNew
-		posStart, posEnd = minimum( posStart1, posStart2, posEnd1, posEnd2 )
-		if posStart == nil then
-			insertAction( "/say " .. str )		-- if no command was used, assume /say.
-		end
-		while posStart do
-			posStart1, posEnd1 = str:find( "/say", posStart+1 )
-			posStart2, posEnd2 = str:find( "/do", posStart+1 )
-			posStartNew, posEndNew = minimum( posStart1, posStart2, posEnd1, posEnd2 )
-			if posStartNew then
-				--print(str:sub(posStart, posStartNew-1))
-				insertAction( str:sub(posStart, posStartNew-1) )
-			else
-				insertAction( str:sub(posStart, #str) )
+		if str:lower() == string.lower("/skip") then
+			insertAction( "/skip" )
+		else
+			--the following code splits the string at the different commands (/do, /say and later /use)
+			local posStart1, posEnd1 = str:find( "/say" )
+			local posStart2, posEnd2 = str:find( "/do" )
+			local posStart, posEnd, posStartNew, posEndNew
+			posStart, posEnd = minimum( posStart1, posStart2, posEnd1, posEnd2 )
+			if posStart == nil then
+				insertAction( "/say " .. str )		-- if no command was used, assume /say.
+			elseif posStart ~= 1 then
+				insertAction( "/say " .. str:sub(1, posStart-1) )		-- if it doesn't start with a command, /say the beginning.
 			end
-			posStart, posEnd = posStartNew, posEndNew
+			while posStart do
+				posStart1, posEnd1 = str:find( "/say", posStart+1 )
+				posStart2, posEnd2 = str:find( "/do", posStart+1 )
+				posStartNew, posEndNew = minimum( posStart1, posStart2, posEnd1, posEnd2 )
+				if posStartNew then
+					--print(str:sub(posStart, posStartNew-1))
+					insertAction( str:sub(posStart, posStartNew-1) )
+				else
+					insertAction( str:sub(posStart, #str) )
+				end
+				posStart, posEnd = posStartNew, posEndNew
+			end
 		end
-
 		for key, string in ipairs(actionStrings) do
 			client:send( "ACTION:" .. string.typ .. string.str .. "\n")
 		end
@@ -299,10 +313,13 @@ function game.sendAction( )
 	scrollGameBox()
 end
 
-function game.receiveAction( msg, typ)
+function game.receiveAction( msg, typ, clientID)
 	if gameTextBox then
 		if server then
-			playersHaveReplied = playersHaveReplied + 1
+			if playersHaveRepliedTable[clientID] == nil then
+				playersHaveReplied = playersHaveReplied + 1		-- if I have replied no message from this player so far, then count up.
+			end
+			playersHaveRepliedTable[clientID] = true
 		end
 
 		if typ == "do" then
@@ -311,11 +328,14 @@ function game.receiveAction( msg, typ)
 			textBox.setLineColour( gameTextBox,  textBox.numLines( gameTextBox ) +1, colSpeech.r, colSpeech.g, colSpeech.b )
 		elseif typ == "use" then
 			textBox.setLineColour( gameTextBox,  textBox.numLines( gameTextBox ) +1, colUse.r, colUse.g, colUse.b )
+		elseif typ == "skip" then
+			print( "Player " .. clientID .. " has skipped their turn." )
 		end
+
 		textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) ..  msg .. "\n")
 		
 	end
-	scrollGameBox()
+	table.insert( nextFrameEvent, {func = scrollGameBox, frames = 2 } )
 end
 
 function game.receiveStory( msg )
@@ -329,13 +349,12 @@ function game.receiveStory( msg )
 			waitForPlayerActionsTimer = 0
 			if chat.getActive() == false then
 				textBox.setAccess( gameInputBox, true )
-				scrollGameBox()
 			end
 			textBox.setContent( gameStatusBox, "What would you like to do?" )
 			textBox.setReturnEvent( gameInputBox, game.sendAction )
 		end
 	end
-	scrollGameBox()
+	table.insert( nextFrameEvent, {func = scrollGameBox, frames = 2 } )
 end
 
 function game.show()
@@ -441,6 +460,12 @@ function game.init()
 	
 	textBox.highlightText( gameTextBox, startingWord, colHighlightWikiWordNew.r,colHighlightWikiWordNew.g,colHighlightWikiWordNew.b )
 	
+	local r,g,b
+	for key, cl in pairs( connectedClients ) do
+		r,g,b = getClientColour(key)
+		textBox.highlightText( gameTextBox, cl.playerName, r,g,b , 50 )
+	end
+
 	inventoryFieldHeader = textBox.new( chatAreaX+2, chatAreaY+chatAreaHeight+8, 1, fontInputHeader, 300 )
 	--textBox.setMaxVisibleLines( gameInputBox, math.floor(gameInputAreaHeight/fontInput:getHeight()) )
 	buttons.clear()

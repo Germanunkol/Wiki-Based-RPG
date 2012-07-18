@@ -121,16 +121,16 @@ local function splitIntoLines( text )		-- will calculate line breaks for the tex
 end
 
 
-function textBox.highlightText( text, word, red, green, blue )
+function textBox.highlightText( text, word, red, green, blue, alpha )
 	if #word > 0 then
 		print("highlighting: " .. word)
 		for k, v in pairs( text.highlightWords ) do
 			if v.w == word then 
-				v.r, v.g, v.b = red, green, blue
+				v.r, v.g, v.b, v.a = red, green, blue, alpha or 255
 				return
 			end
 		end
-		table.insert( text.highlightWords, { w=word, r=red, g=green, b=blue } )
+		table.insert( text.highlightWords, { w=word, r=red, g=green, b=blue, a=alpha or 255 } )
 	else
 		text.highlightWords = {}
 	end
@@ -154,8 +154,8 @@ end
 
 function calculateHighlights( text )			-- calculate where things should be highlighted
 	text.highlights = {}
+	local start, ending, xPos, yPos, width, height
 	for key, highLWord in pairs(text.highlightWords) do
-		local start, ending, xPos, yPos, width, height
 		width = text.font:getWidth( highLWord.w )
 		height = text.font:getHeight()
 		local lowerCaseLine
@@ -166,7 +166,7 @@ function calculateHighlights( text )			-- calculate where things should be highl
 				start, ending = lowerCaseLine:find( string.lower(highLWord.w) )	-- Find the position of the text to highlight
 				while start do
 					xPos = text.font:getWidth( text.lines[i]:sub(1, start-1) )
-					table.insert( text.highlights, { line=i, x=xPos, y=yPos, w=width, h=height, r=highLWord.r, g=highLWord.g, b=highLWord.b} )
+					table.insert( text.highlights, { line=i, x=xPos, y=yPos, w=width, h=height, r=highLWord.r, g=highLWord.g, b=highLWord.b, a=highLWord.a} )
 					start, ending = lowerCaseLine:find( string.lower(highLWord.w), start+1 )	--find pos of next word.
 				end
 			end
@@ -222,7 +222,7 @@ function textBox.display( text )
 	
 	if text.showOnlyPart == nil then
 		for k, highL in pairs( text.highlights ) do		-- go through all highlights and show them as rectangles in the background.
-			love.graphics.setColor( highL.r, highL.g, highL.b )
+			love.graphics.setColor( highL.r, highL.g, highL.b, highL.a )
 			love.graphics.rectangle( "fill", text.x + highL.x, text.y + highL.y, highL.w, highL.h )
 		end
 		love.graphics.setColor( text.colour.r, text.colour.g, text.colour.b )
@@ -241,7 +241,7 @@ function textBox.display( text )
 	else	-- this is called if part of the text is hidden because there are more lines than can be displayed (scrollable text)
 		for k, highL in pairs( text.highlights ) do		-- go through all highlights and show them as rectangles in the background.
 			if highL.line >= text.showStartLine and highL.line <= text.showOnlyPart+text.showStartLine then
-				love.graphics.setColor( highL.r, highL.g, highL.b )
+				love.graphics.setColor( highL.r, highL.g, highL.b, highL.a )
 				love.graphics.rectangle( "fill", text.x + highL.x, text.y + highL.y-(text.showStartLine-1)*highL.h, highL.w, highL.h )
 			end
 		end

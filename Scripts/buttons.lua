@@ -49,13 +49,19 @@ end
 function button.show()
 	love.graphics.setFont( buttonFont )
 	love.graphics.setLine( 3, "smooth" )
+	helpButton = nil
 	for key, button in pairs( buttons ) do
 		if mouseOver( button ) and button.drawHover then
-			button.drawHover( button )
+			if button.label == "Help" then		-- draw Help button above everything else.
+				helpButton = button
+			else
+				button.drawHover( button )
+			end
 		elseif button.drawNormal then
 			button.drawNormal( button )
 		end
 	end
+	if helpButton then helpButton.drawHover( helpButton ) end
 end
 
 
