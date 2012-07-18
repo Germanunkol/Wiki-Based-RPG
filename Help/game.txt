@@ -12,9 +12,6 @@ You can and should use commands in your text. Available commands are:
 /skip (skip your turn)
 For example, if the storyteller writes about a chest, you could type: "/do opens the chest. /say Let's see what's in here!".
 
-
-
-
 Chat: Click on chat area or "c" or "enter". Type text, then press "enter".
 
 Write story/action: Click on Story/Action area or press "a" or "s". Type text, then press "enter".

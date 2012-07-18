@@ -6,7 +6,10 @@ You have three "jokers". If the words given to you absolutely don't fit with you
 Hero:
 If you're one of the heroes, wait for the server to write the story. Once the story is sent to you, you can reply by doing something.
 You can and should use commands in your text. Available commands are:
-/do	(Means you )
+/do	(Write some action your character does)
+/say	(Will be written as speech. Quotation marks are automatically added.)
+/use	(Doesn't work yet)
+/skip (skip your turn)
 For example, if the storyteller writes about a chest, you could type: "/do opens the chest. /say Let's see what's in here!".
 
 
