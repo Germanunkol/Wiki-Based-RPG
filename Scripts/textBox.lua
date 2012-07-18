@@ -22,6 +22,7 @@ function textBox.new( xPos, yPos, newLines, newFont, newWidth )
 	newText.cursorBlinkTime = 0
 	newText.highlights = {}
 	newText.highlightWords = {}
+	newText.highlightNames = {}
 	newText.showStartLine = 1
 
 	table.insert( fields, newText )
@@ -135,6 +136,21 @@ function textBox.highlightText( text, word, red, green, blue, alpha )
 		text.highlightWords = {}
 	end
 end
+		-- must differentiate between names and other highlighted words, because only those which are not names will be highlighted in exported files.
+function textBox.highlightTextName( text, word, red, green, blue, alpha )
+	if #word > 0 then
+		print("highlighting: " .. word)
+		for k, v in pairs( text.highlightNames ) do
+			if v.w == word then 
+				v.r, v.g, v.b, v.a = red, green, blue, alpha or 255
+				return
+			end
+		end
+		table.insert( text.highlightNames, { w=word, r=red, g=green, b=blue, a=alpha or 255 } )
+	else
+		text.highlightNames = {}
+	end
+end
 
 function textBox.removeHighlight( text, word )
 	if #word > 0 then
@@ -144,11 +160,18 @@ function textBox.removeHighlight( text, word )
 				return
 			end
 		end
+		for k, v in pairs( text.highlightNames ) do
+			if v.w == word then 
+				text.highlightNames[k] = nil
+				return
+			end
+		end
 	end
 end
 
 function textBox.highlightClearAll( text )
 	text.highlightWords = {}
+	text.highlightNames = {}
 end
 
 
@@ -163,11 +186,28 @@ function calculateHighlights( text )			-- calculate where things should be highl
 			yPos = text.font:getHeight()*(i-1)
 			if text.lines[i] then
 				lowerCaseLine = string.lower( text.lines[i] )
-				start, ending = lowerCaseLine:find( string.lower(highLWord.w) )	-- Find the position of the text to highlight
+				start, ending = lowerCaseLine:find( string.lower(highLWord.w), 1, true )	-- Find the position of the text to highlight
 				while start do
 					xPos = text.font:getWidth( text.lines[i]:sub(1, start-1) )
 					table.insert( text.highlights, { line=i, x=xPos, y=yPos, w=width, h=height, r=highLWord.r, g=highLWord.g, b=highLWord.b, a=highLWord.a} )
-					start, ending = lowerCaseLine:find( string.lower(highLWord.w), start+1 )	--find pos of next word.
+					start, ending = lowerCaseLine:find( string.lower(highLWord.w), start+1, true )	--find pos of next word.
+				end
+			end
+		end
+	end
+	for key, highLWord in pairs(text.highlightNames) do
+		width = text.font:getWidth( highLWord.w )
+		height = text.font:getHeight()
+		local lowerCaseLine
+		for i = 1, #text.lines,1 do
+			yPos = text.font:getHeight()*(i-1)
+			if text.lines[i] then
+				lowerCaseLine = string.lower( text.lines[i] )
+				start, ending = lowerCaseLine:find( string.lower(highLWord.w), 1, true )	-- Find the position of the text to highlight
+				while start do
+					xPos = text.font:getWidth( text.lines[i]:sub(1, start-1) )
+					table.insert( text.highlights, { line=i, x=xPos, y=yPos, w=width, h=height, r=highLWord.r, g=highLWord.g, b=highLWord.b, a=highLWord.a} )
+					start, ending = lowerCaseLine:find( string.lower(highLWord.w), start+1, true )	--find pos of next word.
 				end
 			end
 		end
@@ -212,7 +252,7 @@ function textBox.display( text )
 	if text.hasChanged then
 		splitIntoLines( text )
 		correctCursorPos( text )
-		if #text.highlightWords > 0 then
+		if #text.highlightWords > 0 or #text.highlightNames > 0 then
 			calculateHighlights( text )
 		end
 	end

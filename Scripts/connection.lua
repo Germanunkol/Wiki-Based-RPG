@@ -214,9 +214,21 @@ function connection.runClient( cl )				--handle all messages that come from the 
 				return
 			end
 			
+			start, ending = msg:find( "NEWPLAYERTURNS:" )
+			if start == 1 then
+				displayNextPlayerTurns(msg:sub(ending+1, #msg))
+				return
+			end
+			
 			start, ending = msg:find( "STORY:" )
 			if start == 1 then
 				game.receiveStory( msg:sub(ending+1, #msg) )
+				return
+			end
+			
+			start, ending = msg:find( "YOURTURN:" )
+			if start == 1 then
+				game.startMyTurn()
 				return
 			end
 			

@@ -36,5 +36,19 @@ function getClientColour( ID )
 	elseif ID == 4 then
 		return 0,255,255
 	end
-	return 0,0,0
+	return 0,0,0		-- fallback
+end
+
+function printTable( t, tabs )
+	tabs = tabs or 0
+	for k, v in pairs(t) do
+		str = ""
+		for i=0,tabs,1 do str = str .. " " end
+		if type(v) == "table" then
+			print(str .. k)
+			printTable( v, tabs + 1)
+		else
+			print(str .. k .. " " ..  v)
+		end
+	end
 end

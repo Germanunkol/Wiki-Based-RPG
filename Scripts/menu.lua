@@ -73,7 +73,7 @@ end
 local function clientInitIpInput()
 	print ("new playername: " .. textBox.getContent( plNameInputBox ) )
 	if plNameInputBox then plName = textBox.getContent( plNameInputBox ) end
-	if #plName > 1 and plName["1"] ~= " " then
+	if #plName > 1 and plName["1"] ~= " " and not plName:find(",") and not plName:find(";") and plName:lower() ~= "server" and plName:lower() ~= "story" then
 		if plNameInputBox then
 			textBox.setAccess( plNameInputBox, false )
 		end
@@ -117,6 +117,9 @@ function menu.initMainMenu()
 	logoIMG = love.graphics.newImage( "Images/LogoColourSmall.png" )
 	
 	local helpFile = io.open( "Help/main.txt", "r" )
+	if not helpFile then
+		helpFile = io.open( "Help\\main.txt", "r" )
+	end
 	if helpFile then
 		helpString = helpFile:read( "*all" )
 		helpFile:close()

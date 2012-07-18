@@ -58,12 +58,26 @@ testingConnection = 0
 
 
 function love.load(arg)
+	success = love.graphics.setMode( 1024, 680, false, false, 0 )
 	love.graphics.setCaption( "Wiki-Based RPG" )
 	export.init()
 	menu.initMainMenu()
 	love.keyboard.setKeyRepeat( 0.3, 0.03 )
 	testingConnection = true
 	table.insert( nextFrameEvent, {func = wikiClient.testConnection, frames = 2 } )
+	
+	--[[
+	connectedClients[1] = { client = newClient, playerName = "name1" }
+	connectedClients[2] = { client = newClient, playerName = "name2" }
+	connectedClients[3] = { client = newClient, playerName = "name3" }
+	connectedClients[4] = { client = newClient, playerName = "name4" }
+	
+	addPlayerTurns()
+	addPlayerTurns()
+	printTable( playerTurns1 )
+	printTable( playerTurns2 )
+	]]--
+	
 	--wikiClient.newWord()
 	--wikiClient.nextWord()
 	--tb = textBox.new( 10, 200, 5, fontInput, 75)
@@ -73,7 +87,6 @@ function love.load(arg)
 	--textBox.setAccess ( tb , true )
 	--textBox.highlightText( tb, "server" )
 	--print(string.find("this is a test", ".* "))
-
 end
 
 local lastSent = os.time()
@@ -119,10 +132,7 @@ function love.draw()
 		end
 		buttons.show()
 		statusMsg.display()
-
-		
 	end
-	
 	--textBox.display( tb )
 end
 

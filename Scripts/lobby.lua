@@ -57,6 +57,9 @@ function lobby.init()
 	end
 
 	local helpFile = io.open( "Help/lobby.txt", "r" )
+	if not helpFile then
+		helpFile = io.open( "Help\\lobby.txt", "r" )
+	end
 	if helpFile then
 		helpString = helpFile:read( "*all" )
 		helpFile:close()

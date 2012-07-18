@@ -2,7 +2,7 @@ local game = {}
 
 local active = false
 
-local REPLYTIME = 180
+--local REPLYTIME = 180
 
 local NUMBER_OF_NEW_WORDS = 3
 
@@ -16,6 +16,11 @@ local chatAreaY = 0
 local chatAreaWidth = 0
 local chatAreaHeight = 0
 
+local nextPlayerAreaX = 0
+local nextPlayerAreaY = 0
+local nextPlayerAreaWidth = 0
+local nextPlayerAreaHeight = 0
+
 local gameInputAreaX = 0
 local gameInputAreaY = 0
 local gameInputAreaWdith = 0
@@ -25,12 +30,122 @@ local gameInputBox = nil
 local gameStatusBox = nil
 local gameTextBox = nil
 
-local waitForPlayerActions = false
-local waitForPlayerActionsTimer = 0
-local playersHaveReplied = 0
-local playersHaveRepliedTable ={}
-
 local inventoryFieldHeader
+
+local waitForPlayerActions = false
+local allPlayersHaveReacted = false
+local playersHaveRepliedTable = {}
+
+playerTurns1 = {}
+playerTurns2 = {}
+playerTurns3 = {}
+playerTurns4 = {}
+
+playerTurnsStrings = {}
+
+local fullNumberOfTurns = 1
+local currentPlayer = ""
+
+function addPlayerTurns()
+	playerTurns1 = playerTurns2
+	playerTurns2 = playerTurns3
+	playerTurns3 = playerTurns4
+	playerTurns4 = {}
+	for k, v in pairs(connectedClients) do
+		table.insert( playerTurns4, { ID = v.clientNumber, name = v.playerName } )
+	end
+	playerTurns4[0] = {ID = 0, name = "Server"}
+	for i = #playerTurns4, 2, -1 do -- backwards
+		local r = math.random(i) -- select a random number between 1 and i
+		playerTurns4[i], playerTurns4[r] = playerTurns4[r], playerTurns4[i] -- swap the randomly selected item to position i
+	end
+
+	sendNextPlayerTurns()
+end
+
+function sendNextPlayerTurns()
+	local str = ""
+	local j = fullNumberOfTurns
+	for i=0,#playerTurns1,1 do 
+		if playerTurns1[i] then str = str .. j .. ":" .. playerTurns1[i].name .. "," .. playerTurns1[i].ID ..";" end
+		j = j+1
+	end
+	for i=0,#playerTurns2,1 do 
+		if playerTurns2[i] then str = str .. j .. ":" .. playerTurns2[i].name .. "," .. playerTurns2[i].ID ..";" end
+		j = j+1
+	end
+	for i=0,#playerTurns3,1 do 
+		if playerTurns3[i] then str = str .. j .. ":" .. playerTurns3[i].name .. "," .. playerTurns3[i].ID ..";" end
+		j = j+1
+	end
+	for i=0,#playerTurns4,1 do 
+		if playerTurns4[i] then str = str .. j .. ":" .. playerTurns4[i].name .. "," .. playerTurns4[i].ID ..";" end
+		j = j+1
+	end
+	connection.serverBroadcast("NEWPLAYERTURNS:" .. str )
+	displayNextPlayerTurns( str )
+end
+
+function removePlayerTurn()
+	printTable(playerTurns1)
+	for i=0,#playerTurns1,1 do
+		playerTurns1[i] = playerTurns1[i+1]		-- move all upcoming players up one:
+	end
+	--playerTurns1[#playerTurns1] = nil
+	-- send to other players:
+	sendNextPlayerTurns()
+end
+
+function displayNextPlayerTurns( str )
+	if nextPlayerAreaWidth <= 0 then return end
+	playerTurnsStrings = {}
+	local s,e = str:find(";", 1, true)
+	local player, name
+	i = 1
+	while s do
+		player = str:sub(1,e)
+		name = player:sub(1, player:find(",", 1, true) - 1)
+		while fontStatus:getWidth(name) > nextPlayerAreaWidth - 10 do
+			name = name:sub(1, #name-1)
+		end
+		playerTurnsStrings[i] = {str=name, ID = tonumber(player:sub( player:find(",", 1, true)+1, #player-1)) }
+		i = i+1
+		str = str:sub(e+1, #str)
+		s,e = str:find(";", 1, true)
+	end
+	currentPlayer = ""
+	if playerTurnsStrings[1] and playerTurnsStrings[1].str and playerTurnsStrings[1].str:find(":", 1, true) then
+		currentPlayer = playerTurnsStrings[1].str:sub( playerTurnsStrings[1].str:find(":", 1, true) +1, #playerTurnsStrings[1].str)
+	end
+	if client then 
+		textBox.setContent( gameStatusBox, "Waiting for " .. currentPlayer )
+	end
+	--printTable(playerTurnsStrings)
+end
+
+function game.sendNextTurn()
+	removePlayerTurn()
+	if playerTurns1[0] then
+		for k, cl in pairs( connectedClients ) do
+			if cl.playerName == playerTurns1[0].name then
+				cl.client:send( "YOURTURN:\n" )
+				return true
+			end
+		end
+	end
+	return false
+end
+
+function game.startMyTurn()
+	if client then
+		waitForPlayerActions = true
+		if chat.getActive() == false then
+			textBox.setAccess( gameInputBox, true )
+		end
+		textBox.setContent( gameStatusBox, "Your Turn! What would you like to do?" )
+		textBox.setReturnEvent( gameInputBox, game.sendAction )
+	end
+end
 
 local function scrollGameBox()
 	local linesFittingOnScreen
@@ -199,17 +314,23 @@ end
 function game.sendStory()
 	local str = textBox.getContent( gameInputBox )
 	if #str > 0 then
-		if str:upper():find( curGameWord:upper() ) then
-			playersHaveReplied = 0
+		if str:upper():find( curGameWord:upper(), 1, true ) then
 			playersHaveRepliedTable = {}
+			
+			fullNumberOfTurns = fullNumberOfTurns + 1
+				
 			connection.serverBroadcast("CURWORD:" .. curGameWord .. "\n")		--send the current wiki word along, so that it can be highlighted on the players' side.
 			connection.serverBroadcast( "STORY:" .. str .. "\n")
+			if game.sendNextTurn() then
+				allPlayersHaveReacted = false
+			else
+				allPlayersHaveReacted = true
+			end
 			game.receiveStory( str )
 			textBox.setContent( gameInputBox, "" )
 			textBox.setContent( gameStatusBox, "Waiting for heroes to reply..." )
 			textBox.setColour( gameStatusBox, 0, 0, 0 )
 			waitForPlayerActions = true
-			waitForPlayerActionsTimer = 0
 			nextWordChosen = false
 			statusMsg.new("Loading...")
 			table.insert( nextFrameEvent, {func = game.serverChooseNextWord, frames = 2 } )
@@ -302,7 +423,7 @@ function game.sendAction( )
 
 		--game.receiveAction( plName .. ": " .. str )
 		textBox.setContent( gameInputBox, "" )
-		textBox.setContent( gameStatusBox, "Waiting for story..." )
+		textBox.setContent( gameStatusBox, "Waiting for other players..." )
 		textBox.setColour( gameStatusBox, 0, 0, 0 )
 		waitForPlayerActions = false
 	else
@@ -317,9 +438,11 @@ function game.receiveAction( msg, typ, clientID)
 	if gameTextBox then
 		if server then
 			if playersHaveRepliedTable[clientID] == nil then
-				playersHaveReplied = playersHaveReplied + 1		-- if I have replied no message from this player so far, then count up.
+				-- if I have gotten no message from this player so far...
+				
+				fullNumberOfTurns = fullNumberOfTurns + 1
+				if not game.sendNextTurn() then allPlayersHaveReacted = true end		-- if this was the last player in the list, continue the story.
 			end
-			playersHaveRepliedTable[clientID] = true
 		end
 
 		if typ == "do" then
@@ -343,16 +466,6 @@ function game.receiveStory( msg )
 		--textBox.setColourStart( gameTextBox, #textBox.getContent( gameTextBox ) + 1, colStory.r, colStory.g, colStory.b )
 		textBox.setLineColour( gameTextBox,  textBox.numLines( gameTextBox ) + 1, colStory.r, colStory.g, colStory.b )
 		textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .."Story: " .. msg .. "\n")
-
-		if client then
-			waitForPlayerActions = true
-			waitForPlayerActionsTimer = 0
-			if chat.getActive() == false then
-				textBox.setAccess( gameInputBox, true )
-			end
-			textBox.setContent( gameStatusBox, "What would you like to do?" )
-			textBox.setReturnEvent( gameInputBox, game.sendAction )
-		end
 	end
 	table.insert( nextFrameEvent, {func = scrollGameBox, frames = 2 } )
 end
@@ -361,9 +474,28 @@ function game.show()
 	love.graphics.setColor( colBorder.r, colBorder.g, colBorder.b )
 	love.graphics.rectangle( "fill",gameAreaX, gameAreaY, gameAreaWidth, gameAreaHeight)
 	love.graphics.rectangle( "fill",chatAreaX, chatAreaY, chatAreaWidth, chatAreaHeight)
+	love.graphics.rectangle( "fill",nextPlayerAreaX, nextPlayerAreaY, nextPlayerAreaWidth, nextPlayerAreaHeight)
 	love.graphics.setColor( colMainBg.r, colMainBg.g, colMainBg.b )
 	love.graphics.rectangle( "fill",gameAreaX+2, gameAreaY+2, gameAreaWidth-4, gameAreaHeight-4)
 	love.graphics.rectangle( "fill",chatAreaX+2, chatAreaY+2, chatAreaWidth-4, chatAreaHeight-4)
+	love.graphics.rectangle( "fill",nextPlayerAreaX+2, nextPlayerAreaY+2, nextPlayerAreaWidth-4, nextPlayerAreaHeight-4)
+	
+	
+	-- display the list of players in the order in which they will be playing:
+	love.graphics.setFont( fontStatus )
+	if playerTurnsStrings[1] and playerTurnsStrings[1].ID and playerTurnsStrings[1].ID ~= 0 then
+		local r,g,b = getClientColour(playerTurnsStrings[1].ID)
+		love.graphics.setColor( r,g,b , 100 )
+		love.graphics.rectangle( "fill",nextPlayerAreaX+4, nextPlayerAreaY+4, nextPlayerAreaWidth-8, fontStatus:getHeight())
+		love.graphics.print( playerTurnsStrings[1].ID, nextPlayerAreaX+5, nextPlayerAreaY+5 + (1-1)*fontStatus:getHeight())
+	end
+	love.graphics.setColor( 0,0,0 )
+	for i=1,#playerTurnsStrings,1 do
+		love.graphics.print( playerTurnsStrings[i].str, nextPlayerAreaX+5, nextPlayerAreaY+5 + (i-1)*fontStatus:getHeight())
+		if i*fontStatus:getHeight() > nextPlayerAreaHeight then
+			break
+		end
+	end
 	
 	if textBox.getAccess( gameInputBox ) then
 		love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b )
@@ -380,30 +512,29 @@ function game.show()
 	textBox.display( inventoryFieldHeader )
 	
 	if server and waitForPlayerActions then
-		waitForPlayerActionsTimer = waitForPlayerActionsTimer + love.timer.getDelta()
-		textBox.setContent( gameStatusBox, "Waiting for heroes to reply... (" .. math.floor(REPLYTIME-waitForPlayerActionsTimer) .. ")" )
-		if waitForPlayerActionsTimer >= REPLYTIME or playersHaveReplied >= connection.getPlayers() then
+		textBox.setContent( gameStatusBox, "Waiting for " .. currentPlayer )
+		if allPlayersHaveReacted then
 			if chat.getActive() == false and nextWordChosen == true then
 				textBox.setAccess( gameInputBox, true )
 			end
 			scrollGameBox()
 			if nextWordChosen == true then
-				textBox.setContent( gameStatusBox, "Continue the story. Use \"" .. curGameWord .. "\" in your text.")
+				textBox.setContent( gameStatusBox, "Continue the story. Use \"" .. curGameWord .. "\" in your text." )
 			else
-				textBox.setContent( gameStatusBox, "Choose a word...")
+				textBox.setContent( gameStatusBox, "Choose a word..." )
 			end
 			textBox.setColour( gameStatusBox, 0, 0, 0 )
 			waitForPlayerActions = false
+			addPlayerTurns()
 		end
 	elseif client and waitForPlayerActions then
-		waitForPlayerActionsTimer = waitForPlayerActionsTimer + love.timer.getDelta()
-		textBox.setContent( gameStatusBox, "What would you like to do? (" .. math.floor(REPLYTIME-waitForPlayerActionsTimer) .. ")" )
-		if waitForPlayerActionsTimer >= REPLYTIME then
+		textBox.setContent( gameStatusBox, "Your turn! What would you like to do?" )
+		--[[if waitForPlayerActionsTimer >= REPLYTIME then
 			textBox.setAccess( gameInputBox, false )
 			scrollGameBox()
 			textBox.setContent( gameStatusBox, "You did nothing. Waiting for story..." )
 			waitForPlayerActions = false
-		end
+		end]]--
 	end
 end
 
@@ -441,7 +572,7 @@ function game.init()
 	statusMsg.new("Game starting.")
 	active = true
 	print("Game started")
-	gameAreaX = 10
+	gameAreaX = 150
 	gameAreaY = 40
 	gameAreaWidth = love.graphics.getWidth() * 0.6 - gameAreaX
 	gameAreaHeight = love.graphics.getHeight() - 50 - gameAreaY
@@ -449,6 +580,13 @@ function game.init()
 	chatAreaY =  40 --love.graphics.getHeight() / 2
 	chatAreaWidth = love.graphics.getWidth() - chatAreaX - 10
 	chatAreaHeight = love.graphics.getHeight() / 2 - 10
+	
+	nextPlayerAreaX = 10
+	nextPlayerAreaY = gameAreaY
+	
+	nextPlayerAreaWidth = gameAreaX - nextPlayerAreaX - 10
+	nextPlayerAreaHeight = gameAreaX - nextPlayerAreaX - 10
+	
 	
 	gameInputAreaX = gameAreaX + 10
 	gameInputAreaY = gameAreaHeight * 0.7 + gameAreaY
@@ -463,7 +601,7 @@ function game.init()
 	local r,g,b
 	for key, cl in pairs( connectedClients ) do
 		r,g,b = getClientColour(key)
-		textBox.highlightText( gameTextBox, cl.playerName, r,g,b , 50 )
+		textBox.highlightTextName( gameTextBox, cl.playerName, r,g,b , 50 )
 	end
 
 	inventoryFieldHeader = textBox.new( chatAreaX+2, chatAreaY+chatAreaHeight+8, 1, fontInputHeader, 300 )
@@ -475,9 +613,11 @@ function game.init()
 	
 	chat.init( chatAreaX+10, chatAreaY+10, math.floor(chatAreaHeight/fontChat:getHeight()) - 1, fontChat, chatAreaWidth-20 )
 	
-	
-	
 	if server then
+		addPlayerTurns()		-- must be called twice, because 2 rounds should be displayed.
+		addPlayerTurns()
+		addPlayerTurns()
+		addPlayerTurns()
 		game.setNewWordButtons()
 		curGameWord = startingWord		-- the current game's word will be the word the server chose as start word
 		textBox.setContent( gameStatusBox, "Start the story. Use \"" .. startingWord .. "\" in your text." )
@@ -493,6 +633,9 @@ function game.init()
 	end
 
 	local helpFile = io.open( "Help/game.txt", "r" )
+	if not helpFile then
+		helpFile = io.open( "Help\\game.txt", "r" )
+	end
 	if helpFile then
 		helpString = helpFile:read( "*all" )
 		helpFile:close()

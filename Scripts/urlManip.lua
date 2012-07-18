@@ -77,7 +77,7 @@ function urlManip.extractURLs(inputStr, contentsStartString)
 	local doublesFound = 0
 
 	for key, value in pairs(urlTableFull) do
-		if value.url and value.title and not value.url:find(":") then
+		if value.url and value.title and not value.url:find(":") and not value.url:find("#") then		-- make only valid links work
 			if value.url:find("/wiki/") == 1 and value.url:find("/Wikipedia") == nil then
 				numberOfFoundLinks = numberOfFoundLinks + 1
 			else
