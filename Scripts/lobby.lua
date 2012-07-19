@@ -94,14 +94,14 @@ function lobby.showPlayers()
 	end
 	
 	
-	for k, v in pairs( connectedClients ) do
+	for k, cl in pairs( connectedClients ) do
 		--love.graphics.setColor( 0, 0, 0 , 255)
 		--love.graphics.rectangle("fill", 0, 110 + 50*(k-1), love.graphics.getWidth(), 35)
 		love.graphics.setColor( colLobby.r, colLobby.g, colLobby.g, 255)
-		love.graphics.rectangle("fill", 0, 111 + 50*(k-1), love.graphics.getWidth(), 33)
+		love.graphics.rectangle("fill", 0, 111 + 50*(cl.clientNumber-1), love.graphics.getWidth(), 33)
 		love.graphics.setColor( 0, 0, 0 , 255)
 		love.graphics.setFont( mainFont )
-		love.graphics.print( v.playerName, 70, 120  + 50*(k-1) )
+		love.graphics.print( cl.playerName, 70, 120  + 50*(cl.clientNumber-1) )
 	end
 end
 

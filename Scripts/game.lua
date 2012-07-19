@@ -4,7 +4,7 @@ local active = false
 
 --local REPLYTIME = 180
 
-local NUMBER_OF_NEW_WORDS = 3
+local NUMBER_OF_JOKERS = 3
 
 local gameAreaX = 0
 local gameAreaY = 0
@@ -47,8 +47,6 @@ local fullNumberOfTurns = 1
 local currentPlayer = ""
 
 function addPlayerTurns()
-
-	print("adding new turns")
 	playerTurns1 = playerTurns2
 	playerTurns2 = playerTurns3
 	playerTurns3 = playerTurns4
@@ -57,7 +55,7 @@ function addPlayerTurns()
 		table.insert( playerTurns4, { ID = v.clientNumber, name = v.playerName } )
 	end
 	playerTurns4[0] = {ID = 0, name = "Server"}
-	for i = #playerTurns4, 2, -1 do -- backwards
+	for i = #playerTurns4, 2, -1 do -- shuffle
 		local r = math.random(i) -- select a random number between 1 and i
 		playerTurns4[i], playerTurns4[r] = playerTurns4[r], playerTurns4[i] -- swap the randomly selected item to position i
 	end
@@ -66,7 +64,6 @@ function addPlayerTurns()
 end
 
 function sendNextPlayerTurns()
-	print("sending player turns")
 	local str = ""
 	local j = fullNumberOfTurns
 	for i=0,#playerTurns1,1 do 
@@ -90,8 +87,6 @@ function sendNextPlayerTurns()
 end
 
 function removePlayerTurn()
-	print("removing player turn")
-	
 	for i=0,#playerTurns1,1 do
 		playerTurns1[i] = playerTurns1[i+1]		-- move all upcoming players up one:
 	end
@@ -129,10 +124,8 @@ function displayNextPlayerTurns( str )
 end
 
 function game.sendNextTurn()
-	print("next player's turn:")
 	removePlayerTurn()
 	if playerTurns1[0] then
-		print(playerTurns1[0].name)
 		for k, cl in pairs( connectedClients ) do
 			if cl.playerName == playerTurns1[0].name then
 				cl.client:send( "YOURTURN:\n" )
@@ -149,6 +142,7 @@ function game.startMyTurn()
 		if chat.getActive() == false then
 			textBox.setAccess( gameInputBox, true )
 		end
+		sound.playNotification()
 		textBox.setContent( gameStatusBox, "Your Turn! What would you like to do?" )
 		textBox.setReturnEvent( gameInputBox, game.sendAction )
 	end
@@ -162,8 +156,6 @@ local function scrollGameBox()
 		linesFittingOnScreen = math.floor( gameAreaHeight/textBox.getFont( gameTextBox ):getHeight() ) - 1
 	end
 	textBox.setVisibleLines( gameTextBox, textBox.numLines( gameTextBox )-linesFittingOnScreen, linesFittingOnScreen )
-
-	print(textBox.numLines( gameTextBox )-linesFittingOnScreen, linesFittingOnScreen )
 end
 
 local chosenURLs
@@ -193,9 +185,10 @@ function chooseNextWord( index )
 		textBox.highlightText( gameInputBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
 		textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
 		
-		wikiClient.setNewURL( chosenURLs[index].url )
+		wikiClient.setNewWord( chosenURLs[index] )
+		
 		buttons.clear()
-		if server then game.setNewWordButtons() end
+		if server then game.setJokerButtons() end
 		game.setButtons()
 		textBox.setContent( inventoryFieldHeader, "" )
 		if waitForPlayerActions == false then 
@@ -255,22 +248,63 @@ function game.clientReceiveNewWord( word )
 	end
 end
 
-function game.chooseNewStartWord()
-	NUMBER_OF_NEW_WORDS = NUMBER_OF_NEW_WORDS-1
+function game.useJoker()
+
+	if wikiClient.getNumOfPreviousWords() < 3 then
+		statusMsg.new("Need to have played at least 4 Words!")
+		return
+	end
+
+	NUMBER_OF_JOKERS = NUMBER_OF_JOKERS-1
+	
+	game.setJokerButtons()
+	
+	connection.serverBroadcast("CHAT:[Server used joker]")
+	chat.receive( "[Server used joker]" )
 	
 	chat.setAccess( false )
 	textBox.setAccess( gameInputBox, false )
 	scrollGameBox()
 	
-	wikiClient.inputFirstWord( chatAreaX, chatAreaY+chatAreaHeight+10, chatAreaWidth, gameAreaHeight - chatAreaHeight-20, game.newWordSet, "Choose new direction:")
+	-- wikiClient.inputFirstWord( chatAreaX, chatAreaY+chatAreaHeight+10, chatAreaWidth, gameAreaHeight - chatAreaHeight-20, game.newWordSet, "Choose new direction:")
+	chosenURLs = wikiClient.randomPreviousWords()
+	
+	if chosenURLs then
+	
+		nextWordChosen = false
+	
+		local i = 0
+		local j
+		local titleStr = 0
+		
+		for k, v in pairs( chosenURLs ) do							-- show all possible Words that server can choose as buttons.
+			print(k .. ": " .. v.title .. " @ " .. v.url)
+			if i < 5 then
+				titleStr = ""
+				for char in v.title:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
+					titleStr = titleStr .. char
+					if buttonFont:getWidth( titleStr ) >= chatAreaWidth-30 then
+						 break
+					end
+				end
+				if titleStr ~= v.title then
+					titleStr = titleStr .. "..."
+				end
+				buttons.add( chatAreaX, chatAreaY+chatAreaHeight+35+i*(buttonHeight-5), chatAreaWidth, buttonHeight/2+10, titleStr, drawButton, highlightButton, chooseNextWord, k )
+			end
+			i = i+1
+		end
+	else
+		print("ERROR: Uhm... no urls found...?")
+	end
 	
 end
 
-function game.setNewWordButtons()
+function game.setJokerButtons()
 	buttons.clear()
-	for i = 1,NUMBER_OF_NEW_WORDS,1 do
-		buttons.add( chatAreaX+25*(i-1), gameAreaY + gameAreaHeight-25, 25,25, tostring(i), drawButton, highlightButton, game.chooseNewStartWord)
-	end	
+	for i = 1,NUMBER_OF_JOKERS,1 do
+		buttons.add( chatAreaX+25*(i-1), gameAreaY + gameAreaHeight-25, 25,25, tostring(i), drawButton, highlightButton, game.useJoker )
+	end
 	
 	game.setButtons()
 end
@@ -300,7 +334,7 @@ function game.newWordSet( word )
 	textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
 	
 	buttons.clear()
-	if server then game.setNewWordButtons() end
+	if server then game.setJokerButtons() end
 	game.setButtons()
 	textBox.setContent( inventoryFieldHeader, "" )
 	if waitForPlayerActions == false then 
@@ -428,7 +462,6 @@ function game.sendAction( )
 			client:send( "ACTION:" .. string.typ .. string.str .. "\n")
 		end
 
-		--game.receiveAction( plName .. ": " .. str )
 		textBox.setContent( gameInputBox, "" )
 		textBox.setContent( gameStatusBox, "Waiting for other players..." )
 		textBox.setColour( gameStatusBox, 0, 0, 0 )
@@ -462,7 +495,10 @@ function game.receiveAction( msg, typ, clientID)
 			print( "Player " .. clientID .. " has skipped their turn." )
 		end
 
-		textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) ..  msg .. "\n")
+		if not typ == "skip" then
+			-- if all that was sent was a "skip" command, don't write anything to the game window.
+			textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) ..  msg .. "\n" )
+		end
 		
 	end
 	table.insert( nextFrameEvent, {func = scrollGameBox, frames = 2 } )
@@ -472,7 +508,7 @@ function game.receiveStory( msg )
 	if gameTextBox then
 		--textBox.setColourStart( gameTextBox, #textBox.getContent( gameTextBox ) + 1, colStory.r, colStory.g, colStory.b )
 		textBox.setLineColour( gameTextBox,  textBox.numLines( gameTextBox ) + 1, colStory.r, colStory.g, colStory.b )
-		textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .."Story: " .. msg .. "\n")
+		textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .. "Story: " .. msg .. "\n")
 	end
 	table.insert( nextFrameEvent, {func = scrollGameBox, frames = 2 } )
 end
@@ -492,7 +528,7 @@ function game.show()
 	love.graphics.setFont( fontStatus )
 	if playerTurnsStrings[1] and playerTurnsStrings[1].ID and playerTurnsStrings[1].ID ~= 0 then
 		local r,g,b = getClientColour(playerTurnsStrings[1].ID)
-		love.graphics.setColor( r,g,b , 75 )
+		love.graphics.setColor( r,g,b , 35 )
 		love.graphics.rectangle( "fill",nextPlayerAreaX+4, nextPlayerAreaY+4, nextPlayerAreaWidth-8, fontStatus:getHeight())
 		love.graphics.print( playerTurnsStrings[1].ID, nextPlayerAreaX+5, nextPlayerAreaY+5 + (1-1)*fontStatus:getHeight())
 	end
@@ -532,6 +568,7 @@ function game.show()
 			end
 			textBox.setColour( gameStatusBox, 0, 0, 0 )
 			waitForPlayerActions = false
+			sound.playNotification()
 			addPlayerTurns()
 		end
 	elseif client and waitForPlayerActions then
@@ -563,7 +600,7 @@ function gameAreaClicked()
 			textBox.setAccess( gameInputBox, true )
 			scrollGameBox()
 		else
-			statusMsg.new( "Story has not yet been written!" )
+			statusMsg.new( "It's not your turn!" )
 		end
 	end
 end
@@ -577,6 +614,9 @@ end
 
 function game.init()
 	statusMsg.new("Game starting.")
+	
+	sound.playNotification()
+	
 	active = true
 	print("Game started")
 	gameAreaX = 150
@@ -592,7 +632,7 @@ function game.init()
 	nextPlayerAreaY = gameAreaY
 	
 	nextPlayerAreaWidth = gameAreaX - nextPlayerAreaX - 10
-	nextPlayerAreaHeight = gameAreaX - nextPlayerAreaX - 10
+	nextPlayerAreaHeight = love.graphics.getHeight()/2-50
 	
 	
 	gameInputAreaX = gameAreaX + 10
@@ -607,8 +647,8 @@ function game.init()
 	
 	local r,g,b
 	for key, cl in pairs( connectedClients ) do
-		r,g,b = getClientColour(key)
-		textBox.highlightTextName( gameTextBox, cl.playerName, r,g,b , 75 )
+		r,g,b = getClientColour( cl.clientNumber )
+		textBox.highlightTextName( gameTextBox, cl.playerName, r,g,b , 35 )
 	end
 
 	inventoryFieldHeader = textBox.new( chatAreaX+2, chatAreaY+chatAreaHeight+8, 1, fontInputHeader, 300 )
@@ -625,7 +665,7 @@ function game.init()
 		addPlayerTurns()
 		addPlayerTurns()
 		addPlayerTurns()
-		game.setNewWordButtons()
+		game.setJokerButtons()
 		curGameWord = startingWord		-- the current game's word will be the word the server chose as start word
 		textBox.setContent( gameStatusBox, "Start the story. Use \"" .. startingWord .. "\" in your text." )
 		textBox.setColourStart( gameStatusBox, #"Start the story. Use \""+1 , colWikiWord.r, colWikiWord.g, colWikiWord.b )
@@ -663,7 +703,7 @@ end
 function game.receiveServerMessage( msg )
 	if gameTextBox then
 		textBox.setLineColour( gameTextBox,  textBox.numLines( gameTextBox ) + 1, colServerMsg.r, colServerMsg.g, colServerMsg.b )
-		textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .."(" .. msg .. ")\n")
+		textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .."[" .. msg .. "]\n")
 	end
 end
 

@@ -4,6 +4,8 @@ connection = require("Scripts/connection")
 export = require("Scripts/export")
 
 lobby = require("Scripts/lobby")
+sound = require("Scripts/sound")
+
 
 wikiClient = require("Scripts/wikiClient")
 
@@ -27,6 +29,8 @@ menu = require("Scripts/menu")
 buttons = require("Scripts/buttons")
 
 game = require("Scripts/game")
+
+notificationSound = nil
 
 mainFont = love.graphics.newFont( "Fonts/AveriaSans-Regular.ttf", 18 )
 buttonFont = love.graphics.newFont( "Fonts/AveriaSans-Bold.ttf", 18 )
@@ -55,28 +59,20 @@ colHighlightWikiWordNew = { r=225, g=250, b=190 }
 nextFrameEvent = {}			-- these functions will be called after the next draw call.
 testingConnection = 0
 
+function initSound()
 
+end
 
-function love.load(arg)
+function love.load( arg )
+
 	success = love.graphics.setMode( 1024, 680, false, false, 0 )
 	love.graphics.setCaption( "Wiki-Based RPG" )
+	sound.init()
 	export.init()
 	menu.initMainMenu()
 	love.keyboard.setKeyRepeat( 0.3, 0.03 )
 	testingConnection = true
 	table.insert( nextFrameEvent, {func = wikiClient.testConnection, frames = 2 } )
-	
-	--[[
-	connectedClients[1] = { client = newClient, playerName = "name1" }
-	connectedClients[2] = { client = newClient, playerName = "name2" }
-	connectedClients[3] = { client = newClient, playerName = "name3" }
-	connectedClients[4] = { client = newClient, playerName = "name4" }
-	
-	addPlayerTurns()
-	addPlayerTurns()
-	printTable( playerTurns1 )
-	printTable( playerTurns2 )
-	]]--
 	
 	--wikiClient.newWord()
 	--wikiClient.nextWord()
@@ -114,6 +110,7 @@ function love.update()
 end
 
 function love.draw()
+
 	if testingConnection then
 		love.graphics.setFont( fontStatus )
 		love.graphics.setColor( 0,0,0,255 )

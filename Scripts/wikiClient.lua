@@ -16,6 +16,8 @@ local fullURL = ""
 
 local urlTable = nil
 
+local previousWikiWords = {}		-- stores all words a player chooses, so that jokers can revert back to one of them.
+
 function wikiClient.testConnection()
 	pageSource = http.request(WIKI_URL)
 	if pageSource == nil then
@@ -64,8 +66,6 @@ function wikiClient.newWord( wordToSearchFor )
 	return foundStartPage, multipleFound, urlTable
 end
 
-
-
 function wikiClient.nextWord()		-- choose a few random links from the wiki source page of the current word
 	urlManipulation.log(fullURL)
 	pageSource = http.request(fullURL)
@@ -79,8 +79,8 @@ function wikiClient.nextWord()		-- choose a few random links from the wiki sourc
 	print("Found " .. numberOfFoundLinks .. " wiki-internal urls")
 	print("Found " .. numberOfFoundLinks - doublesFound.. " unique wiki-internal urls")
 
-	chosenURLIndecies = {}
-	chosenURLs = {}
+	local chosenURLIndecies = {}
+	local chosenURLs = {}
 	math.randomseed(os.time())
 	for i = 1,math.min(numberOfChoices, numberOfFoundLinks - doublesFound-1),1 do
 		index = #chosenURLIndecies + 1
@@ -98,9 +98,31 @@ function wikiClient.nextWord()		-- choose a few random links from the wiki sourc
 	--fullURL = WIKI_URL .. urlTable[chosenURLs[inputNum] ].url
 end
 
-function wikiClient.setNewURL( newURL )
-	fullURL = WIKI_URL .. newURL
-	print("Next url: " .. fullURL)
+function wikiClient.getNumOfPreviousWords()
+	return #previousWikiWords
+end
+
+function wikiClient.randomPreviousWords()		-- give the player old words to go back to.
+
+	for i = #previousWikiWords, 2, -1 do -- shuffle
+		local r = math.random(i) -- select a random number between 1 and i
+		previousWikiWords[i], previousWikiWords[r] = previousWikiWords[r], previousWikiWords[i] -- swap the randomly selected item to position i
+	end
+	local chosenURLs = {}
+	local i = 1
+	for k, word in pairs( previousWikiWords ) do
+		if i > 5 then break end
+		table.insert( chosenURLs, { title = word.title, url=word.url } )
+	end
+	
+	return chosenURLs
+	--fullURL = WIKI_URL .. urlTable[chosenURLs[inputNum] ].url
+end
+
+function wikiClient.setNewWord( newWord )
+	fullURL = WIKI_URL .. newWord.url
+	table.insert( previousWikiWords, newWord )		-- remember, so player can jump back to an old word (using a joker)
+	print("URL chosen: " .. fullURL)
 end
 
 
@@ -125,7 +147,7 @@ function chooseWord( k )
 	
 	firstWordActive = false
 	
-	wikiClient.setNewURL( urlTable[k].url )
+	wikiClient.setNewWord( urlTable[k] )
 	
 	if returnEvent then
 		returnEvent( urlTable[k].title )

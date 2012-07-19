@@ -30,10 +30,11 @@ local function synchronizeClients( newClient )
 	for k, cl in pairs( connectedClients ) do
 		cl.client:send("NEWPLAYER:" .. newClient.clientNumber .. newClient.playerName .. "\n")
 		if	cl ~= newClient then
-			newClient.client:send("NEWPLAYER:" .. newClient.clientNumber .. cl.playerName .. "\n")
+			newClient.client:send("NEWPLAYER:" .. cl.clientNumber .. cl.playerName .. "\n")
 		end
 		numOfPlayers = numOfPlayers + 1
 	end
+	printTable(connectedClients)
 end
 
 function handleNewClient( newClient )
@@ -270,6 +271,12 @@ function connection.runClient( cl )				--handle all messages that come from the 
 			start, ending = msg:find( "CLIENTLEFT:" )
 			if start == 1 then
 				game.receiveServerMessage( msg:sub(ending+1, #msg) .. " has left the game." )
+				for k, v in pairs(connectedClients) do
+					if v.playerName == msg:sub(ending+1, #msg) then
+						connectedClients[k] = nil
+						break
+					end
+				end
 				return
 			end
 			

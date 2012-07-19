@@ -1,0 +1,18 @@
+TO DO Wiki-Based-RPG:
+====================
+[x]	- client list in game?
+[x]	- timer goes away when server has chosen word
+[x]	- server can type even if not all players have replied
+[x]	- change joker behaviour
+[x]	- highlight Player Names
+[x]	- when player leaves, clients still see him in lobby.
+[x]	- Sound when it's your turn.
+[x]	- Time up: ask players if they want to send what's already written
+[x]	- Word not recognized
+[x]	- Players: list order, don't let all players reply at same time.
+	- chat exportieren?
+	- Inventory
+	- Clients need to use Wiki words as well
+[x]	- screw time limit.
+[x]	- /skip creates extra line on server.
+	- When client received nextturn he gameBox text is overlapping input field.

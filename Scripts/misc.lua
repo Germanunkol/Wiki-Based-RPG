@@ -48,7 +48,11 @@ function printTable( t, tabs )
 			print(str .. k)
 			printTable( v, tabs + 1)
 		else
-			print(str .. k .. " " ..  v)
+			if type(v) == "string" or type(v) == "number" then
+				print(str .. k .. " " ..  v)
+			else
+				print(str .. k)
+			end
 		end
 	end
 end
