@@ -47,6 +47,8 @@ local fullNumberOfTurns = 1
 local currentPlayer = ""
 
 function addPlayerTurns()
+
+	print("adding new turns")
 	playerTurns1 = playerTurns2
 	playerTurns2 = playerTurns3
 	playerTurns3 = playerTurns4
@@ -64,6 +66,7 @@ function addPlayerTurns()
 end
 
 function sendNextPlayerTurns()
+	print("sending player turns")
 	local str = ""
 	local j = fullNumberOfTurns
 	for i=0,#playerTurns1,1 do 
@@ -87,13 +90,15 @@ function sendNextPlayerTurns()
 end
 
 function removePlayerTurn()
-	printTable(playerTurns1)
+	print("removing player turn")
+	
 	for i=0,#playerTurns1,1 do
 		playerTurns1[i] = playerTurns1[i+1]		-- move all upcoming players up one:
 	end
+	printTable(playerTurns1)
 	--playerTurns1[#playerTurns1] = nil
-	-- send to other players:
-	sendNextPlayerTurns()
+	-- send to other players, but only if the round isn't over yet. If it's over, then the addNewPlayerTurns function will send the data.:
+	if playerTurns1[0] then sendNextPlayerTurns() end
 end
 
 function displayNextPlayerTurns( str )
@@ -124,8 +129,10 @@ function displayNextPlayerTurns( str )
 end
 
 function game.sendNextTurn()
+	print("next player's turn:")
 	removePlayerTurn()
 	if playerTurns1[0] then
+		print(playerTurns1[0].name)
 		for k, cl in pairs( connectedClients ) do
 			if cl.playerName == playerTurns1[0].name then
 				cl.client:send( "YOURTURN:\n" )
@@ -438,8 +445,8 @@ function game.receiveAction( msg, typ, clientID)
 	if gameTextBox then
 		if server then
 			if playersHaveRepliedTable[clientID] == nil then
+				playersHaveRepliedTable[clientID] = true
 				-- if I have gotten no message from this player so far...
-				
 				fullNumberOfTurns = fullNumberOfTurns + 1
 				if not game.sendNextTurn() then allPlayersHaveReacted = true end		-- if this was the last player in the list, continue the story.
 			end
@@ -485,14 +492,14 @@ function game.show()
 	love.graphics.setFont( fontStatus )
 	if playerTurnsStrings[1] and playerTurnsStrings[1].ID and playerTurnsStrings[1].ID ~= 0 then
 		local r,g,b = getClientColour(playerTurnsStrings[1].ID)
-		love.graphics.setColor( r,g,b , 100 )
+		love.graphics.setColor( r,g,b , 75 )
 		love.graphics.rectangle( "fill",nextPlayerAreaX+4, nextPlayerAreaY+4, nextPlayerAreaWidth-8, fontStatus:getHeight())
 		love.graphics.print( playerTurnsStrings[1].ID, nextPlayerAreaX+5, nextPlayerAreaY+5 + (1-1)*fontStatus:getHeight())
 	end
 	love.graphics.setColor( 0,0,0 )
 	for i=1,#playerTurnsStrings,1 do
 		love.graphics.print( playerTurnsStrings[i].str, nextPlayerAreaX+5, nextPlayerAreaY+5 + (i-1)*fontStatus:getHeight())
-		if i*fontStatus:getHeight() > nextPlayerAreaHeight then
+		if (i+1)*fontStatus:getHeight() > nextPlayerAreaHeight then
 			break
 		end
 	end
@@ -601,7 +608,7 @@ function game.init()
 	local r,g,b
 	for key, cl in pairs( connectedClients ) do
 		r,g,b = getClientColour(key)
-		textBox.highlightTextName( gameTextBox, cl.playerName, r,g,b , 50 )
+		textBox.highlightTextName( gameTextBox, cl.playerName, r,g,b , 75 )
 	end
 
 	inventoryFieldHeader = textBox.new( chatAreaX+2, chatAreaY+chatAreaHeight+8, 1, fontInputHeader, 300 )

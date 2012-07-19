@@ -35,21 +35,16 @@ end
 function textBox.setVisibleLines( text, from, num )
 	text.showStartLine = math.max(from+1, 1)
 	text.showOnlyPart = num
-	if text.showOnlyPart and text.showStartLine then
-		print("showing lines from " .. text.showStartLine .. " to " .. text.showStartLine .. "+" ..text.showOnlyPart )
-	end
 end
 
 function textBox.scrollUp( text )
 	if text then
-		print("up " .. text.showStartLine-2)
 		textBox.setVisibleLines( text, text.showStartLine-2, text.showOnlyPart )
 	end
 end
 
 function textBox.scrollDown( text )
 	if text then
-		print("down " .. text.showStartLine)
 		if text.showStartLine < #text.lines then
 			textBox.setVisibleLines( text, text.showStartLine, text.showOnlyPart )
 		end

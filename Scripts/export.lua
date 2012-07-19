@@ -64,7 +64,6 @@ function export.toHtmlFile( text )				-- this function assumes that the game sta
 
 
 			stringToWrite = stringToWrite:gsub( "\nStory:([^\n]*)", "\n</p><i>%1</i><p CLASS=\"indent\">" )
-			--stringToWrite = stringToWrite:gsub( "\n", "\n<br />%1" )
 			
 			s,e = stringToWrite:find("\n", 1, true)
 			while s do
@@ -74,6 +73,10 @@ function export.toHtmlFile( text )				-- this function assumes that the game sta
 				end
 				s,e = stringToWrite:find("\n", e+1, true)
 			end
+			
+			-- make .html file look better:
+			stringToWrite = stringToWrite:gsub( "(<p CLASS=\"indent\">)", "\n%1" )
+			stringToWrite = stringToWrite:gsub( "(</p>)", "\n%1\n" )
 
 			file:write(stringToWrite)
 			file:close()
