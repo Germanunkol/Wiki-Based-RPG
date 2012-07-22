@@ -267,7 +267,7 @@ function game.useJoker()
 	scrollGameBox()
 	
 	-- wikiClient.inputFirstWord( chatAreaX, chatAreaY+chatAreaHeight+10, chatAreaWidth, gameAreaHeight - chatAreaHeight-20, game.newWordSet, "Choose new direction:")
-	chosenURLs = wikiClient.randomPreviousWords()
+	local chosenURLs = wikiClient.randomPreviousWords()
 	
 	if chosenURLs then
 	
@@ -474,7 +474,7 @@ function game.sendAction( )
 	scrollGameBox()
 end
 
-function game.receiveAction( msg, typ, clientID)
+function game.receiveAction( msg, typ, clientID )
 	if gameTextBox then
 		if server then
 			if playersHaveRepliedTable[clientID] == nil then
@@ -495,7 +495,7 @@ function game.receiveAction( msg, typ, clientID)
 			print( "Player " .. clientID .. " has skipped their turn." )
 		end
 
-		if not typ == "skip" then
+		if typ ~= "skip" then
 			-- if all that was sent was a "skip" command, don't write anything to the game window.
 			textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) ..  msg .. "\n" )
 		end
@@ -513,7 +513,7 @@ function game.receiveStory( msg )
 	table.insert( nextFrameEvent, {func = scrollGameBox, frames = 2 } )
 end
 
-function game.show()
+function game.show()		-- called once every frame
 	love.graphics.setColor( colBorder.r, colBorder.g, colBorder.b )
 	love.graphics.rectangle( "fill",gameAreaX, gameAreaY, gameAreaWidth, gameAreaHeight)
 	love.graphics.rectangle( "fill",chatAreaX, chatAreaY, chatAreaWidth, chatAreaHeight)
@@ -543,16 +543,35 @@ function game.show()
 	if textBox.getAccess( gameInputBox ) then
 		love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b )
 		love.graphics.rectangle( "fill",gameInputAreaX, gameInputAreaY, gameInputAreaWdith, gameInputAreaHeight)
-	end
-	
-	if textBox.getAccess( gameInputBox ) then
 		textBox.display( gameInputBox )
 	end
+
 	textBox.display( gameTextBox )
 	textBox.display( gameStatusBox )
 	
 	chat.show()
 	textBox.display( inventoryFieldHeader )
+	
+	if currentPlayer and currentPlayer ~= server then		-- display avatar of the player who's currently playing
+		for k, cl in pairs(connectedClients) do
+			if cl.playerName == currentPlayer then
+				if cl.avatar then
+					for i=0,AVATAR_PIXELS_X-1,1 do
+						for j=0,AVATAR_PIXELS_Y-1,1 do
+							if cl.avatar[i*AVATAR_PIXELS_Y+j] == 1 then
+								love.graphics.setColor( colCharM.r,colCharM.g,colCharM.b )
+								love.graphics.rectangle("fill", nextPlayerAreaX + i*8, nextPlayerAreaY-120 + j*8, 8, 8)
+							elseif cl.avatar[i*AVATAR_PIXELS_Y+j] == 2 then
+								love.graphics.setColor( colCharD.r,colCharD.g,colCharD.b )
+								love.graphics.rectangle("fill", nextPlayerAreaX + i*8, nextPlayerAreaY-120 + j*8, 8, 8)
+							end
+						end			
+					end
+				end
+				break
+			end
+		end
+	end
 	
 	if server and waitForPlayerActions then
 		textBox.setContent( gameStatusBox, "Waiting for " .. currentPlayer )
@@ -629,7 +648,7 @@ function game.init()
 	chatAreaHeight = love.graphics.getHeight() / 2 - 10
 	
 	nextPlayerAreaX = 10
-	nextPlayerAreaY = gameAreaY
+	nextPlayerAreaY = gameAreaY + 100
 	
 	nextPlayerAreaWidth = gameAreaX - nextPlayerAreaX - 10
 	nextPlayerAreaHeight = love.graphics.getHeight()/2-50

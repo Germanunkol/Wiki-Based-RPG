@@ -54,7 +54,17 @@ colUse = { r=0, g=0, b=0 }		-- for "/use" command
 colHighlightWikiWord = { r=200, g=225, b=170 }
 colHighlightWikiWordNew = { r=225, g=250, b=190 }
 
+colCharB = { r=240, g=210, b=150 }
+colCharM = { r=135, g=76, b=45 }
+colCharD = { r=50, g=20, b=10 }
 
+AVATAR_PIXELS_X = 15
+AVATAR_PIXELS_Y = 15
+AVATAR_PIXELS_WIDTH = 15
+AVATAR_PIXELS_HEIGHT = 15
+avatar = {}
+
+clientReady = false
 
 nextFrameEvent = {}			-- these functions will be called after the next draw call.
 testingConnection = 0
@@ -73,6 +83,10 @@ function love.load( arg )
 	love.keyboard.setKeyRepeat( 0.3, 0.03 )
 	testingConnection = true
 	table.insert( nextFrameEvent, {func = wikiClient.testConnection, frames = 2 } )
+	
+	for i=0,AVATAR_PIXELS_X*AVATAR_PIXELS_Y-1,1 do
+		avatar[i] = 0
+	end
 	
 	--wikiClient.newWord()
 	--wikiClient.nextWord()

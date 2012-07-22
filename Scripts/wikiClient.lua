@@ -210,7 +210,6 @@ function wikiClient.firstWordSet()
 			returnEvent( word )
 		end
 		
-		
 	else
 		textBox.setAccess( firstWordInputBox, true )
 		statusMsg.new( "Only numbers, spaces and letters allowed!" )
@@ -222,7 +221,7 @@ function wikiClient.startFirstWordSet()
 	table.insert( nextFrameEvent, {func = wikiClient.firstWordSet, frames = 2 } ) --make sure message is drawn before calling the event
 end
 
-function wikiClient.inputFirstWord( xPos, yPos, width, height, event, title)
+function wikiClient.inputWikiWord( xPos, yPos, width, height, event, title)
 	x, y, w, h, returnEvent = xPos, yPos, width, height, event
 	if firstWordActive == true then
 		textBox.remove( firstWordInputBox )
@@ -233,7 +232,7 @@ function wikiClient.inputFirstWord( xPos, yPos, width, height, event, title)
 	firstWordActive = true
 	buttons.clear()
 	if firstWordHeaderBox == nil then
-		firstWordHeaderBox = textBox.new( x+10, y + 3, 2, fontInputHeader, 300 )
+		firstWordHeaderBox = textBox.new( x+10, y + 3, 2, fontInputHeader, w )
 	end
 	textBox.setContent( firstWordHeaderBox, title )
 	if firstWordInputBox == nil then
@@ -245,8 +244,8 @@ function wikiClient.inputFirstWord( xPos, yPos, width, height, event, title)
 end
 
 function wikiClient.displayFirstWordChoosing()
-	love.graphics.setColor( colLobby.r, colLobby.g, colLobby.g, 255)
-	love.graphics.rectangle("fill", x, y, w, h)	
+	--love.graphics.setColor( colLobby.r, colLobby.g, colLobby.g, 255)
+	--love.graphics.rectangle("fill", x, y, w, h)	
 	textBox.display( firstWordInputBox )
 	textBox.display( firstWordHeaderBox )
 end

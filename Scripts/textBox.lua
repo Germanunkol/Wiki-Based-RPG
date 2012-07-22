@@ -54,31 +54,6 @@ end
 function textBox.setLineColour( text, line, red, green, blue)
 	text.colours[line] = { r=red, g=green, b=blue }
 end
---[[
-local function splitIntoLines( text )		-- will calculate line breaks for the text
-	text.lines = {}
-	local partialStr = ""
-	for char in text.content:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- go through entire text
-		if text.font:getWidth( partialStr .. char ) >= text.width or char == "\n" then
-			text.lines[#text.lines+1] = partialStr
-			partialStr = ""
-		end
-		if char ~= "\n" then
-			partialStr = partialStr .. char
-		end
-	end
-	if text.font:getWidth( partialStr .. char ) > text.width then 
-		string.gfind(partialStr, ".* [^ ]*")
-	end
-	if partialStr ~= "" then
-		text.lines[#text.lines+1] = partialStr
-	end
-	if text.lines[1] == nil then
-		text.lines[1] = ""
-	end
-	text.hasChanged = false
-end]]--
-
 
 local function splitIntoLines( text )		-- will calculate line breaks for the text
 	text.lines = {}
@@ -370,7 +345,18 @@ function textBox.input( key, unicode )
 					break			-- only allow one textBox to be terminated per ESC-Key-Pressed.
 				end
 			elseif key == "tab" then
-				if curGameWord and #curGameWord > 0 then
+
+				if lobby.active() and descriptionWord and #descriptionWord > 0 then
+					if (v.font:getWidth(v.lines[#v.lines] .. curGameWord) < v.width or #v.lines < v.maxLines) and #v.lines <= v.maxLines then
+						absCursorPos = 0
+						for i = 1,v.cursorLine-1,1 do
+							absCursorPos = absCursorPos + #v.lines[i]
+						end
+						absCursorPos = absCursorPos + v.cursorPos
+						v.content = v.content:sub(1, absCursorPos) .. descriptionWord .. v.content:sub(absCursorPos+1, #v.content)
+						v.cursorPos = v.cursorPos + #descriptionWord
+					end
+				elseif curGameWord and #curGameWord > 0 then
 					if (v.font:getWidth(v.lines[#v.lines] .. curGameWord) < v.width or #v.lines < v.maxLines) and #v.lines <= v.maxLines then
 						absCursorPos = 0
 						for i = 1,v.cursorLine-1,1 do

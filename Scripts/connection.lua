@@ -31,6 +31,21 @@ local function synchronizeClients( newClient )
 		cl.client:send("NEWPLAYER:" .. newClient.clientNumber .. newClient.playerName .. "\n")
 		if	cl ~= newClient then
 			newClient.client:send("NEWPLAYER:" .. cl.clientNumber .. cl.playerName .. "\n")
+			if cl.description then	-- if I have a character description already, send it along.
+				newClient.client:send("CHARDESCRIPTION:" .. cl.clientNumber .. cl.description .. "\n")
+			end
+			if cl.ready then	-- if I have a character description already, send it along.
+				newClient.client:send("READY:" .. cl.clientNumber .. "true" .. "\n")
+			else
+				newClient.client:send("READY:" .. cl.clientNumber .. "false" .. "\n")
+			end
+			if cl.avatar then
+				local str = ""
+				for i=0,AVATAR_PIXELS_X*AVATAR_PIXELS_Y-1,1 do
+					str = str .. cl.avatar[i]
+				end
+				newClient.client:send("AVATAR:" .. cl.clientNumber .. str .. "\n")
+			end
 		end
 		numOfPlayers = numOfPlayers + 1
 	end
@@ -80,8 +95,41 @@ function connection.serverBroadcast( msg )
 	end
 end
 
+
+
 function connection.getPlayers()
 	return numOfPlayers
+end
+
+function connection.receiveDiscription( descr )
+	local ID = tonumber( descr:sub(1,1) )
+	for k, cl in pairs(connectedClients) do
+		if cl.clientNumber == ID then
+			cl.description = descr:sub(2, #descr)
+			return
+		end
+	end
+end
+
+function connection.receiveAvatar( str )
+	for k, cl in pairs(connectedClients) do
+		if cl.clientNumber == tonumber(str:sub(1, 1)) then
+			str = str:sub(2, #str )
+			cl.avatar = {}
+			for i=0,AVATAR_PIXELS_X*AVATAR_PIXELS_Y-1,1 do
+				cl.avatar[i] = tonumber( str:sub(i+1,i+1) )
+			end
+			return
+		end
+	end
+end
+
+function connection.sendAvatar()
+	local str = ""
+	for i=0,AVATAR_PIXELS_X*AVATAR_PIXELS_Y-1,1 do
+		str = str .. avatar[i]
+	end
+	client:send("AVATAR:" .. str .. "\n")
 end
 
 local start, ending
@@ -117,10 +165,35 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 				end
 				
 				print("end received: " .. msg)
-			else	
+			else
+			
+				start, ending = msg:find( "CHARDESCRIPTION:" )
+				if start == 1 then
+					connection.receiveDiscription( cl.clientNumber .. msg:sub(ending+1, #msg) )
+					connection.serverBroadcast("CHARDESCRIPTION:" .. cl.clientNumber .. msg:sub(ending+1, #msg))
+				end
+				
+				start, ending = msg:find( "READY:true" )
+				if start == 1 then
+					cl.ready = true
+					connection.serverBroadcast("READY:" .. cl.clientNumber .. "true")
+				end
+				
+				start, ending = msg:find( "READY:false" )
+				if start == 1 then
+					cl.ready = false
+					connection.serverBroadcast("READY:" .. cl.clientNumber .. "false")
+				end
+				
+				start, ending = msg:find( "AVATAR:" )
+				if start == 1 then
+					connection.receiveAvatar( cl.clientNumber .. msg:sub( ending+1, #msg ) )
+					connection.serverBroadcast("AVATAR:" .. cl.clientNumber .. msg:sub( ending+1, #msg ) )
+				end
+			
 				start, ending = msg:find( "ACTION:do" )
 				if start == 1 then
-					game.receiveAction( cl.playerName  .. msg:sub(ending+1, #msg), "do", cl.clientNumber)
+					game.receiveAction( cl.playerName .. msg:sub(ending+1, #msg), "do", cl.clientNumber)
 					connection.serverBroadcast( "ACTION:do" .. cl.playerName .. msg:sub(ending+1, #msg) )
 				end
 				start, ending = msg:find( "ACTION:say" )
@@ -200,6 +273,32 @@ function connection.runClient( cl )				--handle all messages that come from the 
 			if start == 1 then
 				table.insert( connectedClients, {playerName=msg:sub(ending+2, #msg), clientNumber=tonumber( msg:sub(ending+1, ending+1) ) } )
 				return
+			end
+			
+			start, ending = msg:find( "CHARDESCRIPTION:" )
+			if start == 1 then
+				connection.receiveDiscription( msg:sub(ending+1, #msg) )
+			end
+			
+			start, ending = msg:find( "READY:" )
+			if start == 1 then
+				print(msg:sub(ending+3, #msg))
+				for k, cl in pairs(connectedClients) do
+					if cl.clientNumber == tonumber(msg:sub(ending+1, ending+1)) then
+						if msg:sub(ending+2, #msg):find("true") then
+							cl.ready = true
+						else
+							cl.ready = false
+						end
+						return
+					end
+				end
+				return
+			end
+			
+			start, ending = msg:find( "AVATAR:" )
+			if start == 1 then
+				connection.receiveAvatar( msg:sub(ending+1, #msg) )
 			end
 			
 			start, ending = msg:find( "CURWORD:" )

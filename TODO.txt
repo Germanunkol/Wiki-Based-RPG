@@ -16,3 +16,4 @@ TO DO Wiki-Based-RPG:
 [x]	- screw time limit.
 [x]	- /skip creates extra line on server.
 	- When client received nextturn he gameBox text is overlapping input field.
+	- increase avatar Colour contrast

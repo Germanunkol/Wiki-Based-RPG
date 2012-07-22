@@ -69,7 +69,8 @@ function export.toHtmlFile( text )				-- this function assumes that the game sta
 				if stringToWrite:sub( s-#"</i><p CLASS=\"indent\">", s-1 ) ~= "</i><p CLASS=\"indent\">" then
 					stringToWrite = stringToWrite:sub(1, s-1) .. "<br />" .. stringToWrite:sub(s, #stringToWrite)
 				end
-				s,e = stringToWrite:find("\n", e+1, true)
+				print(stringToWrite:sub(e+6, #stringToWrite))
+				s,e = stringToWrite:find("\n", e+7, true)
 			end
 			
 			-- make .html file look better:
