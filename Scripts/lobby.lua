@@ -8,6 +8,21 @@ local avatarPicY = 410
 
 function attemptGameStart()
 
+	for k, cl in pairs( connectedClients ) do
+		if cl.ready ~= true then
+			rand = math.random(7)
+			if rand == 1 then statusMsg.new( "Some heroes have not packed their lunchbags yet." )
+			elseif rand == 2 then statusMsg.new( "Still waiting for the heroes to dress..." )
+			elseif rand == 3 then statusMsg.new( "SOMEONE is still not ready!" )
+			elseif rand == 4 then statusMsg.new( "Waiting for the heroes to draw their little avatar-thingies..." )
+			elseif rand == 5 then statusMsg.new( "*Sigh*... nope. Someone's not ready yet." )
+			else statusMsg.new( "Someone's still getting ready..." )
+			end
+			
+			return
+		end
+	end
+
 	local numClients = 0
 	for k, cl in pairs( connectedClients ) do
 		numClients = numClients + 1
@@ -15,13 +30,13 @@ function attemptGameStart()
 		cl.client:send( "GAMESTART:\n" )
 	end
 	print("clients found: " .. numClients)
-	--if numClients == 0 then
+	if numClients == 0 then
 		statusMsg.new( "Need at least one player!" )
-	--else
+	else
 		buttons.clear()		-- remove game start button
 		active = false
 		game.init()
-	--end
+	end
 end
 
 local found, multiple, urlTable
