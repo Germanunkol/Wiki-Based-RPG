@@ -60,6 +60,7 @@ Once the server has finished writing the first part of the story, the clients ta
 - /say TEXT
 - /use inventoryID TEXT
 
+####Example 1####
 For example, if you have a key as the first Object in your inventory the following text:
 
 	/say Let me check if I can open this... /do examines the chest. /use 1 chest's lock
@@ -69,12 +70,22 @@ will produce:
 	Germanunkol: "Let me check if I can open this..."
 	Germanunkol examines the chest.
 	Germanunkol uses Key on chest's lock.
+	
+####Example 2####
+
+	/do jumps. /say Look, I can jump higher than you! /do jumps even higher.
+	
+will produce:
+
+	Germanunkol jumps.
+	Germanunkol: "Look, I can jump higher than you!"
+	Germanunkol jumps even higher.
+	
+Note that you do not need to add quotes when speaking, the game will add them for you.
 
 While the clients are busy replying, the server can choose the next wiki word from the list. Optionally, he/she can put the object directly into the inventory of a client.
 ###Jokers###
 The server has 3 Jokers which he/she can use to go back to one of the previous words, to get a new chance to take a different path.
-###Inventory###
-When the server is busy 
 
 Report Bugs/Request features
 ================
