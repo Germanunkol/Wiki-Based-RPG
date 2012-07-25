@@ -5,11 +5,18 @@ local urlManipulation = require("Scripts/urlManip")
 
 http.TIMEOUT = 10
 
-local WIKI_NOARTICLE = "<div id=\"mw%-content%-text\"><div class=\"noarticletext\">"
-local WIKI_DELETEDPAGE = "<div id=\"mw%-content%-text\"><div class=\"mw%-warning%-with%-logexcerpt\">"
-local WIKI_STARTOFCONTENTS = "<div id=\"mw%-content%-text\"-"
+-- this is the base URL of the wiki. To start out, you can try "http://de.wikipedia.org" or "http://fr.wikipedia.org":
 local WIKI_URL = "http://en.wikipedia.org"
+-- if this line is found on the source page, then there is no wiki site for the word you're looking for:
+local WIKI_NOARTICLE = "<div id=\"mw%-content%-text\"><div class=\"noarticletext\">"
+-- if this line is found, then the page has been deleted.
+local WIKI_DELETEDPAGE = "<div id=\"mw%-content%-text\"><div class=\"mw%-warning%-with%-logexcerpt\">"
+-- this is what the text body starts with. The game will only look for links starting after this line, because other links might be links that have nothing to do with the content. We don't want those.
+local WIKI_STARTOFCONTENTS = "<div id=\"mw%-content%-text\"-"
+-- if there's more than one page to a given word, then this disambiguation is found in the page source somewhere:
 local WIKI_DISAMBIGUATION = "[D,d]isambig[^\"]*%.svg%.png"
+
+-- the number of wiki words that the game will choose from the page:
 local numberOfChoices = 5
 
 local fullURL = ""

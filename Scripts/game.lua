@@ -560,10 +560,10 @@ function game.show()		-- called once every frame
 						for j=0,AVATAR_PIXELS_Y-1,1 do
 							if cl.avatar[i*AVATAR_PIXELS_Y+j] == 1 then
 								love.graphics.setColor( colCharM.r,colCharM.g,colCharM.b )
-								love.graphics.rectangle("fill", nextPlayerAreaX + i*8, nextPlayerAreaY-120 + j*8, 8, 8)
+								love.graphics.rectangle("fill", nextPlayerAreaX + i*8, nextPlayerAreaY-117 + j*8, 8, 8)
 							elseif cl.avatar[i*AVATAR_PIXELS_Y+j] == 2 then
 								love.graphics.setColor( colCharD.r,colCharD.g,colCharD.b )
-								love.graphics.rectangle("fill", nextPlayerAreaX + i*8, nextPlayerAreaY-120 + j*8, 8, 8)
+								love.graphics.rectangle("fill", nextPlayerAreaX + i*8, nextPlayerAreaY-117 + j*8, 8, 8)
 							end
 						end			
 					end

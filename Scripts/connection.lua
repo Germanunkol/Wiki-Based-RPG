@@ -148,8 +148,8 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 		if msg ~= nil then
 			print("received: " .. msg)
 			if msg:find( "NAME:" ) == 1 then
-				cl.playerName = msg:sub( 6, #msg )
 				local nameTaken = false
+				cl.playerName = msg:sub( 6, #msg )
 				for k2, cl2 in pairs( connectedClients) do
 					if cl2 ~= cl and cl2.playerName == cl.playerName then
 						nameTaken = true

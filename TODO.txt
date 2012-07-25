@@ -12,8 +12,8 @@ TO DO Wiki-Based-RPG:
 [x]	- Players: list order, don't let all players reply at same time.
 	- chat exportieren?
 	- Inventory
-	- Clients need to use Wiki words as well
+[h]	- Clients need to use Wiki words as well
 [x]	- screw time limit.
 [x]	- /skip creates extra line on server.
-	- When client received nextturn he gameBox text is overlapping input field.
-	- increase avatar Colour contrast
+	- When client received nextturn the gameBox text is overlapping input field.
+[x]	- increase avatar Colour contrast

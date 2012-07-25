@@ -16,7 +16,9 @@ function attemptGameStart()
 			elseif rand == 3 then statusMsg.new( "SOMEONE is still not ready!" )
 			elseif rand == 4 then statusMsg.new( "Waiting for the heroes to draw their little avatar-thingies..." )
 			elseif rand == 5 then statusMsg.new( "*Sigh*... nope. Someone's not ready yet." )
-			else statusMsg.new( "Someone's still getting ready..." )
+			elseif rand == 6 then statusMsg.new( "Heroes are taking their time..." )
+			elseif rand == 7 then statusMsg.new( "A hero is still busy kissing his mum good-bye..." )
+			else statusMsg.new( "If only they were all ready..." )
 			end
 			
 			return
@@ -180,7 +182,7 @@ function lobby.firstWordSet( word )
 	connection.serverBroadcast("CURWORD:" .. startingWord .. "\n")
 
 	buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, "Change first Word", drawButton, highlightButton , lobby.inputFirstWord )
-	buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Start Game", drawButton, highlightButton , attemptGameStart )
+	buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Begin journey", drawButton, highlightButton , attemptGameStart )
 	
 	statusMsg.new( "Start word set." )
 end
@@ -199,7 +201,7 @@ function lobby.init()
 	
 	
 	if server then
-		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, "Choose first Word", drawButton, highlightButton , lobby.inputFirstWord )
+		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, "Choose Path", drawButton, highlightButton , lobby.inputFirstWord )
 	else
 		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, "Describe character", drawButton, highlightButton , lobby.inputDescriptionWord )
 		
