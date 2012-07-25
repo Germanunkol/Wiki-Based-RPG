@@ -206,7 +206,7 @@ function lobby.init()
 		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, "Describe character", drawButton, highlightButton , lobby.inputDescriptionWord )
 		
 		setAvatarButtons()
-		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Ready [ ]", drawButton, highlightButton , sendReady )
+		-- buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Ready [ ]", drawButton, highlightButton , sendReady )
 	end
 
 	local helpFile = io.open( "Help/lobby.txt", "r" )

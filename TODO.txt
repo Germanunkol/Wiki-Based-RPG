@@ -17,3 +17,4 @@ TO DO Wiki-Based-RPG:
 [x]	- /skip creates extra line on server.
 	- When client received nextturn the gameBox text is overlapping input field.
 [x]	- increase avatar Colour contrast
+	- avatar save button

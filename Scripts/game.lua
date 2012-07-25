@@ -5,6 +5,7 @@ local active = false
 --local REPLYTIME = 180
 
 local NUMBER_OF_JOKERS = 3
+INVENTORY_CAPACITY = 5
 
 local gameAreaX = 0
 local gameAreaY = 0
@@ -162,7 +163,7 @@ local chosenURLs
 
 function chooseNextWord( index )
 	if chosenURLs then
-		nextWordChosen = true
+		-- nextWordChosen = true
 		
 		-- change colour of last curGameWord:
 		textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWord.r, colHighlightWikiWord.g, colHighlightWikiWord.b )
@@ -181,6 +182,8 @@ function chooseNextWord( index )
 		
 		statusMsg.new( "Chose: \"" .. curGameWord .."\"")
 		
+		textBox.setContent( inventoryFieldHeader, "What would you like to do?" )
+		
 		textBox.highlightClearAll( gameInputBox )
 		textBox.highlightText( gameInputBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
 		textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
@@ -188,28 +191,42 @@ function chooseNextWord( index )
 		wikiClient.setNewWord( chosenURLs[index] )
 		
 		buttons.clear()
-		if server then game.setJokerButtons() end
-		game.setButtons()
-		textBox.setContent( inventoryFieldHeader, "" )
-		if waitForPlayerActions == false then 
-			textBox.setContent( gameStatusBox, "Continue the story. Use \"" .. curGameWord .. "\" in your text.")
-			if chat.getActive() == false then
-				textBox.setAccess( gameInputBox, true, true )
-				scrollGameBox()
+		buttons.add( chatAreaX+10, chatAreaY+chatAreaHeight + 30, chatAreaWidth, buttonHeight/2+5, "Use for story", drawButton, highlightButton , game.useWord )
+	
+		local i = 1
+		for k, cl in pairs( connectedClients ) do
+			if i < 5 then
+				titleStr = "Give to "
+				for char in cl.playerName:gfind("([%z\1-\127\194-\244][\128-\191]*)") do
+					titleStr = titleStr .. char
+					if buttonFont:getWidth( titleStr ) >= chatAreaWidth-30 then
+						 break
+					end
+				end
+				if titleStr ~= cl.playerName then
+					titleStr = titleStr .. "..."
+				end
+				buttons.add( chatAreaX+10, chatAreaY+chatAreaHeight + 35 + i*(buttonHeight-10), chatAreaWidth, buttonHeight/2+5, titleStr, drawButton, highlightButton , game.giveCurWordToClient, k )
 			end
+			i = i+1
 		end
-		chosenURLs = nil
 	end
 end
+
 
 function game.serverChooseNextWord()
 
 	chosenURLs = wikiClient.nextWord()
-	textBox.setContent( inventoryFieldHeader, "Choose your path..." )
+	game.chooseWord()
+end
+
+function game.chooseWord()
+	textBox.setContent( inventoryFieldHeader, "Choose a word..." )
 	if chosenURLs then
 		local i = 0
 		local j
 		local titleStr = 0
+		buttons.clear()
 		
 		for k, v in pairs( chosenURLs ) do							-- show all possible Words that server can choose as buttons.
 			print(k .. ": " .. v.title .. " @ " .. v.url)
@@ -309,9 +326,42 @@ function game.setJokerButtons()
 	game.setButtons()
 end
 
-function game.newWordSet( word )
+function game.giveCurWordToClient( k )
+	if connectedClients[k] then
+		game.addToInventory( connectedClients[k].clientNumber, curGameWord )
+		statusMsg.new("Word will be added to " .. connectedClients[k].playerName .. "'s inventory." )
+	else
+		print("Error: Client not found. Can't give object to client.")
+		statusMsg.new("Client not found. Can't give object to client.")
+	end
+	game.chooseWord()
+end
+
+function game.useWord()
+	chosenURLs = nil
+	game.wordChoosingEnded()
+end
+
+
+function game.wordChoosingEnded()
 	nextWordChosen = true
-		
+	buttons.clear()
+	if server then game.setJokerButtons() end
+	game.setButtons()	
+	textBox.setContent( inventoryFieldHeader, "" )
+	if waitForPlayerActions == false then 
+		textBox.setContent( gameStatusBox, "Continue the story. Use \"" .. curGameWord .. "\" in your text.")
+		if chat.getActive() == false then
+			textBox.setAccess( gameInputBox, true, true )
+			scrollGameBox()
+		end
+	end
+end
+
+
+--[[
+function game.newWordSet( word )
+
 	-- change colour of last curGameWord:
 	textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWord.r, colHighlightWikiWord.g, colHighlightWikiWord.b )
 	curGameWord = word
@@ -333,24 +383,43 @@ function game.newWordSet( word )
 	textBox.highlightText( gameInputBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
 	textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
 	
-	buttons.clear()
-	if server then game.setJokerButtons() end
-	game.setButtons()
-	textBox.setContent( inventoryFieldHeader, "" )
-	if waitForPlayerActions == false then 
-		textBox.setContent( gameStatusBox, "Continue the story. Use \"" .. curGameWord .. "\" in your text.")
-		if chat.getActive() == false then
-			textBox.setAccess( gameInputBox, true, true )
-			scrollGameBox()
+	statusMsg.new( "New word set." )
+	
+	
+	buttons.add( chatAreaX+10, chatAreaY+chatAreaHeight + 25, chatAreaWidth, buttonHeight/2+5, "Don't give away", drawButton, highlightButton , game.wordChoosingEnded )
+	
+	local i = 1
+	for k, cl in pairs( connectedClients ) do
+		if i < 5 then
+			titleStr = "Give to "
+			for char in cl.playerName:gfind("([%z\1-\127\194-\244][\128-\191]*)") do
+				titleStr = titleStr .. char
+				if buttonFont:getWidth( titleStr ) >= chatAreaWidth-30 then
+					 break
+				end
+			end
+			if titleStr ~= cl.playerName then
+				titleStr = titleStr .. "..."
+			end
+			buttons.add( chatAreaX+10, chatAreaY+chatAreaHeight + 25 + i*(buttonHeight-10), chatAreaWidth, buttonHeight/2+5, titleStr, drawButton, highlightButton , game.giveCurWordToClient, k )
 		end
+		i = i+1
 	end
 	
-	statusMsg.new( "New word set." )
 end
+]]--
 
 function game.inputEscape()
 	scrollGameBox()
 end
+
+local inventoryAddCue = {}
+
+function game.addToInventory( playerID, object )
+	table.insert( inventoryAddCue, { ID = playerID, item = object } )
+end
+
+local firstStoryPartSent = false
 
 function game.sendStory()
 	local str = textBox.getContent( gameInputBox )
@@ -362,12 +431,32 @@ function game.sendStory()
 				
 			connection.serverBroadcast("CURWORD:" .. curGameWord .. "\n")		--send the current wiki word along, so that it can be highlighted on the players' side.
 			connection.serverBroadcast( "STORY:" .. str .. "\n")
+			
+			game.receiveStory( str )
+			
 			if game.sendNextTurn() then
 				allPlayersHaveReacted = false
 			else
 				allPlayersHaveReacted = true
 			end
-			game.receiveStory( str )
+			
+			
+			if firstStoryPartSent == false then
+				firstStoryPartSent = true
+				for k, cl in pairs(connectedClients) do
+					if cl.description then
+				 		connection.serverBroadcast( "TXT:" .. cl.description .. "\n")
+				 		game.receiveStory(cl.description, true)
+					end
+				end
+			end
+			
+			for k, v in pairs(inventoryAddCue) do
+				connection.inventoryAdd( v.ID, v.item )
+				inventoryAddCue[k] = nil
+			end
+			
+			
 			textBox.setContent( gameInputBox, "" )
 			textBox.setContent( gameStatusBox, "Waiting for heroes to reply..." )
 			textBox.setColour( gameStatusBox, 0, 0, 0 )
@@ -390,20 +479,26 @@ function game.sendStory()
 	scrollGameBox()
 end
 
-function minimum( posStart1, posStart2, posEnd1, posEnd2 )
-	if posStart1 and posStart2 then
-		if posStart1 < posStart2 then
-			return posStart1, posEnd1
-		else
-			return posStart2, posEnd2
-		end
-	elseif posStart1 then
-		return posStart1, posEnd1
-	elseif posStart2 then
-		return posStart2, posEnd2
-	else
-		return nil, nil
+function srt( a, b )
+	if a.s and b.s then
+		return (a.s < b.s)
+	elseif a.s then
+		return true
 	end
+	return false
+end
+
+function minimum( posStart1, posStart2, posStart3, posEnd1, posEnd2, posEnd3 )
+	local tbl = {}
+	table.insert( tbl, {s=posStart1, e=posEnd1} )
+	table.insert( tbl, {s=posStart2, e=posEnd2} )
+	table.insert( tbl, {s=posStart3, e=posEnd3} )
+	
+	printTable(tbl)
+	table.sort( tbl, srt )
+	
+	printTable(tbl)
+	return tbl[1].s, tbl[1].e
 end
 
 
@@ -419,7 +514,24 @@ function insertAction( newStr )
 			actionStrings[#actionStrings+1] = { typ="say", str=newStr:sub(5, #newStr) }
 		end
 	elseif newStr:find("/use") == 1 then
-		actionStrings[#actionStrings+1] = { typ="use", str=newStr:sub(5, #newStr) }
+		local inventoryID = tonumber(newStr:sub(6, 6))
+		local found = false
+		if inventoryID and inventoryID > 0 and inventoryID < 5 then
+			for k, cl in pairs(connectedClients) do
+				if cl.playerName == plName then
+					if cl.inventory[inventoryID] ~= nil then
+						actionStrings[#actionStrings+1] = { typ="use", str=cl.inventory[inventoryID] .. " on " .. newStr:sub(8, #newStr) }
+						client:send("INVREMOVE:" .. cl.clientNumber .. cl.inventory[inventoryID] .. "\n")
+						found = true
+					end
+				end
+				break
+			end
+		end
+		if found == false then
+			statusMsg.new("This object does not exist in your inventory!")
+			actionStrings[#actionStrings+1] = { typ="skip", str = "" }		--needed! otherwise server won't know that client has attempted to reply, if only a wrong /use action was sent.
+		end
 	elseif newStr:find("/skip") then
 		actionStrings[#actionStrings+1] = { typ="skip", str = "" }
 	else
@@ -438,8 +550,9 @@ function game.sendAction( )
 			--the following code splits the string at the different commands (/do, /say and later /use)
 			local posStart1, posEnd1 = str:find( "/say" )
 			local posStart2, posEnd2 = str:find( "/do" )
+			local posStart3, posEnd3 = str:find( "/use" )
 			local posStart, posEnd, posStartNew, posEndNew
-			posStart, posEnd = minimum( posStart1, posStart2, posEnd1, posEnd2 )
+			posStart, posEnd = minimum( posStart1, posStart2, posStart3, posEnd1, posEnd2, posEnd3 )
 			if posStart == nil then
 				insertAction( "/say " .. str )		-- if no command was used, assume /say.
 			elseif posStart ~= 1 then
@@ -448,7 +561,8 @@ function game.sendAction( )
 			while posStart do
 				posStart1, posEnd1 = str:find( "/say", posStart+1 )
 				posStart2, posEnd2 = str:find( "/do", posStart+1 )
-				posStartNew, posEndNew = minimum( posStart1, posStart2, posEnd1, posEnd2 )
+				posStart3, posEnd3 = str:find( "/use", posStart+1 )
+				posStartNew, posEndNew = minimum( posStart1, posStart2, posStart3, posEnd1, posEnd2, posEnd3 )
 				if posStartNew then
 					--print(str:sub(posStart, posStartNew-1))
 					insertAction( str:sub(posStart, posStartNew-1) )
@@ -504,11 +618,15 @@ function game.receiveAction( msg, typ, clientID )
 	table.insert( nextFrameEvent, {func = scrollGameBox, frames = 2 } )
 end
 
-function game.receiveStory( msg )
+function game.receiveStory( msg, noPrefix )
 	if gameTextBox then
 		--textBox.setColourStart( gameTextBox, #textBox.getContent( gameTextBox ) + 1, colStory.r, colStory.g, colStory.b )
 		textBox.setLineColour( gameTextBox,  textBox.numLines( gameTextBox ) + 1, colStory.r, colStory.g, colStory.b )
-		textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .. "Story: " .. msg .. "\n")
+		if noPrefix then
+			textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .. msg .. "\n")
+		else
+			textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .. "Story: " .. msg .. "\n")
+		end		
 	end
 	table.insert( nextFrameEvent, {func = scrollGameBox, frames = 2 } )
 end
@@ -567,6 +685,18 @@ function game.show()		-- called once every frame
 							end
 						end			
 					end
+				end
+				break
+			end
+		end
+	end
+	
+	if client then
+		for k, cl in pairs(connectedClients) do
+			if cl.playerName == plName then
+				love.graphics.setFont( fontStatus )
+				for a, item in pairs(cl.inventory) do
+					love.graphics.print(a .. ": " .. item, chatAreaX+5, chatAreaY+chatAreaHeight+12 + fontStatus:getHeight()*a )
 				end
 				break
 			end

@@ -69,9 +69,6 @@ clientReady = false
 nextFrameEvent = {}			-- these functions will be called after the next draw call.
 testingConnection = 0
 
-function initSound()
-
-end
 
 function love.load( arg )
 

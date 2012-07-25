@@ -57,7 +57,7 @@ function handleNewClient( newClient )
 	local clientNumber = 0
 	for i=1, maxPlayers, 1 do
 		if connectedClients[i] == nil then
-			connectedClients[i] = { client = newClient, playerName = "" }
+			connectedClients[i] = { client = newClient, playerName = "", inventory = {} }
 			connectedClients[i].clientNumber = i
 			clientNumber = i
 			break
@@ -132,6 +132,42 @@ function connection.sendAvatar()
 	client:send("AVATAR:" .. str .. "\n")
 end
 
+function connection.inventoryAdd( playerID, object )
+	for k, cl in pairs( connectedClients ) do
+		if cl.clientNumber == tonumber(playerID) then
+			if #cl.inventory >= INVENTORY_CAPACITY then return end
+			for a, v in pairs(cl.inventory) do
+				if v == object then return end
+			end
+			table.insert( cl.inventory, object )
+			game.receiveStory( cl.playerName .. " received " .. object, true )
+		end
+	end
+	if server then
+		connection.serverBroadcast("INVADD:" .. playerID .. object)
+	end
+end
+
+function connection.inventoryRemove( playerID, object )
+	
+	if server then
+		connection.serverBroadcast("INVREMOVE:" .. playerID .. object)
+	end
+	
+	if playerID then
+		for k, cl in pairs( connectedClients ) do
+			if cl.clientNumber == playerID then
+				for a, v in pairs(cl.inventory) do
+					if v == object then
+						cl.inventory[a] = nil		-- remove the object from the player's inventory.
+						break
+					end
+				end
+			end
+		end
+	end
+end
+
 local start, ending
 
 function connection.runServer( tcpServer )		--handle all messages that come from the clients
@@ -203,13 +239,19 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 				end
 				start, ending = msg:find( "ACTION:use" )
 				if start == 1 then
-					game.receiveAction( cl.playerName .. ": " .. msg:sub(ending+1, #msg), "use", cl.clientNumber )
-					connection.serverBroadcast( "ACTION:use" .. cl.playerName .. ": " .. msg:sub(ending+1, #msg) )
+					game.receiveAction( cl.playerName .. " uses " .. msg:sub(ending+1, #msg), "use", cl.clientNumber )
+					connection.serverBroadcast( "ACTION:use" .. cl.playerName .. " uses " .. msg:sub(ending+1, #msg) )
 				end
 				start, ending = msg:find( "ACTION:skip" )
 				if start == 1 then
 					game.receiveAction( "", "skip", cl.clientNumber )
 					--connection.serverBroadcast( "ACTION:skip" .. cl.playerName .. ": " .. msg:sub(ending+1, #msg) )
+				end
+				
+				start, ending = msg:find( "INVREMOVE:" )
+				if start == 1 then
+					connection.inventoryRemove( tonumber(msg:sub(ending+1, ending+1)), msg:sub(ending+2, #msg) )
+					return
 				end
 				
 				start, ending = msg:find( "CHAT:" )
@@ -271,7 +313,7 @@ function connection.runClient( cl )				--handle all messages that come from the 
 			
 			start, ending = msg:find( "NEWPLAYER:" )
 			if start == 1 then
-				table.insert( connectedClients, {playerName=msg:sub(ending+2, #msg), clientNumber=tonumber( msg:sub(ending+1, ending+1) ) } )
+				table.insert( connectedClients, {playerName=msg:sub(ending+2, #msg), clientNumber=tonumber( msg:sub(ending+1, ending+1) ), inventory={} } )
 				return
 			end
 			
@@ -348,9 +390,27 @@ function connection.runClient( cl )				--handle all messages that come from the 
 				return
 			end
 			
+			start, ending = msg:find( "INVADD:" )
+			if start == 1 then
+				connection.inventoryAdd( msg:sub(ending+1, ending+1), msg:sub(ending+2, #msg) )
+				return
+			end
+			
+			start, ending = msg:find( "INVREMOVE:" )
+			if start == 1 then
+				connection.inventoryRemove( tonumber(msg:sub(ending+1, ending+1)), msg:sub(ending+2, #msg) )
+				return
+			end
+			
 			start, ending = msg:find( "CHAT:" )
 			if start == 1 then
 				chat.receive( msg:sub(ending+1, #msg) )
+				return
+			end
+			
+			start, ending = msg:find( "TXT:" )
+			if start == 1 then
+				game.receiveStory( msg:sub(ending+1, #msg), true )
 				return
 			end
 			
