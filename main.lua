@@ -74,7 +74,7 @@ function love.load( arg )
 
 	success = love.graphics.setMode( 1024, 680, false, false, 0 )
 	love.graphics.setCaption( "Wiki-Based RPG" )
-	sound.init()
+	--sound.init()
 	export.init()
 	menu.initMainMenu()
 	love.keyboard.setKeyRepeat( 0.3, 0.03 )
