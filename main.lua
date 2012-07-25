@@ -32,8 +32,6 @@ buttons = require("Scripts/buttons")
 
 game = require("Scripts/game")
 
-notificationSound = nil
-
 mainFont = love.graphics.newFont( "Fonts/AveriaSans-Regular.ttf", 18 )
 buttonFont = love.graphics.newFont( "Fonts/AveriaSans-Bold.ttf", 18 )
 fontHeader = love.graphics.newFont( "Fonts/AveriaSans-Bold.ttf", 25 )
@@ -76,7 +74,7 @@ function love.load( arg )
 
 	success = love.graphics.setMode( 1024, 680, false, false, 0 )
 	love.graphics.setCaption( "Wiki-Based RPG" )
-	--sound.init()
+	sound.init()
 	export.init()
 	menu.initMainMenu()
 	love.keyboard.setKeyRepeat( 0.3, 0.03 )

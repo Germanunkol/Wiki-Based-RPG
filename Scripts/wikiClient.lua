@@ -20,6 +20,9 @@ local WIKI_STARTOFCONTENTS = "<div id=\"mw%-content%-text\"-"
 -- if there's more than one page to a given word, then this disambiguation is found in the page source somewhere:
 local WIKI_DISAMBIGUATION = "[D,d]isambig[^\"]*%.svg%.png"
 
+-- manually add names of pages you don't want displayed. This is a comma-seperated list.
+WIKI_BLACKLIST = {"view the content page"}
+
 -- the number of wiki words that the game will choose from the page:
 local numberOfChoices = 5
 

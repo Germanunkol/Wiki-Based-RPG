@@ -94,6 +94,12 @@ function urlManip.extractURLs(inputStr, contentsStartString)
 				urlTableFull[k] = nil
 				doublesFound = doublesFound + 1
 			end
+			for key, value in pairs(WIKI_BLACKLIST) do		--make sure not to pass blacklisted words on.
+				if v.title:lower():find(value:lower(), 1, true) then
+					urlTableFull[k] = nil
+					break				
+				end
+			end
 		end
 	end
 	

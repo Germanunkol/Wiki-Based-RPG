@@ -92,7 +92,8 @@ The server has 3 Jokers which he/she can use to go back to one of the previous w
 - Use easy words to start with, like "chest" or "room"
 - As a server, try not to dictate what players do. Let them choose as much as possible, write about what happens to them, not about what actions they take.
 - Before choosing a word in the list of words, think about the concequences. If you choose "superconductor", you're not likely to get led back to a medivial theme.
-- Because it can take a while for it to be your turn again, the game is ideal when doing something else at the same time. It is a VERY casual game. 
+- Because it can take a while for it to be your turn again, the game is ideal when doing something else at the same time. It is a VERY casual game.
+- Players should not just invent and use random objects. Only use what the server gives to you!
 
 Report Bugs/Request features
 ================

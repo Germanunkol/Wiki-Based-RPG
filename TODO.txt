@@ -20,5 +20,5 @@ TO DO Wiki-Based-RPG:
 	- avatar save button
 [x]	- fix scroll buttons on clients
 [x]	- fix jokers
-	- logo not displayed?
+	- logo not displayed?	(can't reproduce)
 [x]	- fixed inventory capacity
