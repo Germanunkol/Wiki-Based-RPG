@@ -32,7 +32,7 @@ function attemptGameStart()
 		cl.client:send( "GAMESTART:\n" )
 	end
 	print("clients found: " .. numClients)
-	if numClients == 0 then
+	if numClients == 0 and not DEBUG then
 		statusMsg.new( "Need at least one player!" )
 	else
 		buttons.clear()		-- remove game start button
@@ -206,7 +206,8 @@ function lobby.init()
 		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, "Describe character", drawButton, highlightButton , lobby.inputDescriptionWord )
 		
 		setAvatarButtons()
-		-- buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Ready [ ]", drawButton, highlightButton , sendReady )
+		if DEBUG then buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Ready [ ]", drawButton, highlightButton , sendReady )
+		end
 	end
 
 	local helpFile = io.open( "Help/lobby.txt", "r" )

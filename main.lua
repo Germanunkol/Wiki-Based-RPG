@@ -12,6 +12,8 @@ wikiClient = require("Scripts/wikiClient")
 --THIS PORT MUST BE FORWARDED ON YOUR ROUTER FOR INTERNET PLAY!
 PORT = 8080
 
+DEBUG = true
+
 server = nil		-- server object. When not nil, then connection is established.
 client = nil		-- client object. When not nil, then connection is established.
 

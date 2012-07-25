@@ -35,9 +35,11 @@ end
 function textBox.setVisibleLines( text, from, num )
 	text.showStartLine = math.max(from+1, 1)
 	text.showOnlyPart = num
+	print(math.max(from+1, 1), num)
 end
 
 function textBox.scrollUp( text )
+	print(text)
 	if text then
 		textBox.setVisibleLines( text, text.showStartLine-2, text.showOnlyPart )
 	end

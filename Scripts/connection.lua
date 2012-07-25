@@ -141,6 +141,8 @@ function connection.inventoryAdd( playerID, object )
 			end
 			table.insert( cl.inventory, object )
 			game.receiveStory( cl.playerName .. " received " .. object, true )
+			
+			textBox.highlightText( gameTextBox, object, colHighlightWikiWord.r, colHighlightWikiWord.g, colHighlightWikiWord.b )
 		end
 	end
 	if server then

@@ -29,7 +29,7 @@ local gameInputAreaHeight = 0
 
 local gameInputBox = nil
 local gameStatusBox = nil
-local gameTextBox = nil
+gameTextBox = nil
 
 local inventoryFieldHeader
 
@@ -57,7 +57,7 @@ function addPlayerTurns()
 	end
 	playerTurns4[0] = {ID = 0, name = "Server"}
 	for i = #playerTurns4, 2, -1 do -- shuffle
-		local r = math.random(i) -- select a random number between 1 and i
+		local r = math.random(#playerTurns4) -- select a random number between 1 and i
 		playerTurns4[i], playerTurns4[r] = playerTurns4[r], playerTurns4[i] -- swap the randomly selected item to position i
 	end
 
@@ -284,7 +284,7 @@ function game.useJoker()
 	scrollGameBox()
 	
 	-- wikiClient.inputFirstWord( chatAreaX, chatAreaY+chatAreaHeight+10, chatAreaWidth, gameAreaHeight - chatAreaHeight-20, game.newWordSet, "Choose new direction:")
-	local chosenURLs = wikiClient.randomPreviousWords()
+	chosenURLs = wikiClient.randomPreviousWords()
 	
 	if chosenURLs then
 	
@@ -428,8 +428,8 @@ function game.sendStory()
 			playersHaveRepliedTable = {}
 			
 			fullNumberOfTurns = fullNumberOfTurns + 1
-				
-			connection.serverBroadcast("CURWORD:" .. curGameWord .. "\n")		--send the current wiki word along, so that it can be highlighted on the players' side.
+			
+			connection.serverBroadcast("CURWORD:" .. curGameWord .. "\n")		-- send the current wiki word along, so that it can be highlighted on the players' side.
 			connection.serverBroadcast( "STORY:" .. str .. "\n")
 			
 			game.receiveStory( str )
@@ -516,7 +516,7 @@ function insertAction( newStr )
 	elseif newStr:find("/use") == 1 then
 		local inventoryID = tonumber(newStr:sub(6, 6))
 		local found = false
-		if inventoryID and inventoryID > 0 and inventoryID < 5 then
+		if inventoryID and inventoryID > 0 and inventoryID <= INVENTORY_CAPACITY then
 			for k, cl in pairs(connectedClients) do
 				if cl.playerName == plName then
 					if cl.inventory[inventoryID] ~= nil then
@@ -627,6 +627,10 @@ function game.receiveStory( msg, noPrefix )
 		else
 			textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .. "Story: " .. msg .. "\n")
 		end		
+	end
+	if client then
+		buttons.clear()
+		game.setButtons()
 	end
 	table.insert( nextFrameEvent, {func = scrollGameBox, frames = 2 } )
 end
@@ -840,6 +844,7 @@ function game.init()
 end
 
 function game.setButtons()
+print(chatBox)
 	buttons.add( gameAreaX, gameAreaY, gameAreaWidth, gameAreaHeight, "", nil, nil, gameAreaClicked )
 	buttons.add( chatAreaX, chatAreaY, chatAreaWidth, chatAreaHeight, "", nil, nil, chatAreaClicked )
 	buttons.add( gameAreaX+gameAreaWidth-100, gameAreaY + gameAreaHeight, 50, 20, "Up", drawButton, highlightButton, textBox.scrollUp, gameTextBox )
