@@ -6,11 +6,11 @@ A Text-Based RPG that will work with a Wiki of your choice! Mutliplayer only.
 License:
 This game is released under the "Do What The Fuck You Want To Public License":  
 
-> This program is free software. It comes without any warranty, to
-the extent permitted by applicable law. You can redistribute it
-and/or modify it under the terms of the Do What The Fuck You Want
-To Public License, Version 2, as published by Sam Hocevar. See
-http://sam.zoy.org/wtfpl/COPYING for more details.
+	This program is free software. It comes without any warranty, to
+	the extent permitted by applicable law. You can redistribute it
+	and/or modify it under the terms of the Do What The Fuck You Want
+	To Public License, Version 2, as published by Sam Hocevar. See
+	http://sam.zoy.org/wtfpl/COPYING for more details.
 
 If you do use the software, change it, add to it etc, then feel free to tell me about it either on github.com or IndieDB.com.
 
@@ -43,7 +43,7 @@ How to Play
 The game is inspired by "Sleep is Death", a great game, where the story forms as you go along, and where the server creates a game for the client to play, in realtime.  
 In the Wiki-Based-Role-Playing-Game, the server writes a story and the players reply by saying or doing things.
 ###Starting a server###
-Simply click on "Start Server". **Make sure to either forward/open port 8080 on your router, or use a service like Hamachi.**
+Simply click on "Start Server". **If you want to play over the internet, make sure to either forward/open port 8080 on your router, or use a service like Hamachi.** Only the server has to port-forward, client's shouldn't need to.
 ###Starting client###
 Enter your Playername and the IP address of the server. If you're in the same LAN as the server, it often starts with "192.168.". If you're playing over the net, ask the server to visit a site like http://www.whatismyip.org/ and tell you their IP address. If you're playing via a service like Hamachi, make sure you're in the same network as the server, then click their name and get their IP Address (this one usually starts with "5.")
 ###Lobby###

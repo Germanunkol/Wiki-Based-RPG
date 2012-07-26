@@ -1,5 +1,5 @@
 Choose "Server" to start a game.
-You'll be the storywriter. Make sure to open/forward the port on your router if you're playing over the net! You'll find the port in main.lua in the game folder.
+You'll be the storywriter. Make sure to open/forward the port 8080 on your router if you're playing over the net! You can also change the port in "main.lua" in the game folder or .zip or .love.
 
 Choose "Client" to join a server.
 You need to know the server's IP to join, and you'll only be able to join while the server is in the lobby. As soon as the server has started the game, no more joining is possible.

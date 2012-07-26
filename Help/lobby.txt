@@ -1,4 +1,11 @@
 Wait for all players to join.
 
 Server:
-Choose a first word. This word will be the one where the story beginns (or what the story is about). If you're unsure, you can try "Room", "Chest", "Monster", or "Dungeon". Or anything else, really. If there's no Wiki-Entry found for the word, it'll tell you so.
+Choose a first word. This word will be the one where the story beginns (or what the story is about).
+If you're unsure, you can try "Room", "Chest", "Monster", or "Dungeon". Or anything else, really. If there's no Wiki-Entry found for the word, it'll tell you so.
+
+Clients:
+Create your Avatar. Also, choose something that describes your character.
+If you don't like the words the wiki chooses for you, you can click "Change Description" as soon as you're done entering a description, to try again.
+Press tab to automatically fill in the Word chosen by the wiki while typing.
+When you're done, press "Ready".

@@ -1,16 +1,17 @@
 Server:
 If you are the server, you have to write the story which the heroes will play through. Write a piece of the story (you must use the current Wiki-Word), then press enter. Then the clients have time to reply with actions.
 In the meantime, you choose a new follow-up word which the Wiki has provided for you. Once the players are done answering (or the time is up), you continue the story. Again, you MUST use the word you picked in your story. You must also incorporate the actions that the heroes have done.
-You have three "jokers". If the words given to you absolutely don't fit with your story, click on the "1","2" or "3" buttons and enter a new word that you can continue with.
+You have three "jokers". If the words given to you absolutely don't fit with your story, click on the "1","2" or "3" buttons to go back to a previous word and choose a new path from there on.
+You can also choose to give put words directly into the clients' inventories. To do so, click the word, then click on "Give to ...".
 
 Hero:
 If you're one of the heroes, wait for the server to write the story. Once the story is sent to you, you can reply by doing something.
 You can and should use commands in your text. Available commands are:
-/do	(Write some action your character does)
-/say	(Will be written as speech. Quotation marks are automatically added.)
-/use	(Doesn't work yet)
-/skip (skip your turn)
-For example, if the storyteller writes about a chest, you could type: "/do opens the chest. /say Let's see what's in here!".
+/do	TEXT		(Write some action your character does)
+/say TEXT		(Will be written as speech. Quotation marks are automatically added.)
+/use ID TEXT	(If there's something in your inventory, the number next to it is the ID. If the first object in your inventory is "1) key" then /use 1 door will produce: "Germanunkol uses key on door".)
+/skip			(skip your turn)
+For example, if the storyteller writes about a chest, you could type: "/do opens the chest. /say Let's see what's in here! /use 1 chest's lock".
 
 Chat: Click on chat area or "c" or "enter". Type text, then press "enter".
 
