@@ -10,7 +10,7 @@ TO DO Wiki-Based-RPG:
 [x]	- Time up: ask players if they want to send what's already written
 [x]	- Word not recognized
 [x]	- Players: list order, don't let all players reply at same time.
-	- chat exportieren?
+	- export chat?
 [x]	- Inventory
 [h]	- Clients need to use Wiki words as well
 [x]	- screw time limit.
