@@ -5,7 +5,7 @@ local export = {}
 function export.init()
 	love.filesystem.setIdentity("WikiBasedRPG")
 end
-
+--[[
 function export.toTextFile( text )
 	if text and text.content then
 		local curTime = os.date("*t")
@@ -31,6 +31,7 @@ function export.toTextFile( text )
 		print( "Text empty" )
 	end
 end
+]]--
 
 function export.toHtmlFile( text )				-- this function assumes that the game starts with a piece of the story, (i.e. server starts, not the players) !
 	if text and text.content then

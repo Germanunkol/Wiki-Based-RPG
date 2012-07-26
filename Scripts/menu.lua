@@ -38,8 +38,8 @@ end
 
 local function serverStart()
 	buttons.clear()
+	print("Attempting to start server...")
 	startServer()
-	print("server options started")
 end
 
 function clientFinishedInput()
@@ -71,7 +71,6 @@ function abortClientConnecting()
 end
 
 local function clientInitIpInput()
-	print ("new playername: " .. textBox.getContent( plNameInputBox ) )
 	if plNameInputBox then plName = textBox.getContent( plNameInputBox ) end
 	if #plName > 1 and plName["1"] ~= " " and not plName:find(",") and not plName:find(";") and plName:lower() ~= "server" and plName:lower() ~= "story" then
 		if plNameInputBox then

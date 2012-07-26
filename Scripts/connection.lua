@@ -49,7 +49,6 @@ local function synchronizeClients( newClient )
 		end
 		numOfPlayers = numOfPlayers + 1
 	end
-	printTable(connectedClients)
 end
 
 function handleNewClient( newClient )
@@ -184,7 +183,7 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 	for k, cl in pairs(connectedClients) do
 		local msg, err = cl.client:receive()
 		if msg ~= nil then
-			print("received: " .. msg)
+			if DEBUG then print("received: " .. msg) end
 			if msg:find( "NAME:" ) == 1 then
 				local nameTaken = false
 				cl.playerName = msg:sub( 6, #msg )
@@ -202,7 +201,6 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 					synchronizeClients( cl )
 				end
 				
-				print("end received: " .. msg)
 			else
 			
 				start, ending = msg:find( "CHARDESCRIPTION:" )
@@ -283,7 +281,7 @@ function connection.runClient( cl )				--handle all messages that come from the 
 	msg = cl:receive()
 
 	if msg then
-		print("received: " .. msg)
+		if DEBUG then print("received: " .. msg) end
 		
 		if msg:find("ERROR:") == 1 then
 			if msg:find( "ERROR:SERVERFULL" ) == 1 then
@@ -326,7 +324,6 @@ function connection.runClient( cl )				--handle all messages that come from the 
 			
 			start, ending = msg:find( "READY:" )
 			if start == 1 then
-				print(msg:sub(ending+3, #msg))
 				for k, cl in pairs(connectedClients) do
 					if cl.clientNumber == tonumber(msg:sub(ending+1, ending+1)) then
 						if msg:sub(ending+2, #msg):find("true") then

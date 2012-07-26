@@ -224,8 +224,6 @@ function wikiClient.firstWordSet()
 		firstWordActive = false
 	
 		if returnEvent then
-			print("returning")
-			print(word)
 			returnEvent( word )
 		end
 		

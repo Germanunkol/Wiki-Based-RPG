@@ -31,7 +31,6 @@ function attemptGameStart()
 		
 		cl.client:send( "GAMESTART:\n" )
 	end
-	print("clients found: " .. numClients)
 	if numClients == 0 and not DEBUG then
 		statusMsg.new( "Need at least one player!" )
 	else
@@ -97,15 +96,11 @@ function lobby.descriptionAdded()
 end
 
 function lobby.chooseDescriptionWord( index )
-	print("clicked")
 	buttons.clear()
 	setAvatarButtons()
 	if chosenURLs then
-	print("chosenURLS")
 		descriptionWord = chosenURLs[index].title
-		print(descriptionWord)
 		if #descriptionWord > 0 then
-	print("descriptionWord")
 			if descriptionHeaderBox == nil then
 				descriptionHeaderBox = textBox.new( avatarPicX+AVATAR_PIXELS_X*AVATAR_PIXELS_WIDTH+10, 400 + 3, 2, fontInputHeader, love.graphics.getWidth() )
 			end
@@ -131,7 +126,6 @@ end
 
 function lobby.descriptionWordSet()		--ask player to write something about himself.
 	chosenURLs = wikiClient.nextWord()
-	print ("test")
 	if chosenURLs then
 	
 		local displayAreaX = love.graphics.getWidth()/2
@@ -144,7 +138,7 @@ function lobby.descriptionWordSet()		--ask player to write something about himse
 		local titleStr = 0
 		
 		for k, v in pairs( chosenURLs ) do							-- show all possible Words that server can choose as buttons.
-			print(k .. ": " .. v.title .. " @ " .. v.url)
+			if DEBUG then print(k .. ": " .. v.title .. " @ " .. v.url) end
 			if i < 5 then
 				titleStr = ""
 				for char in v.title:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button

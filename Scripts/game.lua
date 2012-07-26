@@ -91,7 +91,6 @@ function removePlayerTurn()
 	for i=0,#playerTurns1,1 do
 		playerTurns1[i] = playerTurns1[i+1]		-- move all upcoming players up one:
 	end
-	printTable(playerTurns1)
 	--playerTurns1[#playerTurns1] = nil
 	-- send to other players, but only if the round isn't over yet. If it's over, then the addNewPlayerTurns function will send the data.:
 	if playerTurns1[0] then sendNextPlayerTurns() end
@@ -229,7 +228,7 @@ function game.chooseWord()
 		buttons.clear()
 		
 		for k, v in pairs( chosenURLs ) do							-- show all possible Words that server can choose as buttons.
-			print(k .. ": " .. v.title .. " @ " .. v.url)
+			if DEBUG then print(k .. ": " .. v.title .. " @ " .. v.url) end
 			if i < 5 then
 				titleStr = ""
 				for char in v.title:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
@@ -295,7 +294,7 @@ function game.useJoker()
 		local titleStr = 0
 		
 		for k, v in pairs( chosenURLs ) do							-- show all possible Words that server can choose as buttons.
-			print(k .. ": " .. v.title .. " @ " .. v.url)
+			if DEBUG then print(k .. ": " .. v.title .. " @ " .. v.url) end
 			if i < 5 then
 				titleStr = ""
 				for char in v.title:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
@@ -494,10 +493,8 @@ function minimum( posStart1, posStart2, posStart3, posEnd1, posEnd2, posEnd3 )
 	table.insert( tbl, {s=posStart2, e=posEnd2} )
 	table.insert( tbl, {s=posStart3, e=posEnd3} )
 	
-	printTable(tbl)
 	table.sort( tbl, srt )
 	
-	printTable(tbl)
 	return tbl[1].s, tbl[1].e
 end
 
@@ -564,7 +561,6 @@ function game.sendAction( )
 				posStart3, posEnd3 = str:find( "/use", posStart+1 )
 				posStartNew, posEndNew = minimum( posStart1, posStart2, posStart3, posEnd1, posEnd2, posEnd3 )
 				if posStartNew then
-					--print(str:sub(posStart, posStartNew-1))
 					insertAction( str:sub(posStart, posStartNew-1) )
 				else
 					insertAction( str:sub(posStart, #str) )
@@ -844,7 +840,6 @@ function game.init()
 end
 
 function game.setButtons()
-print(chatBox)
 	buttons.add( gameAreaX, gameAreaY, gameAreaWidth, gameAreaHeight, "", nil, nil, gameAreaClicked )
 	buttons.add( chatAreaX, chatAreaY, chatAreaWidth, chatAreaHeight, "", nil, nil, chatAreaClicked )
 	buttons.add( gameAreaX+gameAreaWidth-100, gameAreaY + gameAreaHeight, 50, 20, "Up", drawButton, highlightButton, textBox.scrollUp, gameTextBox )

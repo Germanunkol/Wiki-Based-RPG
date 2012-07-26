@@ -35,11 +35,9 @@ end
 function textBox.setVisibleLines( text, from, num )
 	text.showStartLine = math.max(from+1, 1)
 	text.showOnlyPart = num
-	print(math.max(from+1, 1), num)
 end
 
 function textBox.scrollUp( text )
-	print(text)
 	if text then
 		textBox.setVisibleLines( text, text.showStartLine-2, text.showOnlyPart )
 	end
@@ -96,7 +94,6 @@ end
 
 function textBox.highlightText( text, word, red, green, blue, alpha )
 	if #word > 0 then
-		print("highlighting: " .. word)
 		for k, v in pairs( text.highlightWords ) do
 			if v.w == word then 
 				v.r, v.g, v.b, v.a = red, green, blue, alpha or 255
@@ -111,7 +108,6 @@ end
 		-- must differentiate between names and other highlighted words, because only those which are not names will be highlighted in exported files.
 function textBox.highlightTextName( text, word, red, green, blue, alpha )
 	if #word > 0 then
-		print("highlighting: " .. word)
 		for k, v in pairs( text.highlightNames ) do
 			if v.w == word then 
 				v.r, v.g, v.b, v.a = red, green, blue, alpha or 255

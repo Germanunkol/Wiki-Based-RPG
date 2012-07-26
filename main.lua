@@ -173,10 +173,13 @@ function startServer()
 end
 
 function startClient()
+	print("Attempting to connect...")
 	client = connection.initClient( ipStr, PORT)
+	
 	if client then
 		client:send("NAME:" .. plName .. "\n")
 		statusMsg.new("Connected to server.")
+		print("Connected to server.")
 		lobby.init( buttons )
 	end
 end

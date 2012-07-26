@@ -29,7 +29,6 @@ function scrollChat()
 		linesFittingOnScreen = math.floor( h/textBox.getFont( chatBox ):getHeight() - 1 )
 	end
 	textBox.setVisibleLines( chatBox, textBox.numLines( chatBox )-linesFittingOnScreen, linesFittingOnScreen )
-	print(textBox.numLines( chatBox )-linesFittingOnScreen, linesFittingOnScreen)
 end
 
 function chat.receive( msg )
