@@ -828,14 +828,12 @@ function game.init()
 		textBox.setContent( gameStatusBox, "Waiting for server to beginn story..." )
 	end
 
-	local helpFile = io.open( "Help/game.txt", "r" )
-	if not helpFile then
-		helpFile = io.open( "Help\\game.txt", "r" )
-	end
-	if helpFile then
-		helpString = helpFile:read( "*all" )
-		helpFile:close()
-	end
+	-- load the help file for the lobby:
+	local helpFile = love.filesystem.newFile("Help/game.txt")
+	helpFile:open('r')
+	local data = helpFile:read(all)
+	if data then helpString = data
+	else helpString = "Help file not found." end
 
 end
 

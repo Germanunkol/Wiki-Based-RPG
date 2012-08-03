@@ -204,14 +204,12 @@ function lobby.init()
 		end
 	end
 
-	local helpFile = io.open( "Help/lobby.txt", "r" )
-	if not helpFile then
-		helpFile = io.open( "Help\\lobby.txt", "r" )
-	end
-	if helpFile then
-		helpString = helpFile:read( "*all" )
-		helpFile:close()
-	end
+	-- load the help file for the lobby:
+	local helpFile = love.filesystem.newFile("Help/lobby.txt")
+	helpFile:open('r')
+	local data = helpFile:read(all)
+	if data then helpString = data
+	else helpString = "Help file not found." end
 
 end
 

@@ -115,14 +115,13 @@ function menu.initMainMenu()
 
 	logoIMG = love.graphics.newImage( "Images/LogoColourSmall.png" )
 	
-	local helpFile = io.open( "Help/main.txt", "r" )
-	if not helpFile then
-		helpFile = io.open( "Help\\main.txt", "r" )
-	end
-	if helpFile then
-		helpString = helpFile:read( "*all" )
-		helpFile:close()
-	end
+	-- load the help file for the menu:
+	local helpFile = love.filesystem.newFile("Help/main.txt")
+	helpFile:open('r')
+	local data = helpFile:read(all)
+	if data then helpString = data
+	else helpString = "Help file not found." end
+
 	--love.graphics.setBackgroundColor(150,160,200)
 	love.graphics.setBackgroundColor( colMainBg.r, colMainBg.g, colMainBg.b )
 	imgScale = 1
