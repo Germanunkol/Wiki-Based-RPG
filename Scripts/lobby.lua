@@ -6,6 +6,8 @@ local choosingFirstWord = false
 local avatarPicX = 70
 local avatarPicY = 410
 
+local addedDescription = false
+
 function attemptGameStart()
 
 	for k, cl in pairs( connectedClients ) do
@@ -85,6 +87,7 @@ function lobby.descriptionAdded()
 			client:send( "CHARDESCRIPTION:" .. textBox.getContent( descriptionInputBox ) .. "\n")
 			descriptionHeaderBox = nil
 			descriptionInputBox = nil
+			addedDescription = true
 			setClientButtons()
 		else
 			if descriptionWord then statusMsg.new( "You must use " .. descriptionWord .. " in your description!" ) end
@@ -256,7 +259,12 @@ function setClientButtons()
 	buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, "Describe character", drawButton, highlightButton , lobby.inputDescriptionWord )
 		
 	setAvatarButtons()
-	if DEBUG then buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Ready [ ]", drawButton, highlightButton , sendReady )
+	if DEBUG or addedDescription then
+		if clientReady then 
+			buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Ready [x]", drawButton, highlightButton , sendReady )
+		else 
+			buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Ready [ ]", drawButton, highlightButton , sendReady )
+		end
 	end
 end
 
