@@ -55,7 +55,7 @@ end
 
 function switchPixel( ID )
 	if client and clientReady == true then
-		statusMsg.new("Cannot change Avatar while you're \"ready\".")
+		statusMsg.new("Cannot change avatar while you're \"ready\".")
 		return
 	end
 	avatar[ID] = avatar[ID] + 1
@@ -63,6 +63,88 @@ function switchPixel( ID )
 		avatar[ID] = 0
 	end
 end
+
+function statPixel( theButton )
+	if statistics[theButton.label] == 1 then		-- the button's label stores the button ID
+		love.graphics.setColor( colCharM.r, colCharM.g, colCharM.b, 255)
+	else
+		love.graphics.setColor( colCharB.r, colCharB.g, colCharB.b, 255)
+	end
+	love.graphics.rectangle( "fill", theButton.x + 1, theButton.y + 1, theButton.w-2, theButton.h-2)
+end
+
+function changeStat( ID )
+	if client and clientReady == true then
+		statusMsg.new("Cannot change statistics while you're \"ready\".")
+		return
+	end
+	print("setStatistics")
+	printTable(setStatistics)
+	statPointsUsed = 0
+	local numAbilities = 0
+	local line = (ID - 1 - (ID-1) % 5)/5
+	-- per ability, there is a set number of points that are added to the total number of available stat points. (MAX_STATPOINTS_PER_ABILITY)
+	--
+	for k, v in pairs(abilities) do
+		print(k, v, line)
+		if setStatistics[k] and k ~= line then
+			statPointsUsed = statPointsUsed + setStatistics[k]
+		end
+		numAbilities = numAbilities + 1
+	end
+	
+	local before = ID % 5
+	local after = 5 - ID % 5
+	
+	if before == 0 then
+		before = 5
+		after = 0
+	end
+	
+	print( "ID: " .. ID )
+	print( "line: " ..  line )
+	print( "before: " .. before )
+	print( "after: " .. after)
+	print( "max stats: " .. MAX_STATPOINTS_PER_ABILITY*numAbilities )
+	print( "statPointsUsed: " ..statPointsUsed )
+	print( "statPointsUsed + before: " ..statPointsUsed + before )
+	
+	if statPointsUsed + before > MAX_STATPOINTS_PER_ABILITY*numAbilities then
+		return
+	end
+	
+	local i = 0
+	while i < before do
+		statistics[ID-i] = 1
+		i = i + 1
+	end
+	
+	i = 1
+	while i < after + 1 do
+		statistics[ID+i] = 0
+		i = i + 1
+	end
+	
+	setStatistics[line] = before
+end
+
+function statHighlightPixel( theButton )
+	if client and clientReady == true then
+		drawPixel( theButton )
+		return
+	end
+	love.graphics.setColor( 0,0,0, 255)
+	love.graphics.rectangle( "fill", theButton.x, theButton.y, theButton.w, theButton.h)
+	if statistics[theButton.label] == 0 then		-- the button's label stores the button ID
+		love.graphics.setColor( colCharB.r, colCharB.g, colCharB.b, 255)
+	elseif statistics[theButton.label] == 1 then		-- the button's label stores the button ID
+		love.graphics.setColor( colCharM.r, colCharM.g, colCharM.b, 255)
+	else
+		love.graphics.setColor( colCharD.r, colCharD.g, colCharD.b, 255)
+	end
+	love.graphics.rectangle( "fill", theButton.x+2, theButton.y+2, theButton.w-4, theButton.h-4)
+end
+
 
 function getClientColour( ID )
 	if ID == 1 then

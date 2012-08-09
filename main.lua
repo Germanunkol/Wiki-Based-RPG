@@ -12,7 +12,7 @@ wikiClient = require("Scripts/wikiClient")
 --THIS PORT MUST BE FORWARDED ON YOUR ROUTER FOR INTERNET PLAY!
 PORT = 8080
 
-DEBUG = false
+DEBUG = true
 
 server = nil		-- server object. When not nil, then connection is established.
 client = nil		-- client object. When not nil, then connection is established.
@@ -69,9 +69,13 @@ clientReady = false
 nextFrameEvent = {}			-- these functions will be called after the next draw call.
 testingConnection = 0
 
+abilities = {}
+MAX_ABILITIES = 10
+MAX_STATPOINTS_PER_ABILITY = 3
+statistics = {}
+setStatistics = {}
 
 function love.load( arg )
-
 	success = love.graphics.setMode( 1024, 680, false, false, 0 )
 	love.graphics.setCaption( "Wiki-Based RPG" )
 	sound.init()
@@ -79,6 +83,7 @@ function love.load( arg )
 	menu.initMainMenu()
 	love.keyboard.setKeyRepeat( 0.3, 0.03 )
 	testingConnection = true
+	if DEBUG then testingConnection = false end
 	table.insert( nextFrameEvent, {func = wikiClient.testConnection, frames = 2 } )
 	
 	for i=0,AVATAR_PIXELS_X*AVATAR_PIXELS_Y-1,1 do

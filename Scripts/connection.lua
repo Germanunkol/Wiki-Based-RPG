@@ -74,6 +74,12 @@ function handleNewClient( newClient )
 			if startingWord then 
 				newClient:send("CURWORD:" .. startingWord .. "\n")
 			end
+			
+			local toSend = "ABILITIES:"
+			for k, v in pairs(abilities) do
+				toSend = toSend .. v .. ","
+			end
+			newClient:send(toSend .. "\n")
 		else
 			newClient:send("ERROR:SERVERFULL\n")
 			connectedClients[clientNumber] = nil
@@ -93,8 +99,6 @@ function connection.serverBroadcast( msg )
 		numOfPlayers = numOfPlayers + 1
 	end
 end
-
-
 
 function connection.getPlayers()
 	return numOfPlayers
@@ -131,6 +135,31 @@ function connection.sendAvatar()
 	client:send("AVATAR:" .. str .. "\n")
 end
 
+function connection.sendStatistics()
+	local str = ""
+	for i=1,#setStatistics,1 do
+		str = str .. setStatistics[i] .. ","
+	end
+	print("sending stats: " .. str)
+	client:send("STATS:" .. str .. "\n")
+end
+
+function receiveStats( cl, str )
+	local s,e = str:find(",")
+	local num, prev, i = 0, 1, 1
+	cl.statistics = {}s
+	print("str: " .. str )
+	while s do
+		num = tonumber( str:sub(prev, s-1) )
+		if not num then break end
+		cl.statistics[i] = num
+		prev = e+1
+		s,e = str:find( ",", e+1 )
+		i = i+1
+		print( "stat received: " .. num )
+	end
+end
+
 function connection.inventoryAdd( playerID, object )
 	for k, cl in pairs( connectedClients ) do
 		if cl.clientNumber == tonumber(playerID) then
@@ -147,6 +176,18 @@ function connection.inventoryAdd( playerID, object )
 	if server then
 		connection.serverBroadcast("INVADD:" .. playerID .. object)
 	end
+end
+
+
+function connection.sendAbilities()			-- put all abilities into a string and send it to all players.
+	
+	toSend = ""
+
+	for k, v in pairs(abilities) do
+		toSend = toSend .. v .. ","
+	end
+	print(toSend)
+	connection.serverBroadcast( "ABILITIES:" .. toSend )
 end
 
 function connection.inventoryRemove( playerID, object )
@@ -171,7 +212,7 @@ end
 
 local start, ending
 
-function connection.runServer( tcpServer )		--handle all messages that come from the clients
+function connection.runServer( tcpServer )		-- handle all messages that come from the clients
 	local newClient, err = tcpServer:accept()
 	
 	if newClient ~= nil then
@@ -226,7 +267,13 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 					connection.receiveAvatar( cl.clientNumber .. msg:sub( ending+1, #msg ) )
 					connection.serverBroadcast("AVATAR:" .. cl.clientNumber .. msg:sub( ending+1, #msg ) )
 				end
-			
+
+				start, ending = msg:find( "STATS:" )
+				if start == 1 then
+					receiveStats( cl,  msg:sub( ending+1, #msg ) )
+					connection.serverBroadcast("STATS:" .. cl.clientNumber .. ":" .. msg:sub( ending+1, #msg ) )
+				end
+
 				start, ending = msg:find( "ACTION:do" )
 				if start == 1 then
 					game.receiveAction( cl.playerName .. msg:sub(ending+1, #msg), "do", cl.clientNumber)
@@ -275,6 +322,18 @@ function connection.runServer( tcpServer )		--handle all messages that come from
 			end
 		end
 	end
+end
+
+function connection.receiveAbilities( str )
+	abilities = {}
+	local s = str:find(",")
+	local last = 0
+	while s do
+		lobby.addAbility( str:sub(last+1, s-1) )
+		last = s
+		s = str:find(",", s+1)
+	end
+	connection.sendStatistics()
 end
 
 function connection.runClient( cl )				--handle all messages that come from the server
@@ -342,10 +401,29 @@ function connection.runClient( cl )				--handle all messages that come from the 
 				connection.receiveAvatar( msg:sub(ending+1, #msg) )
 			end
 			
+			start, ending = msg:find( "STATS:" )
+			if start == 1 then
+				-- first digit it playerNumber:
+				for k, c in pairs( connectedClients ) do
+					if c.clientNumber == tonumber(msg:sub( ending+1, ending+1 )) then
+						cl = c
+						break
+					end
+				end
+				if cl then
+					receiveStats( cl,  msg:sub( ending+3, #msg ) )
+				end
+			end
+			
 			start, ending = msg:find( "CURWORD:" )
 			if start == 1 then
 				game.clientReceiveNewWord( msg:sub(ending+1, #msg) )
 				return
+			end
+			
+			start, ending = msg:find( "ABILITIES:" )
+			if start == 1 then
+				connection.receiveAbilities( msg:sub(ending+1, #msg) )
 			end
 			
 			start, ending = msg:find( "GAMESTART:" )
