@@ -147,7 +147,7 @@ end
 function receiveStats( cl, str )
 	local s,e = str:find(",")
 	local num, prev, i = 0, 1, 1
-	cl.statistics = {}s
+	cl.statistics = {}
 	print("str: " .. str )
 	while s do
 		num = tonumber( str:sub(prev, s-1) )
