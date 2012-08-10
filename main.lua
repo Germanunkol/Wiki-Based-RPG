@@ -174,6 +174,7 @@ function startServer()
 	server = connection.initServer( "*", PORT, 4 )
 	if server then
 		lobby.init( buttons )
+		love.graphics.setCaption( "Wiki-Based RPG - " .. "Storyteller")
 	end
 end
 
@@ -186,6 +187,7 @@ function startClient()
 		statusMsg.new("Connected to server.")
 		print("Connected to server.")
 		lobby.init( buttons )
+		love.graphics.setCaption( "Wiki-Based RPG - " .. plName)
 	end
 end
 

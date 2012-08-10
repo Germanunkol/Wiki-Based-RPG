@@ -6,7 +6,7 @@ local urlManipulation = require("Scripts/urlManip")
 http.TIMEOUT = 10
 
 -- this is the base URL of the wiki. To start out, you can try "http://de.wikipedia.org" or "http://fr.wikipedia.org":
-local WIKI_URL = "http://en.wikipedia.org"
+local WIKI_URL = "http://de.wikipedia.org"
 
 -- if this line is found on the source page, then there is no wiki site for the word you're looking for:
 local WIKI_NOARTICLE = "<div id=\"mw%-content%-text\"><div class=\"noarticletext\">"

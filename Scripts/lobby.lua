@@ -387,6 +387,7 @@ function lobby.showPlayers()
 		curY = 120 + 50*(cl.clientNumber-1)
 		
 		love.graphics.setColor( colLobby.r, colLobby.g, colLobby.g, 255)
+		if cl.playerName == plName then love.graphics.setColor( colLobby.r-20, colLobby.g-50, colLobby.g-50, 255) end
 		love.graphics.rectangle("fill", 0, curY-9 , love.graphics.getWidth(), 33)
 		love.graphics.setColor( 0, 0, 0 , 255)
 		love.graphics.setFont( mainFont )
