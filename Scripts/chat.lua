@@ -46,8 +46,8 @@ function chat.send()
 		if client then
 			client:send( "CHAT:" .. textBox.getContent( chatInputBox ) .. "\n" )
 		elseif server then
-			connection.serverBroadcast("CHAT:Server: " .. textBox.getContent( chatInputBox ) )
-			chat.receive( "Server: " .. textBox.getContent( chatInputBox ) )
+			connection.serverBroadcast("CHAT:" .. STORYTELLER_STR .. ": " .. textBox.getContent( chatInputBox ) )
+			chat.receive( STORYTELLER_STR .. ": " .. textBox.getContent( chatInputBox ) )
 		end
 		textBox.setContent( chatInputBox, "" )
 	end

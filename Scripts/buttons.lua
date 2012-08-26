@@ -4,7 +4,7 @@ local buttons = {}
 
 function button.clear()
 	for k, v in pairs(buttons) do
-		if v.label ~= "Help" then
+		if v.label ~= HELP_BUTTON_STR then
 			buttons[k] = nil
 		end
 	end
@@ -52,7 +52,7 @@ function button.show()
 	helpButton = nil
 	for key, button in pairs( buttons ) do
 		if mouseOver( button ) and button.drawHover then
-			if button.label == "Help" then		-- draw Help button above everything else.
+			if button.label == HELP_BUTTON_STR then		-- draw Help button above everything else.
 				helpButton = button
 			else
 				button.drawHover( button )

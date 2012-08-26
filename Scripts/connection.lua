@@ -88,7 +88,7 @@ function handleNewClient( newClient )
 		end
 	end
 	if newClient then
-		statusMsg.new( "New player!" )
+		statusMsg.new( NEW_PLAYER_CONNECTED_STR )
 	end
 end
 
@@ -140,7 +140,7 @@ function connection.sendStatistics()
 	for i=1,#setStatistics,1 do
 		str = str .. setStatistics[i] .. ","
 	end
-	print("sending stats: " .. str)
+	if DEBUG then print("sending stats: " .. str) end
 	client:send("STATS:" .. str .. "\n")
 end
 
@@ -148,7 +148,6 @@ function receiveStats( cl, str )
 	local s,e = str:find(",")
 	local num, prev, i = 0, 1, 1
 	cl.statistics = {}
-	print("str: " .. str )
 	while s do
 		num = tonumber( str:sub(prev, s-1) )
 		if not num then break end
@@ -156,7 +155,7 @@ function receiveStats( cl, str )
 		prev = e+1
 		s,e = str:find( ",", e+1 )
 		i = i+1
-		print( "stat received: " .. num )
+		if DEBUG then print( "stat received: " .. num ) end
 	end
 end
 
@@ -168,7 +167,7 @@ function connection.inventoryAdd( playerID, object )
 				if v == object then return end
 			end
 			table.insert( cl.inventory, object )
-			game.receiveStory( cl.playerName .. " received " .. object, true )
+			game.receiveStory( cl.playerName .. " " .. RECEIVED_STR .. " " .. object, true )
 			
 			textBox.highlightText( gameTextBox, object, colHighlightWikiWord.r, colHighlightWikiWord.g, colHighlightWikiWord.b )
 		end
@@ -315,7 +314,7 @@ function connection.runServer( tcpServer )		-- handle all messages that come fro
 					connectedClients[k] = nil			-- if connection was closed, remove from table
 					connection.serverBroadcast("CLIENTLEFT:".. clientName)
 					if game.active() then
-						game.receiveServerMessage( clientName .. " has left the game." )
+						game.receiveServerMessage( clientName .. " " .. PLAYER_LEFT_STR )
 					end
 					return
 				end
@@ -346,19 +345,19 @@ function connection.runClient( cl )				--handle all messages that come from the 
 			if msg:find( "ERROR:SERVERFULL" ) == 1 then
 				client = nil
 				print( "ERROR: Server is full!" )
-				statusMsg.new( "Server is full!" )
+				statusMsg.new( ERROR_SERVER_FULL_STR )
 				menu.initMainMenu()
 				return
 			elseif msg:find( "ERROR:NAMETAKEN" ) == 1 then
 				client = nil
-				print( "Name alread exists!" )
-				statusMsg.new( "Name alread exists!" )
+				print( "ERROR: Name alread exists!" )
+				statusMsg.new( ERROR_DUPLICATE_PLAYERNAME_STR )
 				menu.initMainMenu()
 				return
 			elseif msg:find( "ERROR:NOTINLOBBY" ) == 1 then
 				client = nil
-				print( "Server's game has already started!" )
-				statusMsg.new( "Can't join: Game has already started!" )
+				print( "ERROR: Server's game has already started!" )
+				statusMsg.new( ERROR_GAME_ALREADY_STARTED_STR )
 				menu.initMainMenu()
 				return
 			end
@@ -494,19 +493,19 @@ function connection.runClient( cl )				--handle all messages that come from the 
 			start, ending = msg:find( "SERVERSHUTDOWN:" )
 			if start == 1 then
 				if game.active() then
-					game.receiveServerMessage("Server closed game.")
+					game.receiveServerMessage( SERVER_CLOSED_GAME_STR )
 				else
 					cl:close()
 					lobby.deactivate()
 					menu.initMainMenu()
-					statusMsg.new("Server closed game!")
+					statusMsg.new( SERVER_CLOSED_GAME_STR )
 				end
 				return
 			end
 			
 			start, ending = msg:find( "CLIENTLEFT:" )
 			if start == 1 then
-				game.receiveServerMessage( msg:sub(ending+1, #msg) .. " has left the game." )
+				game.receiveServerMessage( msg:sub(ending+1, #msg) .. PLAYER_LEFT_STR )
 				for k, v in pairs(connectedClients) do
 					if v.playerName == msg:sub(ending+1, #msg) then
 						connectedClients[k] = nil

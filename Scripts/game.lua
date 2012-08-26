@@ -55,7 +55,7 @@ function addPlayerTurns()
 	for k, v in pairs(connectedClients) do
 		table.insert( playerTurns4, { ID = v.clientNumber, name = v.playerName } )
 	end
-	playerTurns4[0] = {ID = 0, name = "Server"}
+	playerTurns4[0] = {ID = 0, name = STORYTELLER_STR}
 	for i = #playerTurns4, 2, -1 do -- shuffle
 		local r = math.random(#playerTurns4) -- select a random number between 1 and i
 		playerTurns4[i], playerTurns4[r] = playerTurns4[r], playerTurns4[i] -- swap the randomly selected item to position i
@@ -118,7 +118,7 @@ function displayNextPlayerTurns( str )
 		currentPlayer = playerTurnsStrings[1].str:sub( playerTurnsStrings[1].str:find(":", 1, true) +1, #playerTurnsStrings[1].str)
 	end
 	if client then 
-		textBox.setContent( gameStatusBox, "Waiting for " .. currentPlayer )
+		textBox.setContent( gameStatusBox, WAITING_FOR_STR .. " " .. currentPlayer )
 	end
 	--printTable(playerTurnsStrings)
 end
@@ -143,7 +143,7 @@ function game.startMyTurn()
 			textBox.setAccess( gameInputBox, true )
 		end
 		sound.playNotification()
-		textBox.setContent( gameStatusBox, "Your Turn! What would you like to do?" )
+		textBox.setContent( gameStatusBox, YOUR_TURN_STR)
 		textBox.setReturnEvent( gameInputBox, game.sendAction )
 	end
 end
@@ -179,9 +179,9 @@ function chooseNextWord( index )
 			end
 		end
 		
-		statusMsg.new( "Chose: \"" .. curGameWord .."\"")
+		statusMsg.new( CHOSE_WORD_STR .. " \"" .. curGameWord .."\"")
 		
-		textBox.setContent( inventoryFieldHeader, "What would you like to do?" )
+		textBox.setContent( inventoryFieldHeader, CHOOSE_WHAT_TO_DO_WITH_WORD_STR )
 		
 		textBox.highlightClearAll( gameInputBox )
 		textBox.highlightText( gameInputBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
@@ -190,12 +190,12 @@ function chooseNextWord( index )
 		wikiClient.setNewWord( chosenURLs[index] )
 		
 		buttons.clear()
-		buttons.add( chatAreaX+10, chatAreaY+chatAreaHeight + 30, chatAreaWidth, buttonHeight/2+5, "Use for story", drawButton, highlightButton , game.useWord )
+		buttons.add( chatAreaX+10, chatAreaY+chatAreaHeight + 30, chatAreaWidth, buttonHeight/2+5, USE_WORD_FOR_STORY_STR, drawButton, highlightButton , game.useWord )
 	
 		local i = 1
 		for k, cl in pairs( connectedClients ) do
 			if i < 5 then
-				titleStr = "Give to "
+				titleStr = GIVE_WORD_TO_PLAYER_STR .. " "
 				for char in cl.playerName:gfind("([%z\1-\127\194-\244][\128-\191]*)") do
 					titleStr = titleStr .. char
 					if buttonFont:getWidth( titleStr ) >= chatAreaWidth-30 then
@@ -220,7 +220,7 @@ function game.serverChooseNextWord()
 end
 
 function game.chooseWord()
-	textBox.setContent( inventoryFieldHeader, "Choose a word..." )
+	textBox.setContent( inventoryFieldHeader, CHOOSE_A_WORD_STR )
 	if chosenURLs then
 		local i = 0
 		local j
@@ -267,7 +267,7 @@ end
 function game.useJoker()
 
 	if wikiClient.getNumOfPreviousWords() < 3 then
-		statusMsg.new("Need to have played at least 4 Words!")
+		statusMsg.new( ERROR_AT_LEAST_4_WORDS_FOR_JOKER_STR )
 		return
 	end
 
@@ -275,8 +275,8 @@ function game.useJoker()
 	
 	game.setJokerButtons()
 	
-	connection.serverBroadcast("CHAT:[Server used joker]")
-	chat.receive( "[Server used joker]" )
+	connection.serverBroadcast("CHAT:" .. SERVER_USED_JOKER_STR)
+	chat.receive( SERVER_USED_JOKER_STR )
 	
 	chat.setAccess( false )
 	textBox.setAccess( gameInputBox, false )
@@ -328,10 +328,10 @@ end
 function game.giveCurWordToClient( k )
 	if connectedClients[k] then
 		game.addToInventory( connectedClients[k].clientNumber, curGameWord )
-		statusMsg.new("Word will be added to " .. connectedClients[k].playerName .. "'s inventory." )
+		statusMsg.new( WORD_GIVEN_TO .. " " .. connectedClients[k].playerName )
 	else
 		print("Error: Client not found. Can't give object to client.")
-		statusMsg.new("Client not found. Can't give object to client.")
+		statusMsg.new( ERROR_CLIENT_NOT_FOUND_STR )
 	end
 	game.chooseWord()
 end
@@ -349,7 +349,7 @@ function game.wordChoosingEnded()
 	game.setButtons()	
 	textBox.setContent( inventoryFieldHeader, "" )
 	if waitForPlayerActions == false then 
-		textBox.setContent( gameStatusBox, "Continue the story. Use \"" .. curGameWord .. "\" in your text.")
+		textBox.setContent( gameStatusBox, CONTINUE_STORY_USE_WORD_STR1 .. " \"" .. curGameWord .. "\" " .. CONTINUE_STORY_USE_WORD_STR2 )
 		if chat.getActive() == false then
 			textBox.setAccess( gameInputBox, true, true )
 			scrollGameBox()
@@ -457,23 +457,23 @@ function game.sendStory()
 			
 			
 			textBox.setContent( gameInputBox, "" )
-			textBox.setContent( gameStatusBox, "Waiting for heroes to reply..." )
+			textBox.setContent( gameStatusBox, WAITING_FOR_HEROES_STR )
 			textBox.setColour( gameStatusBox, 0, 0, 0 )
 			waitForPlayerActions = true
 			nextWordChosen = false
-			statusMsg.new("Loading...")
+			statusMsg.new( LOADING_STR )
 			table.insert( nextFrameEvent, {func = game.serverChooseNextWord, frames = 2 } )
-			table.insert( nextFrameEvent, {func = statusMsg.new, frames = 3, arg = "How should the story continue?" } )
+			table.insert( nextFrameEvent, {func = statusMsg.new, frames = 3, arg = HOW_SHOULD_STORY_CONTINUE_STR } )
 			textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
 		else
 			textBox.setAccess( gameInputBox, true )
 			scrollGameBox()
-			statusMsg.new("You must use '" .. curGameWord .. "' in your Text!")
+			statusMsg.new( MUST_USE_WORD_STR1 .. " '" .. curGameWord .. "' " .. MUST_USE_WORD_STR2)
 		end
 	else
 		textBox.setAccess( gameInputBox, true )
 		scrollGameBox()
-		statusMsg.new("Write something first!")
+		statusMsg.new( ERROR_NO_EMPTY_TEXT_STR )
 	end
 	scrollGameBox()
 end
@@ -526,7 +526,7 @@ function insertAction( newStr )
 			end
 		end
 		if found == false then
-			statusMsg.new("This object does not exist in your inventory!")
+			statusMsg.new( ERROR_DOES_NOT_EXIST_STR )
 			actionStrings[#actionStrings+1] = { typ="skip", str = "" }		--needed! otherwise server won't know that client has attempted to reply, if only a wrong /use action was sent.
 		end
 	elseif newStr:find("/skip") then
@@ -573,13 +573,13 @@ function game.sendAction( )
 		end
 
 		textBox.setContent( gameInputBox, "" )
-		textBox.setContent( gameStatusBox, "Waiting for other players..." )
+		textBox.setContent( gameStatusBox, WAITING_FOR_HEROES_STR )
 		textBox.setColour( gameStatusBox, 0, 0, 0 )
 		waitForPlayerActions = false
 	else
 		textBox.setAccess( gameInputBox, true )
 		scrollGameBox()
-		statusMsg.new("Write something first!")	
+		statusMsg.new( ERROR_NO_EMPTY_TEXT_STR )	
 	end
 	scrollGameBox()
 end
@@ -621,7 +621,7 @@ function game.receiveStory( msg, noPrefix )
 		if noPrefix then
 			textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .. msg .. "\n")
 		else
-			textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .. "Story: " .. msg .. "\n")
+			textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .. STORYTELLER_STR .. ": " .. msg .. "\n")
 		end		
 	end
 	if client then
@@ -704,16 +704,16 @@ function game.show()		-- called once every frame
 	end
 	
 	if server and waitForPlayerActions then
-		textBox.setContent( gameStatusBox, "Waiting for " .. currentPlayer )
+		textBox.setContent( gameStatusBox, WAITING_FOR_STR .. " " .. currentPlayer )
 		if allPlayersHaveReacted then
 			if chat.getActive() == false and nextWordChosen == true then
 				textBox.setAccess( gameInputBox, true )
 			end
 			scrollGameBox()
 			if nextWordChosen == true then
-				textBox.setContent( gameStatusBox, "Continue the story. Use \"" .. curGameWord .. "\" in your text." )
+				textBox.setContent( gameStatusBox, CONTINUE_STORY_USE_WORD_STR1 .. " \"" .. curGameWord .. "\" " .. CONTINUE_STORY_USE_WORD_STR2 )
 			else
-				textBox.setContent( gameStatusBox, "Choose a word..." )
+				textBox.setContent( gameStatusBox, CHOOSE_A_WORD_STR )
 			end
 			textBox.setColour( gameStatusBox, 0, 0, 0 )
 			waitForPlayerActions = false
@@ -721,7 +721,7 @@ function game.show()		-- called once every frame
 			addPlayerTurns()
 		end
 	elseif client and waitForPlayerActions then
-		textBox.setContent( gameStatusBox, "Your turn! What would you like to do?" )
+		textBox.setContent( gameStatusBox, YOUR_TURN_STR )
 		--[[if waitForPlayerActionsTimer >= REPLYTIME then
 			textBox.setAccess( gameInputBox, false )
 			scrollGameBox()
@@ -735,9 +735,9 @@ function gameAreaClicked()
 	if wikiClient.getFirstWordActive() or textBox.getAccess( gameInputBox ) then return end
 	if server then
 		if waitForPlayerActions then
-			statusMsg.new( "Give the heroes some time to reply!" )
+			statusMsg.new( WAITING_FOR_HEROES_STR )
 		elseif nextWordChosen == false then
-			statusMsg.new( "Choose next word first!" )
+			statusMsg.new( ERROR_CHOOSE_NEXT_WORD_BEFORE_CONTINUING_STR )
 		else
 			chat.setAccess( false )
 			textBox.setAccess( gameInputBox, true )
@@ -749,7 +749,7 @@ function gameAreaClicked()
 			textBox.setAccess( gameInputBox, true )
 			scrollGameBox()
 		else
-			statusMsg.new( "It's not your turn!" )
+			statusMsg.new( ERROR_NOT_YOUR_TURN_STR )
 		end
 	end
 end
@@ -762,7 +762,7 @@ function chatAreaClicked()
 end
 
 function game.init()
-	statusMsg.new("Game starting.")
+	statusMsg.new( GAME_STARTING_STR )
 	
 	sound.playNotification()
 	
@@ -816,24 +816,21 @@ function game.init()
 		addPlayerTurns()
 		game.setJokerButtons()
 		curGameWord = startingWord		-- the current game's word will be the word the server chose as start word
+		
+		textBox.setContent( gameStatusBox, START_STORY_USE_WORD_STR1 .. " \"" .. curGameWord .. "\" " .. START_STORY_USE_WORD_STR2 )
 		textBox.setContent( gameStatusBox, "Start the story. Use \"" .. startingWord .. "\" in your text." )
-		textBox.setColourStart( gameStatusBox, #"Start the story. Use \""+1 , colWikiWord.r, colWikiWord.g, colWikiWord.b )
-		textBox.setColourStart( gameStatusBox, #"Start the story. Use \"" + #startingWord + 1 , 0,0,0 )
+		textBox.setColourStart( gameStatusBox, #START_STORY_USE_WORD_STR1+4 , colWikiWord.r, colWikiWord.g, colWikiWord.b )
+		textBox.setColourStart( gameStatusBox, #START_STORY_USE_WORD_STR1 + #startingWord + 4 , 0,0,0 )
 		textBox.setAccess( gameInputBox, true, true )
 		scrollGameBox()
 		textBox.setReturnEvent( gameInputBox, game.sendStory )
 		textBox.highlightText( gameInputBox, curGameWord, colHighlightWikiWord.r, colHighlightWikiWord.g, colHighlightWikiWord.b )
 	else
-		textBox.setContent( inventoryFieldHeader, "Inventory" )
-		textBox.setContent( gameStatusBox, "Waiting for server to beginn story..." )
+		textBox.setContent( inventoryFieldHeader, INVENTORY_STR )
+		textBox.setContent( gameStatusBox, WAITING_FOR_SERVER_BEGINNING_STR )
 	end
 
-	-- load the help file for the lobby:
-	local helpFile = love.filesystem.newFile("Help/game.txt")
-	helpFile:open('r')
-	local data = helpFile:read(all)
-	if data then helpString = data
-	else helpString = "Help file not found." end
+	helpString = HELP_GAME
 
 end
 
@@ -844,7 +841,7 @@ function game.setButtons()
 	buttons.add( gameAreaX+gameAreaWidth-50, gameAreaY + gameAreaHeight, 50, 20, "Down", drawButton, highlightButton, textBox.scrollDown, gameTextBox )
 	buttons.add( chatAreaX+chatAreaWidth-100, chatAreaY - 20, 50, 20, "Up", drawButton, highlightButton, textBox.scrollUp, chatBox )
 	buttons.add( chatAreaX+chatAreaWidth-50, chatAreaY - 20, 50, 20, "Down", drawButton, highlightButton, textBox.scrollDown, chatBox )
-	buttons.add( love.graphics.getWidth()-100, love.graphics.getHeight()-40, 90, 25, "Export", drawButton, highlightButton, export.toHtmlFile, gameTextBox )
+	buttons.add( love.graphics.getWidth()-100, love.graphics.getHeight()-40, 90, 25, EXPORT_STR, drawButton, highlightButton, export.toHtmlFile, gameTextBox )
 end
 
 function game.receiveServerMessage( msg )

@@ -6,7 +6,7 @@ local urlManipulation = require("Scripts/urlManip")
 http.TIMEOUT = 10
 
 -- this is the base URL of the wiki. To start out, you can try "http://de.wikipedia.org" or "http://fr.wikipedia.org":
-local WIKI_URL = "http://de.wikipedia.org"
+WIKI_URL = "http://en.wikipedia.org"
 
 -- if this line is found on the source page, then there is no wiki site for the word you're looking for:
 local WIKI_NOARTICLE = "<div id=\"mw%-content%-text\"><div class=\"noarticletext\">"
@@ -40,7 +40,7 @@ local previousWikiWords = {}		-- stores all words a player chooses, so that joke
 function wikiClient.testConnection()
 	pageSource = http.request(WIKI_URL)
 	if pageSource == nil then
-		table.insert( nextFrameEvent, {func = statusMsg.new, frames = 2, arg = "Could not connect to wiki. Is your internet connection on?" } )
+		table.insert( nextFrameEvent, {func = statusMsg.new, frames = 2, arg = ERROR_WIKI_CONNECTION_LONG_STR } )
 		return false
 	else
 		testingConnection = false
@@ -60,7 +60,7 @@ function wikiClient.newWord( wordToSearchFor )
 	local foundStartPage, multipleFound = false, false
 
 	if pageSource == nil then
-		statusMsg.new("Error connecting. Please retry.")
+		statusMsg.new( ERROR_WIKI_CONNECTION_STR )
 		return nil
 	end
 	if string.find(pageSource, WIKI_NOARTICLE) == nil and string.find(pageSource, WIKI_DELETEDPAGE) == nil then
@@ -90,7 +90,7 @@ function wikiClient.nextWord()		-- choose a few random links from the wiki sourc
 	pageSource = http.request(fullURL)
 
 	if pageSource == nil then
-		statusMsg.new("Error connecting to wiki.")
+		statusMsg.new( ERROR_WIKI_CONNECTION_STR )
 		return nil
 	end
 	local urlTable, numberOfFoundLinks, doublesFound = urlManipulation.extractURLs(pageSource, WIKI_STARTOFCONTENTS)
@@ -179,8 +179,8 @@ function wikiClient.firstWordSet()
 	if textBox.getContent( firstWordInputBox ):match( "[%d%a%s]+" ) == textBox.getContent( firstWordInputBox ) then
 		found, multiple, urlTable = wikiClient.newWord( textBox.getContent( firstWordInputBox ) )
 		if multiple == true then
-			statusMsg.new( "Multiple articles found. Choose one." )
-			textBox.setContent( firstWordHeaderBox, "Did you mean..." )
+			statusMsg.new( ERROR_MULTIPLE_ARTICLES_STR )
+			textBox.setContent( firstWordHeaderBox, CHOOSE_ARTICLE_STR )
 			local fieldWidth = w-20
 			local i = 0
 			local j
@@ -207,7 +207,7 @@ function wikiClient.firstWordSet()
 			--textBox.setAccess( firstWordInputBox, true )
 			return
 		elseif found == nil or found == false then
-			statusMsg.new( "No wiki article found. Try another word or connect to the internet." )
+			statusMsg.new( ERROR_NO_WIKI_ARTICLE_STR )
 			textBox.setAccess( firstWordInputBox, true )
 			return
 		end
@@ -219,7 +219,7 @@ function wikiClient.firstWordSet()
 		textBox.remove( firstWordHeaderBox )
 		firstWordHeaderBox = nil		
 		buttons.clear()
-		statusMsg.new( "New word set." )
+		statusMsg.new( NEW_WORD_SET_STR )
 	
 		firstWordActive = false
 	
@@ -229,12 +229,12 @@ function wikiClient.firstWordSet()
 		
 	else
 		textBox.setAccess( firstWordInputBox, true )
-		statusMsg.new( "Only numbers, spaces and letters allowed!" )
+		statusMsg.new( ERROR_INVALID_CHARACTER_STR )
 	end
 end
 
 function wikiClient.startFirstWordSet()
-	statusMsg.new( "Looking up word..." )	
+	statusMsg.new( LOOKING_UP_WORD_STR )	
 	table.insert( nextFrameEvent, {func = wikiClient.firstWordSet, frames = 2 } ) --make sure message is drawn before calling the event
 end
 

@@ -34,7 +34,7 @@ function attemptGameStart()
 		cl.client:send( "GAMESTART:\n" )
 	end
 	if numClients == 0 and not DEBUG then
-		statusMsg.new( "Need at least one player!" )
+		statusMsg.new( ERROR_MINIMUM_ONE_PLAYER_STR )
 	else
 		buttons.clear()		-- remove game start button
 		active = false
@@ -45,11 +45,11 @@ end
 local found, multiple, urlTable
 
 function lobby.inputFirstWord()
-	wikiClient.inputWikiWord( love.graphics.getWidth()/2, 400, love.graphics.getWidth()/2-20, love.graphics.getHeight()/2-110, lobby.firstWordSet, "What will the story be about?" )
+	wikiClient.inputWikiWord( love.graphics.getWidth()/2, 400, love.graphics.getWidth()/2-20, love.graphics.getHeight()/2-110, lobby.firstWordSet, ENTER_FIRST_WORD_STR )
 end
 
 function lobby.inputDescriptionWord()
-	wikiClient.inputWikiWord( love.graphics.getWidth()/2, 400, love.graphics.getWidth()/2-20, love.graphics.getHeight()/2-110, lobby.descriptionWordSet, "Enter a word to describe your character:" )
+	wikiClient.inputWikiWord( love.graphics.getWidth()/2, 400, love.graphics.getWidth()/2-20, love.graphics.getHeight()/2-110, lobby.descriptionWordSet, ENTER_DESCRIPTION_WORD_STR )
 	setAvatarButtons()
 end
 
@@ -71,12 +71,12 @@ function sendReady()
 	buttons.clear()
 	setAvatarButtons()
 	if clientReady then 
-		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Ready [x]", drawButton, highlightButton , sendReady )
+		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, READY_BUTTON_STR .. " [x]", drawButton, highlightButton , sendReady )
 		connection.sendAvatar()
 		connection.sendStatistics()		
 	else 
-		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Ready [ ]", drawButton, highlightButton , sendReady )
-		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, "Change description", drawButton, highlightButton , lobby.inputDescriptionWord )
+		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, READY_BUTTON_STR .. " [ ]", drawButton, highlightButton , sendReady )
+		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, CHANGE_DESCRIPTION_BUTTON_STR, drawButton, highlightButton , lobby.inputDescriptionWord )
 		setAbilityStatButtons()
 	end
 end
@@ -90,7 +90,7 @@ function lobby.descriptionAdded()
 			addedDescription = true
 			setClientButtons()
 		else
-			if descriptionWord then statusMsg.new( "You must use " .. descriptionWord .. " in your description!" ) end
+			if descriptionWord then statusMsg.new( MMUST_USE_WORD_STR1 " " .. descriptionWord .. " " .. MUST_USE_WORD_STR2 ) end
 			textBox.setAccess( descriptionInputBox, true, true )
 			textBox.moveCursorToEnd( descriptionInputBox )
 		end
@@ -106,7 +106,7 @@ function lobby.chooseDescriptionWord( index )
 			if descriptionHeaderBox == nil then
 				descriptionHeaderBox = textBox.new( avatarPicX+AVATAR_PIXELS_X*AVATAR_PIXELS_WIDTH+10, 400 + 3, 2, fontInputHeader, love.graphics.getWidth() )
 			end
-			textBox.setContent( descriptionHeaderBox, "Tell us something about your character. Use " .. descriptionWord .. "." )
+			textBox.setContent( descriptionHeaderBox, USE_DESCRIPTION_WORD .. " " .. descriptionWord )
 			if descriptionInputBox == nil then
 				descriptionInputBox = textBox.new( avatarPicX+AVATAR_PIXELS_X*AVATAR_PIXELS_WIDTH+15, 400 + 23, 6, fontInput, love.graphics.getWidth()/2-20 )
 				textBox.setColour( descriptionInputBox, colTextInput.r, colTextInput.g, colTextInput.b )
@@ -121,7 +121,7 @@ function lobby.chooseDescriptionWord( index )
 			table.insert( nextFrameEvent, {func = textBox.moveCursorToEnd, arg = descriptionInputBox, frames = 2 } )
 			textBox.setReturnEvent( descriptionInputBox, lobby.descriptionAdded )
 		else
-			buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, "Describe character", drawButton, highlightButton , lobby.inputDescriptionWord )
+			buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, DESCRIBE_CHARACTER_BUTTON_STR, drawButton, highlightButton , lobby.inputDescriptionWord )
 		end
 	end
 end
@@ -177,8 +177,7 @@ function lobby.firstWordSet( word )
 	
 	connection.serverBroadcast("CURWORD:" .. startingWord .. "\n")
 	setServerButtons()
-
-	statusMsg.new( "Start word set." )
+	statusMsg.new( CHOSEN_FIRST_WORD_STR )
 end
 
 function setAvatarButtons()
@@ -242,12 +241,12 @@ function setServerButtons()
 	addAbilityRemoveButtons()
 	
 	if startingWord == nil then
-		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, "Choose Path", drawButton, highlightButton, lobby.inputFirstWord )
-		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight*2-10, buttonWidth, buttonHeight, "Add Ability", drawButton, highlightButton, lobby.inputAbility )
+		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, CHOOSE_PATH_BUTTON_STR, drawButton, highlightButton, lobby.inputFirstWord )
+		--buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight*2-10, buttonWidth, buttonHeight, "Add Ability", drawButton, highlightButton, lobby.inputAbility )
 	else
-		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight*2-10, buttonWidth, buttonHeight, "Add Ability", drawButton, highlightButton, lobby.inputAbility )
-		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, "Change first Word", drawButton, highlightButton, lobby.inputFirstWord )
-		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Begin journey", drawButton, highlightButton, attemptGameStart )
+		--buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight*2-10, buttonWidth, buttonHeight, "Add Ability", drawButton, highlightButton, lobby.inputAbility )
+		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, CHANGE_FIRST_WORD_BUTTON_STR, drawButton, highlightButton, lobby.inputFirstWord )
+		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, BEGIN_JOURNEY_BUTTON_STR, drawButton, highlightButton, attemptGameStart )
 	end
 end
 
@@ -256,14 +255,14 @@ function setClientButtons()
 	setAbilityStatButtons()
 	
 	
-	buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, "Describe character", drawButton, highlightButton , lobby.inputDescriptionWord )
+	buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, DESCRIBE_CHARACTER_BUTTON_STR, drawButton, highlightButton , lobby.inputDescriptionWord )
 		
 	setAvatarButtons()
 	if DEBUG or addedDescription then
 		if clientReady then 
-			buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Ready [x]", drawButton, highlightButton , sendReady )
+			buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, READY_BUTTON_STR .. " [x]", drawButton, highlightButton , sendReady )
 		else 
-			buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, "Ready [ ]", drawButton, highlightButton , sendReady )
+			buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, READY_BUTTON_STR .. " [ ]", drawButton, highlightButton , sendReady )
 		end
 	end
 end
@@ -275,7 +274,7 @@ function lobby.abilityEntered()
 	abilityInputBox = nil
 	
 	if str:find(",") then
-		statusMsg.new( "No Commas allowed!" )
+		statusMsg.new( ERROR_NO_COMMAS_ALLOWED )
 		setServerButtons()
 		return
 	end
@@ -314,11 +313,7 @@ function lobby.init()
 	end
 
 	-- load the help file for the lobby:
-	local helpFile = love.filesystem.newFile("Help/lobby.txt")
-	helpFile:open('r')
-	local data = helpFile:read(all)
-	if data then helpString = data
-	else helpString = "Help file not found." end
+	helpString = HELP_LOBBY
 
 end
 
@@ -341,14 +336,14 @@ function lobby.showPlayers()
 	
 	love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b )
 	love.graphics.setFont( fontHeader )
-	love.graphics.print( "Heroes:", 70, 65 )
+	love.graphics.print( HEROES_STR, 70, 65 )
 	
 	love.graphics.setColor( colBorder.r, colBorder.g, colBorder.g, 255)
 	love.graphics.rectangle("fill", 0, 360, love.graphics.getWidth(), 38)
 	
 	love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b )
 	love.graphics.setFont( fontInputHeader )
-	love.graphics.print( "Options:", 70, 370 )
+	love.graphics.print( OPTIONS_STR, 70, 370 )
 	
 	
 	if descriptionHeaderBox then
@@ -367,7 +362,7 @@ function lobby.showPlayers()
 	if startingWord then
 		love.graphics.setFont( buttonFont )
 		love.graphics.setColor( 0,0,0 )
-		love.graphics.print( "A story of ", (love.graphics.getWidth() - fontHeader:getWidth(startingWord))/2-buttonFont:getWidth("A story of ") , 24 )
+		love.graphics.print( A_STORY_ABOUT_STR, (love.graphics.getWidth() - fontHeader:getWidth(startingWord))/2-buttonFont:getWidth( A_STORY_ABOUT_STR ) , 24 )
 		love.graphics.setFont( fontHeader )
 		love.graphics.setColor( colWikiWord.r,colWikiWord.g,colWikiWord.b )
 		love.graphics.print( startingWord, (love.graphics.getWidth() - fontHeader:getWidth(startingWord))/2, 20 )
@@ -387,7 +382,7 @@ function lobby.showPlayers()
 		curY = 120 + 50*(cl.clientNumber-1)
 		
 		love.graphics.setColor( colLobby.r, colLobby.g, colLobby.g, 255)
-		if cl.playerName == plName then love.graphics.setColor( colLobby.r-20, colLobby.g-50, colLobby.g-50, 255) end
+		if cl.playerName == plName then love.graphics.setColor( colLobby.r-20, colLobby.g-50, colLobby.g-70, 255) end
 		love.graphics.rectangle("fill", 0, curY-9 , love.graphics.getWidth(), 33)
 		love.graphics.setColor( 0, 0, 0 , 255)
 		love.graphics.setFont( mainFont )
@@ -399,13 +394,13 @@ function lobby.showPlayers()
 		end
 		love.graphics.setColor( 60, 60, 60 , 255)
 		if cl.description then
-			love.graphics.print( cl.description, 220+mainFont:getWidth(cl.playerName), curY + 7 )
+			love.graphics.print( cl.description, 220+mainFont:getWidth(cl.playerName), curY + 4 )
 		end
 		if cl.statistics then
 			local x = 0
 			for i = 1,#abilities,1 do
 				if cl.statistics[i] then
-					love.graphics.print( abilities[i] .. ":  " .. cl.statistics[i], 220+mainFont:getWidth(cl.playerName) + x, curY - 7 )
+					love.graphics.print( abilities[i] .. ":  " .. cl.statistics[i], 220+mainFont:getWidth(cl.playerName) + x, curY - 10 )
 					x = x + mainFont:getWidth( abilities[i] .. ":  " .. cl.statistics[i] ) + 10
 				end
 			end

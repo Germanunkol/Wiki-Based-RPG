@@ -55,7 +55,7 @@ end
 
 function switchPixel( ID )
 	if client and clientReady == true then
-		statusMsg.new("Cannot change avatar while you're \"ready\".")
+		statusMsg.new( ERROR_AVATAR_CANNOT_CHANGE_STR )
 		return
 	end
 	avatar[ID] = avatar[ID] + 1
@@ -100,14 +100,6 @@ function changeStat( ID )
 		before = 5
 		after = 0
 	end
-	
-	print( "ID: " .. ID )
-	print( "line: " ..  line )
-	print( "before: " .. before )
-	print( "after: " .. after)
-	print( "max stats: " .. MAX_STATPOINTS_PER_ABILITY*numAbilities )
-	print( "statPointsUsed: " ..statPointsUsed )
-	print( "statPointsUsed + before: " ..statPointsUsed + before )
 	
 	if statPointsUsed + before > MAX_STATPOINTS_PER_ABILITY*numAbilities then
 		return

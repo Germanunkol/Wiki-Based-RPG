@@ -3,6 +3,8 @@ socket = require("socket")
 connection = require("Scripts/connection")
 export = require("Scripts/export")
 
+localization = require("Scripts/Localization")
+
 lobby = require("Scripts/lobby")
 sound = require("Scripts/sound")
 
@@ -12,10 +14,12 @@ wikiClient = require("Scripts/wikiClient")
 --THIS PORT MUST BE FORWARDED ON YOUR ROUTER FOR INTERNET PLAY!
 PORT = 8080
 
---DEBUG = true
+DEBUG = true
 
 server = nil		-- server object. When not nil, then connection is established.
 client = nil		-- client object. When not nil, then connection is established.
+
+language = nil
 
 textBox = require("Scripts/textBox")
 plName = ""
@@ -76,11 +80,20 @@ statistics = {}
 setStatistics = {}
 
 function love.load( arg )
+
+	-- debug:
+	str = "Spatmittelalter"
+	love.graphics.print("|", 7 + mainFont:getWidth(str:sub(1, 3))-3, 20)
+	print( mainFont:getWidth("löve") )
+	
+	love.graphics.setBackgroundColor( colMainBg.r, colMainBg.g, colMainBg.b )
 	success = love.graphics.setMode( 1024, 680, false, false, 0 )
 	love.graphics.setCaption( "Wiki-Based RPG" )
 	sound.init()
 	export.init()
-	menu.initMainMenu()
+	
+	localization.init("Languages")
+	
 	love.keyboard.setKeyRepeat( 0.3, 0.03 )
 	testingConnection = true
 	if DEBUG then testingConnection = false end
@@ -130,20 +143,25 @@ function love.draw()
 	if testingConnection then
 		love.graphics.setFont( fontStatus )
 		love.graphics.setColor( 0,0,0,255 )
-		love.graphics.print( "Loading. Attempting to connect to wiki...", (love.graphics.getWidth()-fontStatus:getWidth("Loading. Attempting to connect to wiki..."))/2, love.graphics.getHeight()-30 )
+		love.graphics.print( ATTEMPT_WIKI_CONNECT_STR, (love.graphics.getWidth()-fontStatus:getWidth( ATTEMPT_WIKI_CONNECT_STR ))/2, love.graphics.getHeight()-30 )
 	else
-		if not server and not client then
-			menu.showMainMenu()
-		elseif lobby.active() then
-			lobby.showPlayers()
-		elseif game.active() then
-			game.show()
+		if not language then
+			localization.display()
+		else
+		
+			if not server and not client then
+				menu.showMainMenu()
+			elseif lobby.active() then
+				lobby.showPlayers()
+			elseif game.active() then
+				game.show()
+			end
+			--textBox.display()
+			if wikiClient.getFirstWordActive() then
+				wikiClient.displayFirstWordChoosing()
+			end
+			buttons.show()
 		end
-		--textBox.display()
-		if wikiClient.getFirstWordActive() then
-			wikiClient.displayFirstWordChoosing()
-		end
-		buttons.show()
 		statusMsg.display()
 	end
 	--textBox.display( tb )
@@ -151,6 +169,7 @@ end
 
 local inputRead
 function love.keypressed(key, unicode)
+	print(key, unicode)
 	inputRead = textBox.input( key, unicode )
 	if not inputRead then		--input has not been put into a chat box: use input as command
 		if ( string.char(unicode) == "c" or string.char(unicode) == "return" ) and game.active() then
@@ -166,7 +185,14 @@ function love.keypressed(key, unicode)
 end
 
 function love.mousepressed()
-	buttons.handleClick()
+	if not language then
+		language = localization.clicked()	-- if a flag was clicked, then the corresponding language will be returned, otherwise nil will be returned.
+		if language then
+			menu.initMainMenu()
+		end
+	else
+		buttons.handleClick()
+	end
 end
 
 
@@ -174,7 +200,7 @@ function startServer()
 	server = connection.initServer( "*", PORT, 4 )
 	if server then
 		lobby.init( buttons )
-		love.graphics.setCaption( "Wiki-Based RPG - " .. "Storyteller")
+		love.graphics.setCaption( "Wiki-Based RPG - " ..  STORYTELLER_STR)
 	end
 end
 
@@ -184,7 +210,7 @@ function startClient()
 	
 	if client then
 		client:send("NAME:" .. plName .. "\n")
-		statusMsg.new("Connected to server.")
+		statusMsg.new(CONNECTION_SUCCESS_STR)
 		print("Connected to server.")
 		lobby.init( buttons )
 		love.graphics.setCaption( "Wiki-Based RPG - " .. plName)

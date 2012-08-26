@@ -63,7 +63,7 @@ function export.toHtmlFile( text )				-- this function assumes that the game sta
 			end
 
 
-			stringToWrite = stringToWrite:gsub( "\nStory:([^\n]*)", "\n</p><i>%1</i><p CLASS=\"indent\">" )
+			stringToWrite = stringToWrite:gsub( "\n" .. STORYTELLER_STR .. ":([^\n]*)", "\n</p><i>%1</i><p CLASS=\"indent\">" )
 			
 			s,e = stringToWrite:find("\n", 1, true)
 			while s do
@@ -80,9 +80,9 @@ function export.toHtmlFile( text )				-- this function assumes that the game sta
 
 			file:write(stringToWrite)
 			file:close()
-			print(fileName .. " written to: " .. love.filesystem.getSaveDirectory() )
+			print(fileName .. " " .. FILE_WRITTEN_TO_LOCATION_STR .. " " .. love.filesystem.getSaveDirectory() )
 		else
-			statusMsg.new( "Error opening file!" );
+			statusMsg.new( ERROR_FILE_OPEN_STR );
 			print( "Error opening " .. filName .. "!" );
 		end
 	else

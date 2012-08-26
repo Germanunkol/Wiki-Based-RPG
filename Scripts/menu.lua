@@ -3,8 +3,6 @@ local menu = {}
 buttonWidth = 200
 buttonHeight = 35
 
-helpString = "Help file not found."			--default, if readme.me is not found
-
 local plNameHeader = nil
 local plNameInputBox = nil
 local ipHeader = nil
@@ -52,11 +50,11 @@ function clientFinishedInput()
 		plNameHeader = textBox.remove( plNameHeader )
 		ipHeader = textBox.remove( ipHeader )
 		ipInputBox = textBox.remove( ipInputBox )
-		statusMsg.new("attempting to connect...")
+		statusMsg.new( ATTEMPT_CLIENT_CONNECT_STR )
 		table.insert( nextFrameEvent, { func = startClient, frames = 2 } )
 	else
 		textBox.setAccess( ipInputBox, true )
-		statusMsg.new( "Invalid IP!" )
+		statusMsg.new( ERROR_INVALID_IP_STR )
 	end
 end
 
@@ -66,19 +64,19 @@ function abortClientConnecting()
 	plNameHeader = textBox.remove( plNameHeader )
 	ipHeader = textBox.remove( ipHeader )
 	ipInputBox = textBox.remove( ipInputBox )
-	statusMsg.new("Aborted.")
+	statusMsg.new( ERROR_ABORTED_STR )
 	menu.initMainMenu()
 end
 
 local function clientInitIpInput()
 	if plNameInputBox then plName = textBox.getContent( plNameInputBox ) end
-	if #plName > 1 and plName["1"] ~= " " and not plName:find(",") and not plName:find(";") and plName:lower() ~= "server" and plName:lower() ~= "story" then
+	if #plName > 1 and plName["1"] ~= " " and not plName:find(",") and not plName:find(";") and plName:lower() ~= "server" and plName:lower() ~= STORYTELLER_STR:lower() then
 		if plNameInputBox then
 			textBox.setAccess( plNameInputBox, false )
 		end
 		
 		ipHeader = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-10, headerPos+120, 1, fontInputHeader, 200)
-		textBox.setContent( ipHeader, "Enter server's IP:" )
+		textBox.setContent( ipHeader, ENTER_IP_STR )
 		ipInputBox = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-5, headerPos+140, 1, fontInput, 200)
 		textBox.setColour( ipInputBox, colTextInput.r, colTextInput.g, colTextInput.b )
 		textBox.setContent( ipInputBox, ipStr )		-- if there's something already in ip string, then place that text in the input box.
@@ -88,7 +86,7 @@ local function clientInitIpInput()
 		textBox.setEscapeEvent( ipInputBox, abortClientConnecting )
 	else
 		if plNameInputBox then textBox.setAccess( plNameInputBox, true ) end
-		statusMsg.new( "Invalid playername!" )
+		statusMsg.new( ERROR_INVALID_PLAYERNAME_STR )
 	end
 end
 
@@ -96,7 +94,7 @@ end
 local function clientInitPlayernameInput()
 	buttons.clear()
 	plNameHeader = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-10, headerPos+70, 1, fontInputHeader, 200)
-	textBox.setContent( plNameHeader, "Enter Playername:" )
+	textBox.setContent( plNameHeader, ENTER_PLAYERNAME_STR )
 	plNameInputBox = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-5, headerPos+90, 1, fontInput, 200)
 	textBox.setColour( plNameInputBox, colTextInput.r, colTextInput.g, colTextInput.b )
 	
@@ -115,23 +113,25 @@ function menu.initMainMenu()
 
 	logoIMG = love.graphics.newImage( "Images/LogoColourSmall.png" )
 	
-	-- load the help file for the menu:
-	local helpFile = love.filesystem.newFile("Help/main.txt")
+	-- load the help file for the menu: (old)
+	--[[local helpFile = love.filesystem.newFile("Help/main.txt")
 	helpFile:open('r')
 	local data = helpFile:read(all)
 	if data then helpString = data
-	else helpString = "Help file not found." end
+	else helpString = "Help file not found." end]]--
+	
+	helpString = HELP_MAIN		-- get the help from in the correct language (default: English)
 
 	--love.graphics.setBackgroundColor(150,160,200)
 	love.graphics.setBackgroundColor( colMainBg.r, colMainBg.g, colMainBg.b )
 	imgScale = 1
 	headerPos = 335
 
-	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 420, buttonWidth, buttonHeight, "Start Server", drawButton, highlightButton, serverStart)
-	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 420 + buttonHeight + 10, buttonWidth, buttonHeight, "Start Client", drawButton, highlightButton, clientInitPlayernameInput )
-	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 420 + buttonHeight*2 + 20, buttonWidth, buttonHeight, "Quit", drawButton, highlightButton, exitProgramm )
-	buttons.add( love.graphics.getWidth()-100, love.graphics.getHeight()-40, 90, 25, "Credits", drawButton, highlightButton)
-	buttons.add( 10, love.graphics.getHeight()-40, 110, 25, "Help", drawButton, displayHelp )
+	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 420, buttonWidth, buttonHeight, START_SERVER_BUTTON_STR, drawButton, highlightButton, serverStart)
+	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 420 + buttonHeight + 10, buttonWidth, buttonHeight, START_CLIENT_BUTTON_STR, drawButton, highlightButton, clientInitPlayernameInput )
+	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 420 + buttonHeight*2 + 20, buttonWidth, buttonHeight, QUIT_BUTTON_STR, drawButton, highlightButton, exitProgramm )
+	buttons.add( love.graphics.getWidth()-100, love.graphics.getHeight()-40, 90, 25, CREDITS_BUTTON_STR, drawButton, highlightButton)
+	buttons.add( 10, love.graphics.getHeight()-40, 110, 25, HELP_BUTTON_STR, drawButton, displayHelp )
 end
 
 
@@ -147,7 +147,7 @@ function menu.showMainMenu()
 	love.graphics.setColor( colLobby.r,colLobby.g,colLobby.b )
 	love.graphics.print( "WB-RPG", 30, headerPos+1 )
 	love.graphics.setFont( mainFont )
-	love.graphics.print( "the Wiki-Based Role Playing Game", 190, headerPos+15 )
+	love.graphics.print( GAME_TITLE_STR, 190, headerPos+15 )
 	
 	love.graphics.draw( logoIMG, (love.graphics.getWidth()-logoIMG:getWidth()*imgScale)/2, 20, 0, imgScale, imgScale )
 
@@ -156,7 +156,5 @@ function menu.showMainMenu()
 	textBox.display( ipHeader )
 	textBox.display( ipInputBox )
 end
-
-
 
 return menu
