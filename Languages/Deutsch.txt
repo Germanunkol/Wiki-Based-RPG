@@ -1,0 +1,127 @@
+WIKI_URL = [[http://de.wikipedia.org]]
+
+WELCOME_STR = [[Willkommen!]]
+
+ATTEMPT_WIKI_CONNECT_STR = [[Lädt. Verbindungsaufbau zur Wiki...]]
+STORYTELLER_STR = [[Erzähler]]
+HEROES_STR = [[Helden]]
+ATTEMPT_CLIENT_CONNECT_STR = [[Verbindungsaufbau...]]
+CONNECTION_SUCCESS_STR = [[Verbunden!]]
+
+START_SERVER_BUTTON_STR = [[Starte Server]]
+START_CLIENT_BUTTON_STR = [[Starte Client]]
+QUIT_BUTTON_STR = [[Beenden]]
+CREDITS_BUTTON_STR = [[Credits]]
+HELP_BUTTON_STR = [[Hilfe]]
+
+GAME_TITLE_STR = [[das Wiki-Basierte Rollenspiel]]
+
+
+SERVER_CLOSED_GAME_STR = [[Server hat das Spiel beendet.]]
+
+-- menu:
+ENTER_PLAYERNAME_STR = [[Spielername:]]
+ENTER_IP_STR = [[IP des Servers:]]
+
+
+-- menu error messages
+ERROR_INVALID_PLAYERNAME_STR = [[Ungültiger Spielername!]]
+ERROR_INVALID_IP_STR = [[Ungültige IP!]]
+ERROR_ABORTED_STR = [[Abgebrochen.]]
+ERROR_SERVER_FULL_STR = [[Server ist bereits voll!]]
+ERROR_DUPLICATE_PLAYERNAME_STR = [[Spielername existiert bereits!]]
+ERROR_GAME_ALREADY_STARTED_STR = [[Spiel hat schon angefangen!]]
+
+-- lobby:
+OPTIONS_STR = [[Optionen:]]
+A_STORY_ABOUT_STR = [[Eine Geschichte über ]]
+NEW_PLAYER_CONNECTED_STR = [[Neuer Mitspieler!]]
+PLAYER_LEFT_STR = [[hat das Spiel verlassen.]]
+BEGIN_JOURNEY_BUTTON_STR = [[Abenteuer beginnen]]
+
+CHOOSE_PATH_BUTTON_STR = [[Richtung aussuchen]]
+CHANGE_FIRST_WORD_BUTTON_STR = [[Erstes Wort ändern]]
+DESCRIBE_CHARACTER_BUTTON_STR = [[Charakter beschreiben]]
+CHANGE_DESCRIPTION_BUTTON_STR = [[Beschreibung ändern]]
+READY_BUTTON_STR = [[Bereit]]
+
+CHOSEN_FIRST_WORD_STR = [[Anfangswort gewählt.]]
+
+ENTER_DESCRIPTION_WORD_STR = [[Ein Wort, dass deinen Character beschreibt:]]
+ENTER_FIRST_WORD_STR = [[Von was soll die Geschichte handeln?]]
+
+USE_DESCRIPTION_WORD = [[Schreibe einen Satz über deinen Character. Benutze das Wort:]]
+
+
+-- lobby Error messages:
+ERROR_AVATAR_CANNOT_CHANGE_STR = [[Avatar nicht änderbar wenn "Bereit".]]
+ERROR_NO_COMMAS_ALLOWED = [[Keine Kommas!]]
+
+-- in game:
+GAME_STARTED_STR = [[Spiel beginnt.]]
+WAITING_FOR_SERVER_BEGINNING_STR = [[Warte auf Erzähler...]]
+
+RECEIVED_STR = [[erhält]]
+WAITING_FOR_STR = [[Warte auf]]
+YOUR_TURN_STR = [[Du bist dran! Was willst du tun?]]
+
+CHOOSE_A_WORD_STR = [[Wähle ein Wort...]]
+CHOOSE_WHAT_TO_DO_WITH_WORD_STR = [[Was willst du tun?]]
+USE_WORD_FOR_STORY_STR =  [[Für Geschichte verwenden]]
+GIVE_WORD_TO_PLAYER_STR = [[Geben an]]
+CHOSE_WORD_STR = [[Gewählt:]]
+WORD_GIVEN_TO_STR = [[Wird gegeben an:]]
+
+SERVER_USED_JOKER_STR = [[(Erzähler verwendet joker)]]
+
+START_STORY_USE_WORD_STR1 = [[Fang mit der Geschichte an. Nutze]]  -- result: "Start the story. Use (the current wiki word) in your text."
+START_STORY_USE_WORD_STR2 = [[in deinem Text.]]
+
+CONTINUE_STORY_USE_WORD_STR1 = [[Erzähle weiter. Nutze]]  -- result: "Continue the story. Use (the current wiki word) in your text."
+CONTINUE_STORY_USE_WORD_STR2 = [[in deinem Text.]]
+
+MUST_USE_WORD_STR1 = [[Du musst]]		-- result: "You must use (the current wiki word) in your text!"
+MUST_USE_WORD_STR2 = [[im Text verwenden!]]
+
+WAITING_FOR_HEROES_STR = [[Warte auf die Helden...]]
+HOW_SHOULD_STORY_CONTINUE_STR = [[Wie soll die Geschichte weitergehen?]]
+
+LOADING_STR = [[Lädt...]]
+
+INVENTORY_STR = [[Inventar]]
+
+-- in game errors:
+ERROR_AT_LEAST_4_WORDS_FOR_JOKER_STR = [[Mindestens 4 Wörter müssen schon gespielt worden sein!]]
+ERROR_CLIENT_NOT_FOUND_STR = [[Spieler nicht gefunden.]]
+ERROR_NO_EMPTY_TEXT_STR = [[Du musst erst etwas schreiben!]]
+ERROR_DOES_NOT_EXIST_STR = [[Objekt ist nicht im Inventar.]]
+ERROR_CHOOSE_NEXT_WORD_BEFORE_CONTINUING_STR = [[Erst Wort wählen!]]
+ERROR_NOT_YOUR_TURN_STR = [[Du bist nicht dran!]]
+
+-- wiki
+NEW_WORD_SET_STR = [[Neues Wort gewählt.]]
+LOOKING_UP_WORD_STR = [[Durchsuche Wiki nach Wort...]]
+
+-- wiki errors:
+ERROR_WIKI_CONNECTION_STR = [[Fehler bei der Verbindung zur Wiki.]]
+ERROR_WIKI_CONNECTION_LONG_STR = [[Konnte nicht mit der Wiki verbinden. Ist deine Internetverbindung aktiviert?]]
+ERROR_NO_WIKI_ARTICLE_STR = [[Kein Wiki Artikel gefunden. Versuche ein anderes Wort oder verbinde mit dem Internet.]]
+ERROR_INVALID_CHARACTER_STR =  [[Nur Nummern, Leerzeichen und Buchstaben!]]
+ERROR_MULTIPLE_ARTICLES_STR = [[Mehrere Artikel gefunden. Wähle einen.]]
+CHOOSE_ARTICLE_STR = [[Meintest du...]]
+
+-- exporter:
+EXPORT_STR = [[Exportieren]]
+FILE_WRITTEN_TO_LOCATION_STR = [[in Datei geschrieben:]]
+ERROR_FILE_OPEN_STR = [[Fehler beim Öffnen der Datei!]]
+
+-- this help text will be displayed on the main screen:
+HELP_MAIN = [[Deutsche Hilfe 1]]
+
+
+-- this is the help text displayed inside the Lobby:
+HELP_LOBBY = [[Deutsche Hilfe 2]]
+
+
+-- this help text will be displayed once players have started a game:
+HELP_GAME = [[Deutsche Hilfe 3]]
