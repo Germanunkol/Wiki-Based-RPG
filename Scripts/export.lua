@@ -57,7 +57,7 @@ function export.toHtmlFile( text )				-- this function assumes that the game sta
 			for k, v in pairs( text.highlightWords ) do
 				s, e = stringToWrite:upper():find( v.w:upper(), 1, true)
 				while s do
-					stringToWrite = stringToWrite:sub(1, s-1) .. "<b>" .. stringToWrite:sub(s,e) .. "</b>" .. stringToWrite:sub(e+1, #stringToWrite)
+					stringToWrite = safeSub(stringToWrite,1, s-1) .. "<b>" .. safeSub(stringToWrite, s,e) .. "</b>" .. safeSub(stringToWrite, e+1, #stringToWrite)
 					s, e = stringToWrite:upper():find( v.w:upper(), e+7, true)
 				end
 			end
@@ -67,10 +67,10 @@ function export.toHtmlFile( text )				-- this function assumes that the game sta
 			
 			s,e = stringToWrite:find("\n", 1, true)
 			while s do
-				if stringToWrite:sub( s-#"</i><p CLASS=\"indent\">", s-1 ) ~= "</i><p CLASS=\"indent\">" then
-					stringToWrite = stringToWrite:sub(1, s-1) .. "<br />" .. stringToWrite:sub(s, #stringToWrite)
+				if safeSub(stringToWrite,  s-#"</i><p CLASS=\"indent\">", s-1 ) ~= "</i><p CLASS=\"indent\">" then
+					stringToWrite = safeSub(stringToWrite, 1, s-1) .. "<br />" .. safeSub(stringToWrite, s, #stringToWrite)
 				end
-				if DEBUG then print(stringToWrite:sub(e+6, #stringToWrite)) end
+				if DEBUG then print(safeSub(stringToWrite, e+6, #stringToWrite)) end
 				s,e = stringToWrite:find("\n", e+7, true)
 			end
 			

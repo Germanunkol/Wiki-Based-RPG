@@ -81,11 +81,15 @@ setStatistics = {}
 
 function love.load( arg )
 
-	-- debug:
-	str = "Spatmittelalter"
-	love.graphics.print("|", 7 + mainFont:getWidth(str:sub(1, 3))-3, 20)
-	print( mainFont:getWidth("löve") )
-	
+	print(safeSub("<!DOCT/öxt/jaYPE /html PUBLIC \"-//W3C//DTD XHTML 1.0 T", 5, -1 ))
+--[[
+	for i = 1, 10, 1 do
+		s = string.sub("löve is great", i, i)
+		print(s, i)
+	end
+]]--
+
+
 	love.graphics.setBackgroundColor( colMainBg.r, colMainBg.g, colMainBg.b )
 	success = love.graphics.setMode( 1024, 680, false, false, 0 )
 	love.graphics.setCaption( "Wiki-Based RPG" )
@@ -138,6 +142,8 @@ function love.update()
 	end
 end
 
+frame = 0
+
 function love.draw()
 
 	if testingConnection then
@@ -156,7 +162,6 @@ function love.draw()
 			elseif game.active() then
 				game.show()
 			end
-			--textBox.display()
 			if wikiClient.getFirstWordActive() then
 				wikiClient.displayFirstWordChoosing()
 			end
@@ -164,7 +169,6 @@ function love.draw()
 		end
 		statusMsg.display()
 	end
-	--textBox.display( tb )
 end
 
 local inputRead

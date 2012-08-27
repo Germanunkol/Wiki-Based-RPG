@@ -56,6 +56,9 @@ function wikiClient.newWord( wordToSearchFor )
 	fullURL = WIKI_URL .. "/wiki/" .. wordToSearchFor
 	print ("Loading URL: " .. fullURL)
 	pageSource = http.request(fullURL)
+	print("length page source 1: " .. strLen(pageSource))
+	--print("start: " .. safeSub( pageSource, 1, 10))
+	print("end: " .. safeSub( pageSource, strLen(pageSource)-10, strLen(pageSource)))
 	urlTable = nil
 	local foundStartPage, multipleFound = false, false
 
@@ -190,7 +193,7 @@ function wikiClient.firstWordSet()
 					titleStr = ""
 					for char in v.title:gfind("([%z\1-\127\194-\244][\128-\191]*)") do
 						titleStr = titleStr .. char
-						if buttonFont:getWidth( titleStr ) >= fieldWidth-30 then
+						if stringWidth( titleStr,buttonFont ) >= fieldWidth-30 then
 							 break
 						end
 					end

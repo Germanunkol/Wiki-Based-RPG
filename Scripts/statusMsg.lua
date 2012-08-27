@@ -14,7 +14,7 @@ function statusMsg.display()
 	if statusMsgTimer < 10 then
 		love.graphics.setFont( fontStatus )
 		love.graphics.setColor( 0, 0, 0, 255*(10-statusMsgTimer)/10)
-		love.graphics.print( curStatusMsg, (love.graphics.getWidth()-fontStatus:getWidth(curStatusMsg))/2, love.graphics.getHeight()-30 )
+		love.graphics.print( curStatusMsg, (love.graphics.getWidth()-stringWidth(curStatusMsg,fontStatus))/2, love.graphics.getHeight()-30 )
 	end
 end
 

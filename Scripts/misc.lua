@@ -11,7 +11,7 @@ function drawButton( theButton )
 	love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b, 255)
 	love.graphics.rectangle( "fill", theButton.x + 3, theButton.y + 3, theButton.w-6, theButton.h-6 )
 	love.graphics.setColor( 0, 0, 0 , 255)
-	love.graphics.print( theButton.label, theButton.x + theButton.w/2 - buttonFont:getWidth(theButton.label)/2, theButton.y + (theButton.h - buttonFont:getHeight())/2)
+	love.graphics.print( theButton.label, theButton.x + theButton.w/2 - stringWidth(theButton.label,buttonFont)/2, theButton.y + (theButton.h - buttonFont:getHeight())/2)
 end
 
 function highlightButton( theButton )
@@ -22,7 +22,7 @@ function highlightButton( theButton )
 	love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b, 255)
 	love.graphics.rectangle( "fill", theButton.x + 3, theButton.y + 3, theButton.w-6, theButton.h-6 )
 	love.graphics.setColor( 0, 0, 0 , 255)
-	love.graphics.print( theButton.label, theButton.x + theButton.w/2 - buttonFont:getWidth(theButton.label)/2, theButton.y + (theButton.h - buttonFont:getHeight())/2 )
+	love.graphics.print( theButton.label, theButton.x + theButton.w/2 - stringWidth(theButton.label,buttonFont)/2, theButton.y + (theButton.h - buttonFont:getHeight())/2 )
 end
 
 function drawPixel( theButton )
@@ -168,3 +168,35 @@ function printTable( t, tabs )
 		end
 	end
 end
+
+function strLen( str )
+	i = 0
+	for char in str:gfind("([%z\1-\127\194-\244][\128-\191]*)") do
+		i = i+1
+	end
+	return i
+end
+
+function safeSub(str, from, to)
+	i = 1
+	tmpStr = ""
+	if to == 0 then return("") end
+	for char in str:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
+		if i >= from then 
+			tmpStr = tmpStr .. char
+		end
+		if i == to then break end
+		i = i + 1
+	end
+	return tmpStr
+end
+
+function stringWidth( string, font )
+	--print("input: " .. string)
+	local tmpStr = ""
+	for char in string:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
+		tmpStr = tmpStr .. char
+	end
+	return( font:getWidth( tmpStr ) )
+end
+

@@ -166,9 +166,9 @@ function lobby.firstWordSet( word )
 	local start, ending = startingWord:find( "%(.*%)" )
 	if start then
 	--print("found: " .. curGameWord:sub(start, ending))
-		startingWord = startingWord:sub( 1, start-1 ) .. startingWord:sub( ending+1, #curGameWord )
-		while startingWord:sub( #startingWord, #startingWord )  == " " do		--don't allow trailing spaces
-			startingWord = startingWord:sub( 1, #startingWord-1 )
+		startingWord = safeSub(startingWord, 1, start-1 ) .. safeSub(startingWord, ending+1, #curGameWord )
+		while safeSub(startingWord, #startingWord, #startingWord )  == " " do		--don't allow trailing spaces
+			startingWord = safeSub(startingWord, 1, #startingWord-1 )
 		end
 		if #startingWord == 0 then
 			startingWord = word
@@ -192,7 +192,7 @@ end
 function setAbilityStatButtons()
 	local maxWidth = 0
 	for k, v in pairs(abilities) do
-		if maxWidth < buttonFont:getWidth(v) then maxWidth = buttonFont:getWidth(v) end
+		if maxWidth < stringWidth(v,buttonFont) then maxWidth = stringWidth(v,buttonFont) end
 	end
 	for i=1,MAX_ABILITIES,1 do
 		if abilities[i] ~= nil then
@@ -362,10 +362,10 @@ function lobby.showPlayers()
 	if startingWord then
 		love.graphics.setFont( buttonFont )
 		love.graphics.setColor( 0,0,0 )
-		love.graphics.print( A_STORY_ABOUT_STR, (love.graphics.getWidth() - fontHeader:getWidth(startingWord))/2-buttonFont:getWidth( A_STORY_ABOUT_STR ) , 24 )
+		love.graphics.print( A_STORY_ABOUT_STR, (love.graphics.getWidth() - stringWidth(startingWord,fontHeader))/2-stringWidth( A_STORY_ABOUT_STR,buttonFont ) , 24 )
 		love.graphics.setFont( fontHeader )
 		love.graphics.setColor( colWikiWord.r,colWikiWord.g,colWikiWord.b )
-		love.graphics.print( startingWord, (love.graphics.getWidth() - fontHeader:getWidth(startingWord))/2, 20 )
+		love.graphics.print( startingWord, (love.graphics.getWidth() - stringWidth(startingWord,fontHeader))/2, 20 )
 	end
 	
 	if not descriptionHeaderBox then
@@ -394,14 +394,14 @@ function lobby.showPlayers()
 		end
 		love.graphics.setColor( 60, 60, 60 , 255)
 		if cl.description then
-			love.graphics.print( cl.description, 220+mainFont:getWidth(cl.playerName), curY + 4 )
+			love.graphics.print( cl.description, 220+stringWidth(cl.playerName,mainFont), curY + 4 )
 		end
 		if cl.statistics then
 			local x = 0
 			for i = 1,#abilities,1 do
 				if cl.statistics[i] then
-					love.graphics.print( abilities[i] .. ":  " .. cl.statistics[i], 220+mainFont:getWidth(cl.playerName) + x, curY - 10 )
-					x = x + mainFont:getWidth( abilities[i] .. ":  " .. cl.statistics[i] ) + 10
+					love.graphics.print( abilities[i] .. ":  " .. cl.statistics[i], 220+stringWidth(cl.playerName,mainFont) + x, curY - 10 )
+					x = x + stringWidth( abilities[i] .. ":  " .. cl.statistics[i],mainFont ) + 10
 				end
 			end
 		end

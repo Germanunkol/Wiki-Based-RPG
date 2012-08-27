@@ -103,19 +103,19 @@ function displayNextPlayerTurns( str )
 	local player, name
 	i = 1
 	while s do
-		player = str:sub(1,e)
-		name = player:sub(1, player:find(",", 1, true) - 1)
-		while fontStatus:getWidth(name) > nextPlayerAreaWidth - 10 do
-			name = name:sub(1, #name-1)
+		player = safeSub(str,1,e)
+		name = safeSub(player, 1, player:find(",", 1, true) - 1)
+		while stringWidth(name,fontStatus) > nextPlayerAreaWidth - 10 do
+			name = safeSub(name, 1, #name-1)
 		end
-		playerTurnsStrings[i] = {str=name, ID = tonumber(player:sub( player:find(",", 1, true)+1, #player-1)) }
+		playerTurnsStrings[i] = {str=name, ID = tonumber(safeSub(player, player:find(",", 1, true)+1, #player-1)) }
 		i = i+1
-		str = str:sub(e+1, #str)
+		str = safeSub(str,e+1, #str)
 		s,e = str:find(";", 1, true)
 	end
 	currentPlayer = ""
 	if playerTurnsStrings[1] and playerTurnsStrings[1].str and playerTurnsStrings[1].str:find(":", 1, true) then
-		currentPlayer = playerTurnsStrings[1].str:sub( playerTurnsStrings[1].str:find(":", 1, true) +1, #playerTurnsStrings[1].str)
+		currentPlayer = safeSub(playerTurnsStrings[1].str, playerTurnsStrings[1].str:find(":", 1, true) +1, #playerTurnsStrings[1].str)
 	end
 	if client then 
 		textBox.setContent( gameStatusBox, WAITING_FOR_STR .. " " .. currentPlayer )
@@ -170,9 +170,9 @@ function chooseNextWord( index )
 		local start, ending = curGameWord:find( "%(.*%)" )
 		if start then
 		--print("found: " .. curGameWord:sub(start, ending))
-			curGameWord = curGameWord:sub( 1, start-1 ) .. curGameWord:sub( ending+1, #curGameWord )
-			while curGameWord:sub( #curGameWord, #curGameWord )  == " " do		--don't allow trailing spaces
-				curGameWord = curGameWord:sub( 1, #curGameWord-1 )
+			curGameWord = safeSub(curGameWord, 1, start-1 ) .. safeSub(curGameWord, ending+1, #curGameWord )
+			while safeSub(curGameWord, #curGameWord, #curGameWord )  == " " do		--don't allow trailing spaces
+				curGameWord = safeSub(curGameWord, 1, #curGameWord-1 )
 			end
 			if #curGameWord == 0 then
 				curGameWord = chosenURLs[index].title
@@ -198,7 +198,7 @@ function chooseNextWord( index )
 				titleStr = GIVE_WORD_TO_PLAYER_STR .. " "
 				for char in cl.playerName:gfind("([%z\1-\127\194-\244][\128-\191]*)") do
 					titleStr = titleStr .. char
-					if buttonFont:getWidth( titleStr ) >= chatAreaWidth-30 then
+					if stringWidth( titleStr,buttonFont ) >= chatAreaWidth-30 then
 						 break
 					end
 				end
@@ -233,7 +233,7 @@ function game.chooseWord()
 				titleStr = ""
 				for char in v.title:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
 					titleStr = titleStr .. char
-					if buttonFont:getWidth( titleStr ) >= chatAreaWidth-30 then
+					if stringWidth( titleStr,buttonFont ) >= chatAreaWidth-30 then
 						 break
 					end
 				end
@@ -299,7 +299,7 @@ function game.useJoker()
 				titleStr = ""
 				for char in v.title:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
 					titleStr = titleStr .. char
-					if buttonFont:getWidth( titleStr ) >= chatAreaWidth-30 then
+					if stringWidth( titleStr,buttonFont ) >= chatAreaWidth-30 then
 						 break
 					end
 				end
@@ -503,21 +503,21 @@ local actionStrings = {}
 
 function insertAction( newStr )
 	if newStr:find("/do") == 1 then
-		actionStrings[#actionStrings+1] = { typ="do", str=newStr:sub(4, #newStr) }
+		actionStrings[#actionStrings+1] = { typ="do", str=safeSub(newStr, 4, #newStr) }
 	elseif newStr:find("/say") == 1 then
-		if newStr:sub(5,5) == " " then
-			actionStrings[#actionStrings+1] = { typ="say", str=newStr:sub(6, #newStr) }	--remove first character if it's a space
+		if safeSub(newStr, 5,5) == " " then
+			actionStrings[#actionStrings+1] = { typ="say", str=safeSub(newStr, 6, #newStr) }	--remove first character if it's a space
 		else
-			actionStrings[#actionStrings+1] = { typ="say", str=newStr:sub(5, #newStr) }
+			actionStrings[#actionStrings+1] = { typ="say", str=safeSub(newStr, 5, #newStr) }
 		end
 	elseif newStr:find("/use") == 1 then
-		local inventoryID = tonumber(newStr:sub(6, 6))
+		local inventoryID = tonumber(safeSub(newStr, 6, 6))
 		local found = false
 		if inventoryID and inventoryID > 0 and inventoryID <= INVENTORY_CAPACITY then
 			for k, cl in pairs(connectedClients) do
 				if cl.playerName == plName then
 					if cl.inventory[inventoryID] ~= nil then
-						actionStrings[#actionStrings+1] = { typ="use", str=cl.inventory[inventoryID] .. " on " .. newStr:sub(8, #newStr) }
+						actionStrings[#actionStrings+1] = { typ="use", str=cl.inventory[inventoryID] .. " on " .. safeSub(newStr, 8, #newStr) }
 						client:send("INVREMOVE:" .. cl.clientNumber .. cl.inventory[inventoryID] .. "\n")
 						found = true
 					end
@@ -553,7 +553,7 @@ function game.sendAction( )
 			if posStart == nil then
 				insertAction( "/say " .. str )		-- if no command was used, assume /say.
 			elseif posStart ~= 1 then
-				insertAction( "/say " .. str:sub(1, posStart-1) )		-- if it doesn't start with a command, /say the beginning.
+				insertAction( "/say " .. safeSub(str,1, posStart-1) )		-- if it doesn't start with a command, /say the beginning.
 			end
 			while posStart do
 				posStart1, posEnd1 = str:find( "/say", posStart+1 )
@@ -561,9 +561,9 @@ function game.sendAction( )
 				posStart3, posEnd3 = str:find( "/use", posStart+1 )
 				posStartNew, posEndNew = minimum( posStart1, posStart2, posStart3, posEnd1, posEnd2, posEnd3 )
 				if posStartNew then
-					insertAction( str:sub(posStart, posStartNew-1) )
+					insertAction( safeSub(str, posStart, posStartNew-1) )
 				else
-					insertAction( str:sub(posStart, #str) )
+					insertAction( safeSub(str, posStart, #str) )
 				end
 				posStart, posEnd = posStartNew, posEndNew
 			end

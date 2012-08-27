@@ -58,7 +58,7 @@ ERROR_AVATAR_CANNOT_CHANGE_STR = [[Avatar nicht änderbar wenn "Bereit".]]
 ERROR_NO_COMMAS_ALLOWED = [[Keine Kommas!]]
 
 -- in game:
-GAME_STARTED_STR = [[Spiel beginnt.]]
+GAME_STARTING_STR = [[Spiel beginnt.]]
 WAITING_FOR_SERVER_BEGINNING_STR = [[Warte auf Erzähler...]]
 
 RECEIVED_STR = [[erhält]]
