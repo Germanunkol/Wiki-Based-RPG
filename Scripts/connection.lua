@@ -120,7 +120,7 @@ function connection.receiveAvatar( str )
 			str = safeSub(str, 2, #str )
 			cl.avatar = {}
 			for i=0,AVATAR_PIXELS_X*AVATAR_PIXELS_Y-1,1 do
-				cl.avatar[i] = tonumber( saveSub(str, i+1,i+1) )
+				cl.avatar[i] = tonumber( safeSub(str, i+1,i+1) )
 			end
 			return
 		end
@@ -149,7 +149,7 @@ function receiveStats( cl, str )
 	local num, prev, i = 0, 1, 1
 	cl.statistics = {}
 	while s do
-		num = tonumber( saveSub(str,prev, s-1) )
+		num = tonumber( safeSub(str,prev, s-1) )
 		if not num then break end
 		cl.statistics[i] = num
 		prev = e+1
@@ -226,7 +226,7 @@ function connection.runServer( tcpServer )		-- handle all messages that come fro
 			if DEBUG then print("received: " .. msg) end
 			if msg:find( "NAME:" ) == 1 then
 				local nameTaken = false
-				cl.playerName = saveSub(msg, 6, #msg )
+				cl.playerName = safeSub(msg, 6, #msg )
 				for k2, cl2 in pairs( connectedClients) do
 					if cl2 ~= cl and cl2.playerName == cl.playerName then
 						nameTaken = true
@@ -245,8 +245,8 @@ function connection.runServer( tcpServer )		-- handle all messages that come fro
 			
 				start, ending = msg:find( "CHARDESCRIPTION:" )
 				if start == 1 then
-					connection.receiveDiscription( cl.clientNumber .. saveSub(msg, ending+1, #msg) )
-					connection.serverBroadcast("CHARDESCRIPTION:" .. cl.clientNumber .. saveSub(msg, ending+1, #msg))
+					connection.receiveDiscription( cl.clientNumber .. safeSub(msg, ending+1, #msg) )
+					connection.serverBroadcast("CHARDESCRIPTION:" .. cl.clientNumber .. safeSub(msg, ending+1, #msg))
 				end
 				
 				start, ending = msg:find( "READY:true" )
@@ -263,30 +263,30 @@ function connection.runServer( tcpServer )		-- handle all messages that come fro
 				
 				start, ending = msg:find( "AVATAR:" )
 				if start == 1 then
-					connection.receiveAvatar( cl.clientNumber .. saveSub(msg, ending+1, #msg ) )
-					connection.serverBroadcast("AVATAR:" .. cl.clientNumber .. saveSub(msg, ending+1, #msg ) )
+					connection.receiveAvatar( cl.clientNumber .. safeSub(msg, ending+1, #msg ) )
+					connection.serverBroadcast("AVATAR:" .. cl.clientNumber .. safeSub(msg, ending+1, #msg ) )
 				end
 
 				start, ending = msg:find( "STATS:" )
 				if start == 1 then
-					receiveStats( cl,  saveSub(msg, ending+1, #msg ) )
-					connection.serverBroadcast("STATS:" .. cl.clientNumber .. ":" .. saveSub(msg, ending+1, #msg ) )
+					receiveStats( cl,  safeSub(msg, ending+1, #msg ) )
+					connection.serverBroadcast("STATS:" .. cl.clientNumber .. ":" .. safeSub(msg, ending+1, #msg ) )
 				end
 
 				start, ending = msg:find( "ACTION:do" )
 				if start == 1 then
-					game.receiveAction( cl.playerName .. saveSub(msg, ending+1, #msg), "do", cl.clientNumber)
-					connection.serverBroadcast( "ACTION:do" .. cl.playerName .. saveSub(msg, ending+1, #msg) )
+					game.receiveAction( cl.playerName .. safeSub(msg, ending+1, #msg), "do", cl.clientNumber)
+					connection.serverBroadcast( "ACTION:do" .. cl.playerName .. safeSub(msg, ending+1, #msg) )
 				end
 				start, ending = msg:find( "ACTION:say" )
 				if start == 1 then
-					game.receiveAction( cl.playerName .. ": \"" .. saveSub(msg, ending+1, #msg) .. "\"", "say", cl.clientNumber )
-					connection.serverBroadcast( "ACTION:say" .. cl.playerName .. ": \"" .. saveSub(msg, ending+1, #msg) .. "\"")
+					game.receiveAction( cl.playerName .. ": \"" .. safeSub(msg, ending+1, #msg) .. "\"", "say", cl.clientNumber )
+					connection.serverBroadcast( "ACTION:say" .. cl.playerName .. ": \"" .. safeSub(msg, ending+1, #msg) .. "\"")
 				end
 				start, ending = msg:find( "ACTION:use" )
 				if start == 1 then
-					game.receiveAction( cl.playerName .. " uses " .. saveSub(msg, ending+1, #msg), "use", cl.clientNumber )
-					connection.serverBroadcast( "ACTION:use" .. cl.playerName .. " uses " .. saveSub(msg, ending+1, #msg) )
+					game.receiveAction( cl.playerName .. " uses " .. safeSub(msg, ending+1, #msg), "use", cl.clientNumber )
+					connection.serverBroadcast( "ACTION:use" .. cl.playerName .. " uses " .. safeSub(msg, ending+1, #msg) )
 				end
 				start, ending = msg:find( "ACTION:skip" )
 				if start == 1 then
@@ -296,14 +296,14 @@ function connection.runServer( tcpServer )		-- handle all messages that come fro
 				
 				start, ending = msg:find( "INVREMOVE:" )
 				if start == 1 then
-					connection.inventoryRemove( tonumber(saveSub(msg, ending+1, ending+1)), saveSub(msg, ending+2, #msg) )
+					connection.inventoryRemove( tonumber(safeSub(msg, ending+1, ending+1)), safeSub(msg, ending+2, #msg) )
 					return
 				end
 				
 				start, ending = msg:find( "CHAT:" )
 				if start == 1 then
-					chat.receive( cl.playerName.. ": " .. saveSub(msg, ending+1, #msg) )
-					connection.serverBroadcast("CHAT:" .. cl.playerName.. ": " .. saveSub(msg, ending+1, #msg))
+					chat.receive( cl.playerName.. ": " .. safeSub(msg, ending+1, #msg) )
+					connection.serverBroadcast("CHAT:" .. cl.playerName.. ": " .. safeSub(msg, ending+1, #msg))
 				end
 			end
 		else
@@ -365,26 +365,26 @@ function connection.runClient( cl )				--handle all messages that come from the 
 		
 			start, ending = msg:find( "CLIENTNUMBER:" )
 			if start == 1 then
-				connection.setClientNumber( saveSub(msg, ending+1, #msg) )
+				connection.setClientNumber( safeSub(msg, ending+1, #msg) )
 				return
 			end
 			
 			start, ending = msg:find( "NEWPLAYER:" )
 			if start == 1 then
-				table.insert( connectedClients, {playerName=saveSub(msg, ending+2, #msg), clientNumber=tonumber(saveSub(msg, ending+1, ending+1) ), inventory={} } )
+				table.insert( connectedClients, {playerName=safeSub(msg, ending+2, #msg), clientNumber=tonumber(safeSub(msg, ending+1, ending+1) ), inventory={} } )
 				return
 			end
 			
 			start, ending = msg:find( "CHARDESCRIPTION:" )
 			if start == 1 then
-				connection.receiveDiscription( saveSub(msg, ending+1, #msg) )
+				connection.receiveDiscription( safeSub(msg, ending+1, #msg) )
 			end
 			
 			start, ending = msg:find( "READY:" )
 			if start == 1 then
 				for k, cl in pairs(connectedClients) do
-					if cl.clientNumber == tonumber(saveSub(msg, ending+1, ending+1)) then
-						if saveSub(msg, ending+2, #msg):find("true") then
+					if cl.clientNumber == tonumber(safeSub(msg, ending+1, ending+1)) then
+						if safeSub(msg, ending+2, #msg):find("true") then
 							cl.ready = true
 						else
 							cl.ready = false
@@ -397,32 +397,32 @@ function connection.runClient( cl )				--handle all messages that come from the 
 			
 			start, ending = msg:find( "AVATAR:" )
 			if start == 1 then
-				connection.receiveAvatar( saveSub(msg, ending+1, #msg) )
+				connection.receiveAvatar( safeSub(msg, ending+1, #msg) )
 			end
 			
 			start, ending = msg:find( "STATS:" )
 			if start == 1 then
 				-- first digit it playerNumber:
 				for k, c in pairs( connectedClients ) do
-					if c.clientNumber == tonumber(saveSub(msg, ending+1, ending+1 )) then
+					if c.clientNumber == tonumber(safeSub(msg, ending+1, ending+1 )) then
 						cl = c
 						break
 					end
 				end
 				if cl then
-					receiveStats( cl,  saveSub(msg,  ending+3, #msg ) )
+					receiveStats( cl,  safeSub(msg,  ending+3, #msg ) )
 				end
 			end
 			
 			start, ending = msg:find( "CURWORD:" )
 			if start == 1 then
-				game.clientReceiveNewWord( saveSub(msg, ending+1, #msg) )
+				game.clientReceiveNewWord( safeSub(msg, ending+1, #msg) )
 				return
 			end
 			
 			start, ending = msg:find( "ABILITIES:" )
 			if start == 1 then
-				connection.receiveAbilities( saveSub(msg, ending+1, #msg) )
+				connection.receiveAbilities( safeSub(msg, ending+1, #msg) )
 			end
 			
 			start, ending = msg:find( "GAMESTART:" )
@@ -434,13 +434,13 @@ function connection.runClient( cl )				--handle all messages that come from the 
 			
 			start, ending = msg:find( "NEWPLAYERTURNS:" )
 			if start == 1 then
-				displayNextPlayerTurns(saveSub(msg, ending+1, #msg))
+				displayNextPlayerTurns(safeSub(msg, ending+1, #msg))
 				return
 			end
 			
 			start, ending = msg:find( "STORY:" )
 			if start == 1 then
-				game.receiveStory( saveSub(msg, ending+1, #msg) )
+				game.receiveStory( safeSub(msg, ending+1, #msg) )
 				return
 			end
 			
@@ -452,35 +452,35 @@ function connection.runClient( cl )				--handle all messages that come from the 
 			
 			start, ending = msg:find( "ACTION:do" )
 			if start == 1 then
-				game.receiveAction( saveSub(msg, ending+1, #msg), "do" )
+				game.receiveAction( safeSub(msg, ending+1, #msg), "do" )
 				return
 			end
 			start, ending = msg:find( "ACTION:say" )
 			if start == 1 then
-				game.receiveAction( saveSub(msg, ending+1, #msg), "say" )
+				game.receiveAction( safeSub(msg, ending+1, #msg), "say" )
 				return
 			end
 			start, ending = msg:find( "ACTION:use" )
 			if start == 1 then
-				game.receiveAction( saveSub(msg, ending+1, #msg), "use" )
+				game.receiveAction( safeSub(msg, ending+1, #msg), "use" )
 				return
 			end
 			
 			start, ending = msg:find( "INVADD:" )
 			if start == 1 then
-				connection.inventoryAdd( saveSub(msg, ending+1, ending+1), saveSub(msg, ending+2, #msg) )
+				connection.inventoryAdd( safeSub(msg, ending+1, ending+1), safeSub(msg, ending+2, #msg) )
 				return
 			end
 			
 			start, ending = msg:find( "INVREMOVE:" )
 			if start == 1 then
-				connection.inventoryRemove( tonumber(saveSub(msg, ending+1, ending+1)), saveSub(msg, ending+2, #msg) )
+				connection.inventoryRemove( tonumber(safeSub(msg, ending+1, ending+1)), safeSub(msg, ending+2, #msg) )
 				return
 			end
 			
 			start, ending = msg:find( "CHAT:" )
 			if start == 1 then
-				chat.receive( saveSub(msg, ending+1, #msg) )
+				chat.receive( safeSub(msg, ending+1, #msg) )
 				return
 			end
 			
@@ -505,9 +505,9 @@ function connection.runClient( cl )				--handle all messages that come from the 
 			
 			start, ending = msg:find( "CLIENTLEFT:" )
 			if start == 1 then
-				game.receiveServerMessage( saveSub(msg, ending+1, #msg) .. PLAYER_LEFT_STR )
+				game.receiveServerMessage( safeSub(msg, ending+1, #msg) .. PLAYER_LEFT_STR )
 				for k, v in pairs(connectedClients) do
-					if v.playerName == saveSub(msg, ending+1, #msg) then
+					if v.playerName == safeSub(msg, ending+1, #msg) then
 						connectedClients[k] = nil
 						break
 					end
