@@ -170,15 +170,12 @@ function printTable( t, tabs )
 end
 
 function strLen( str )
-	i = 0
-	for char in str:gfind("([%z\1-\127\194-\244][\128-\191]*)") do
-		i = i+1
-	end
-	return i
+	local i, len = str:gsub("([%z\1-\127\194-\244])", "")
+	return len
 end
 
 function safeSub(str, from, to)
-	i = 1
+	local i = 1
 	tmpStr = ""
 	if to == 0 then return("") end
 	for char in str:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
@@ -191,12 +188,35 @@ function safeSub(str, from, to)
 	return tmpStr
 end
 
-function stringWidth( string, font )
-	--print("input: " .. string)
+function stringWidth( str, font )
 	local tmpStr = ""
-	for char in string:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
+	for char in str:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
 		tmpStr = tmpStr .. char
 	end
 	return( font:getWidth( tmpStr ) )
 end
 
+function stringFind( str, pattern, start )
+	start = start or 1
+	local i = 1
+	local a,b,firstChar = pattern:find("([%z\1-\127\194-\244][\128-\191]*)")
+	local length = strLen( pattern )
+	local testStr = ""
+	--print("firstChar: " .. firstChar)
+	for char in str:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
+		if i >= start then
+			--print("i has passed start: " .. i)
+			--print("char: " .. char)
+			if char == firstChar then
+				--print("current char is first char:" .. i)
+				testStr = safeSub( str, i, i + length-1 )
+				--print("testStr" .. testStr, pattern)
+				if testStr == pattern then
+					return i, i + length - 1
+				end
+			end
+		end
+		i = i+1
+	end
+	return nil
+end

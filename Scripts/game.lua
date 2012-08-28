@@ -99,28 +99,33 @@ end
 function displayNextPlayerTurns( str )
 	if nextPlayerAreaWidth <= 0 then return end
 	playerTurnsStrings = {}
-	local s,e = str:find(";", 1, true)
+	local s,e = stringFind(str,";", 1)
 	local player, name
 	i = 1
 	while s do
 		player = safeSub(str,1,e)
-		name = safeSub(player, 1, player:find(",", 1, true) - 1)
+	--	print("player: " .. player)
+		name = safeSub(player, 1, stringFind(player, ",", 1) - 1)
+	--	print("name: " .. name)
 		while stringWidth(name,fontStatus) > nextPlayerAreaWidth - 10 do
-			name = safeSub(name, 1, #name-1)
+			name = safeSub(name, 1, strLen(name)-1)
+			--print("n: " .. name)
 		end
-		playerTurnsStrings[i] = {str=name, ID = tonumber(safeSub(player, player:find(",", 1, true)+1, #player-1)) }
+		playerTurnsStrings[i] = {str=name, ID = tonumber(safeSub(player,stringFind(player,",", 1)+1, strLen(player)-1)) }
+		if playerTurnsStrings[i] == nil then print("error: " .. i)
+		else
+		end
 		i = i+1
-		str = safeSub(str,e+1, #str)
-		s,e = str:find(";", 1, true)
+		str = safeSub(str,e+1, strLen(str))
+		s,e = stringFind(str,";", 1)
 	end
 	currentPlayer = ""
-	if playerTurnsStrings[1] and playerTurnsStrings[1].str and playerTurnsStrings[1].str:find(":", 1, true) then
-		currentPlayer = safeSub(playerTurnsStrings[1].str, playerTurnsStrings[1].str:find(":", 1, true) +1, #playerTurnsStrings[1].str)
+	if playerTurnsStrings[1] and playerTurnsStrings[1].str and stringFind(playerTurnsStrings[1].str, ":", 1) then
+		currentPlayer = safeSub(playerTurnsStrings[1].str, stringFind(playerTurnsStrings[1].str, ":", 1) +1, strLen(playerTurnsStrings[1].str))
 	end
 	if client then 
 		textBox.setContent( gameStatusBox, WAITING_FOR_STR .. " " .. currentPlayer )
 	end
-	--printTable(playerTurnsStrings)
 end
 
 function game.sendNextTurn()
@@ -328,7 +333,7 @@ end
 function game.giveCurWordToClient( k )
 	if connectedClients[k] then
 		game.addToInventory( connectedClients[k].clientNumber, curGameWord )
-		statusMsg.new( WORD_GIVEN_TO .. " " .. connectedClients[k].playerName )
+		statusMsg.new( WORD_GIVEN_TO_STR .. " " .. connectedClients[k].playerName )
 	else
 		print("Error: Client not found. Can't give object to client.")
 		statusMsg.new( ERROR_CLIENT_NOT_FOUND_STR )
@@ -647,12 +652,12 @@ function game.show()		-- called once every frame
 	if playerTurnsStrings[1] and playerTurnsStrings[1].ID and playerTurnsStrings[1].ID ~= 0 then
 		local r,g,b = getClientColour(playerTurnsStrings[1].ID)
 		love.graphics.setColor( r,g,b , 35 )
-		love.graphics.rectangle( "fill",nextPlayerAreaX+4, nextPlayerAreaY+4, nextPlayerAreaWidth-8, fontStatus:getHeight())
-		love.graphics.print( playerTurnsStrings[1].ID, nextPlayerAreaX+5, nextPlayerAreaY+5 + (1-1)*fontStatus:getHeight())
+		love.graphics.rectangle( "fill",nextPlayerAreaX+4, nextPlayerAreaY+4, nextPlayerAreaWidth-8, fontStatus:getHeight() )
+		love.graphics.print( playerTurnsStrings[1].ID, nextPlayerAreaX+5, nextPlayerAreaY+5 + (1-1)*fontStatus:getHeight() )
 	end
-	love.graphics.setColor( 0,0,0 )
+	love.graphics.setColor( 0,0,0,255 )
 	for i=1,#playerTurnsStrings,1 do
-		love.graphics.print( playerTurnsStrings[i].str, nextPlayerAreaX+5, nextPlayerAreaY+5 + (i-1)*fontStatus:getHeight())
+		love.graphics.print( playerTurnsStrings[i].str, nextPlayerAreaX+5, nextPlayerAreaY+5 + (i-1)*fontStatus:getHeight() )
 		if (i+1)*fontStatus:getHeight() > nextPlayerAreaHeight then
 			break
 		end
@@ -810,7 +815,7 @@ function game.init()
 	chat.init( chatAreaX+10, chatAreaY+10, math.floor(chatAreaHeight/fontChat:getHeight()) - 1, fontChat, chatAreaWidth-20 )
 	
 	if server then
-		addPlayerTurns()		-- must be called twice, because 2 rounds should be displayed.
+		addPlayerTurns()		-- must be called 4 times, because 4 rounds should be displayed.
 		addPlayerTurns()
 		addPlayerTurns()
 		addPlayerTurns()
@@ -818,7 +823,6 @@ function game.init()
 		curGameWord = startingWord		-- the current game's word will be the word the server chose as start word
 		
 		textBox.setContent( gameStatusBox, START_STORY_USE_WORD_STR1 .. " \"" .. curGameWord .. "\" " .. START_STORY_USE_WORD_STR2 )
-		textBox.setContent( gameStatusBox, "Start the story. Use \"" .. startingWord .. "\" in your text." )
 		textBox.setColourStart( gameStatusBox, #START_STORY_USE_WORD_STR1+4 , colWikiWord.r, colWikiWord.g, colWikiWord.b )
 		textBox.setColourStart( gameStatusBox, #START_STORY_USE_WORD_STR1 + #startingWord + 4 , 0,0,0 )
 		textBox.setAccess( gameInputBox, true, true )

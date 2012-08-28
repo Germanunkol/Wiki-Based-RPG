@@ -54,11 +54,7 @@ end
 
 function wikiClient.newWord( wordToSearchFor )	
 	fullURL = WIKI_URL .. "/wiki/" .. wordToSearchFor
-	print ("Loading URL: " .. fullURL)
 	pageSource = http.request(fullURL)
-	print("length page source 1: " .. strLen(pageSource))
-	--print("start: " .. safeSub( pageSource, 1, 10))
-	print("end: " .. safeSub( pageSource, strLen(pageSource)-10, strLen(pageSource)))
 	urlTable = nil
 	local foundStartPage, multipleFound = false, false
 

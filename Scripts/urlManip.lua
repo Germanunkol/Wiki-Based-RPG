@@ -26,7 +26,6 @@ local function findRelevantArea( inputStr, contentsStartString )
 	local ending = #inputStr
 	local curPos = 1
 	local endFound = false
-	print(inputStr)
 	
 	local subLevelFound = 0
 
@@ -34,20 +33,16 @@ local function findRelevantArea( inputStr, contentsStartString )
 	
 	local foundNewBeginning, foundNewEnding
 	repeat 
-			print("search:")
 		foundNewBeginning = inputStr:find("<div >", curPos)
 		if foundNewBeginning ~= nil then
-			print("found new beginning")
 			subLevelFound = subLevelFound + 1
 			curPos = subLevelFound
 		end
 	until foundNewBeginning == nil
-	print("pos1: " .. curPos)
 	curPos = 1
 	repeat
 		foundNewEnding = inputStr:find("div>", curPos)
 		if foundNewEnding ~= nil then
-			print("found new ending")
 			subLevelFound = subLevelFound - 1
 			curPos = subLevelFound
 		end
@@ -59,7 +54,6 @@ end
 local function extractAllURLs(inputStr, contentsStartString)
 	inputStr = findRelevantArea(inputStr, contentsStartString)
 	local links = {}
-	print(inputStr)
 	for s in string.gmatch(inputStr, "<a href=[^>]->") do
 		table.insert(links,{fullStr = s})
 	end
@@ -76,8 +70,6 @@ function urlManip.extractURLs(inputStr, contentsStartString)
 	local urlTableFull = {}
 	
 	urlTableFull = extractAllURLs(inputStr, contentsStartString)
-	print("urls found:")
-	printTable(urlTableFull)
 	local numberOfFoundLinks = 0
 	local doublesFound = 0
 

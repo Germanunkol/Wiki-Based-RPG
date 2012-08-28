@@ -81,14 +81,12 @@ setStatistics = {}
 
 function love.load( arg )
 
-	print(safeSub("<!DOCT/öxt/jaYPE /html PUBLIC \"-//W3C//DTD XHTML 1.0 T", 5, -1 ))
---[[
-	for i = 1, 10, 1 do
-		s = string.sub("löve is great", i, i)
-		print(s, i)
-	end
-]]--
+	print(strLen("Halleluja"))
+	print(strLen("Hällélüjä Hällélüjä"))
+	print(string.find("Löve2d", "ve2d", 1))
 
+	print(string.find("ällélüjä Hällélüjä", "([%z\1-\127\194-\244][\128-\191]*)"))
+	print(stringFind("Hällélüjä", "üj"))
 
 	love.graphics.setBackgroundColor( colMainBg.r, colMainBg.g, colMainBg.b )
 	success = love.graphics.setMode( 1024, 680, false, false, 0 )
