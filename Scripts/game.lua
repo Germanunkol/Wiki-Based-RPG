@@ -107,7 +107,7 @@ function displayNextPlayerTurns( str )
 	--	print("player: " .. player)
 		name = safeSub(player, 1, stringFind(player, ",", 1) - 1)
 	--	print("name: " .. name)
-		while stringWidth(name,fontStatus) > nextPlayerAreaWidth - 10 do
+		while fontStatus:getWidth(name) > nextPlayerAreaWidth - 10 do
 			name = safeSub(name, 1, strLen(name)-1)
 			--print("n: " .. name)
 		end
@@ -172,17 +172,16 @@ function chooseNextWord( index )
 		-- change colour of last curGameWord:
 		textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWord.r, colHighlightWikiWord.g, colHighlightWikiWord.b )
 		curGameWord = chosenURLs[index].title
-		local start, ending = curGameWord:find( "%(.*%)" )
-		if start then
+		--local start, ending = stringFind(curGameWord, " (" )
+		--if start then
 		--print("found: " .. curGameWord:sub(start, ending))
-			curGameWord = safeSub(curGameWord, 1, start-1 ) .. safeSub(curGameWord, ending+1, #curGameWord )
-			while safeSub(curGameWord, #curGameWord, #curGameWord )  == " " do		--don't allow trailing spaces
-				curGameWord = safeSub(curGameWord, 1, #curGameWord-1 )
-			end
+			--curGameWord = safeSub(curGameWord, 1, start-1 ) .. safeSub(curGameWord, ending+1, #curGameWord ) --old
+			--curGameWord = safeSub(curGameWord, 1, start-1 )
+			curGameWord = string.gsub(curGameWord, " %(.*%)", "")
 			if #curGameWord == 0 then
 				curGameWord = chosenURLs[index].title
 			end
-		end
+		--end
 		
 		statusMsg.new( CHOSE_WORD_STR .. " \"" .. curGameWord .."\"")
 		
@@ -203,7 +202,7 @@ function chooseNextWord( index )
 				titleStr = GIVE_WORD_TO_PLAYER_STR .. " "
 				for char in cl.playerName:gfind("([%z\1-\127\194-\244][\128-\191]*)") do
 					titleStr = titleStr .. char
-					if stringWidth( titleStr,buttonFont ) >= chatAreaWidth-30 then
+					if buttonFont:getWidth( titleStr ) >= chatAreaWidth-30 then
 						 break
 					end
 				end
@@ -238,7 +237,7 @@ function game.chooseWord()
 				titleStr = ""
 				for char in v.title:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
 					titleStr = titleStr .. char
-					if stringWidth( titleStr,buttonFont ) >= chatAreaWidth-30 then
+					if buttonFont:getWidth( titleStr ) >= chatAreaWidth-30 then
 						 break
 					end
 				end
@@ -304,7 +303,7 @@ function game.useJoker()
 				titleStr = ""
 				for char in v.title:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
 					titleStr = titleStr .. char
-					if stringWidth( titleStr,buttonFont ) >= chatAreaWidth-30 then
+					if buttonFont:getWidth( titleStr ) >= chatAreaWidth-30 then
 						 break
 					end
 				end

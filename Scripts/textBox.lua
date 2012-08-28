@@ -63,7 +63,7 @@ local function splitIntoLines( text )		-- will calculate line breaks for the tex
 	while i <= #text.content do
 		start, ending,char = text.content:find("([%z\1-\127\194-\244][\128-\191]*)", i)
 		if start then
-			if stringWidth( partialStr .. char,text.font ) >= text.width or char == "\n" then
+			if text.font:getWidth( partialStr .. char ) >= text.width or char == "\n" then
 				if char ~= "\n" then
 					start, ending = partialStr:find( ".* " )		-- look for spaces.
 					if start then		--if spaces found, cut the string there.
@@ -147,7 +147,7 @@ function calculateHighlights( text )			-- calculate where things should be highl
 	text.highlights = {}
 	local start, ending, xPos, yPos, width, height
 	for key, highLWord in pairs(text.highlightWords) do
-		width = stringWidth( highLWord.w,text.font )
+		width = text.font:getWidth( highLWord.w )
 		height = text.font:getHeight()
 		local lowerCaseLine
 		for i = 1, #text.lines,1 do
@@ -155,29 +155,29 @@ function calculateHighlights( text )			-- calculate where things should be highl
 			if text.lines[i] then
 				lowerCaseLine = string.lower( text.lines[i] )
 				print(lowerCaseLine, string.lower(highLWord.w))
-				start, ending = lowerCaseLine:find( string.lower(highLWord.w), 1, true )	-- Find the position of the text to highlight
+				start, ending = stringFind(lowerCaseLine, string.lower(highLWord.w), 1 )	-- Find the position of the text to highlight
 				while start do
-					xPos = stringWidth( safeSub(text.lines[i], 1, start-1), text.font )
+					xPos = text.font:getWidth( safeSub(text.lines[i], 1, start-1) )
 					print("xPos", xPos, safeSub(text.lines[i], 1, start-1), text.lines[i], 1, start-1)
 					table.insert( text.highlights, { line=i, x=xPos, y=yPos, w=width, h=height, r=highLWord.r, g=highLWord.g, b=highLWord.b, a=highLWord.a} )
-					start, ending = lowerCaseLine:find( string.lower(highLWord.w), start+1, true )	--find pos of next word.
+					start, ending = stringFind(lowerCaseLine, string.lower(highLWord.w), start+1 )	--find pos of next word.
 				end
 			end
 		end
 	end
 	for key, highLWord in pairs(text.highlightNames) do
-		width = stringWidth( highLWord.w,text.font )
+		width = text.font:getWidth( highLWord.w )
 		height = text.font:getHeight()
 		local lowerCaseLine
 		for i = 1, #text.lines,1 do
 			yPos = text.font:getHeight()*(i-1)
 			if text.lines[i] then
 				lowerCaseLine = string.lower( text.lines[i] )
-				start, ending = lowerCaseLine:find( string.lower(highLWord.w), 1, true )	-- Find the position of the text to highlight
+				start, ending = stringFind(lowerCaseLine, string.lower(highLWord.w), 1 )	-- Find the position of the text to highlight
 				while start do
-					xPos = stringWidth( safeSub(text.lines[i], 1, start-1),text.font )
+					xPos = text.font:getWidth( safeSub(text.lines[i], 1, start-1) )
 					table.insert( text.highlights, { line=i, x=xPos, y=yPos, w=width, h=height, r=highLWord.r, g=highLWord.g, b=highLWord.b, a=highLWord.a} )
-					start, ending = lowerCaseLine:find( string.lower(highLWord.w), start+1, true )	--find pos of next word.
+					start, ending = stringFind(lowerCaseLine, string.lower(highLWord.w), start+1 )	--find pos of next word.
 				end
 			end
 		end
@@ -247,7 +247,7 @@ function textBox.display( text )
 	
 		if text.access == true and text.cursorBlinkTime < .5 and text.lines[text.cursorLine] then
 			--print(safeSub(text.lines[text.cursorLine], 1, text.cursorPos))
-			love.graphics.print("|", text.x + stringWidth(safeSub(text.lines[text.cursorLine], 1, text.cursorPos),text.font)-1, text.y + (text.cursorLine-1)*text.font:getHeight())
+			love.graphics.print("|", text.x + text.font:getWidth(safeSub(text.lines[text.cursorLine], 1, text.cursorPos))-1, text.y + (text.cursorLine-1)*text.font:getHeight())
 		end
 	else	-- this is called if part of the text is hidden because there are more lines than can be displayed (scrollable text)
 		for k, highL in pairs( text.highlights ) do		-- go through all highlights and show them as rectangles in the background.
@@ -289,7 +289,7 @@ function textBox.input( key, unicode )
 			inputUsed = true			
 			v.hasChanged = true
 			if unicode > 31 and unicode < 127 then
-				if (stringWidth(v.lines[#v.lines] .. string.char(unicode),v.font) < v.width or #v.lines < v.maxLines) and #v.lines <= v.maxLines then
+				if (v.font:getWidth(v.lines[#v.lines] .. string.char(unicode)) < v.width or #v.lines < v.maxLines) and #v.lines <= v.maxLines then
 					absCursorPos = 0
 					for i = 1,v.cursorLine-1,1 do
 						absCursorPos = absCursorPos + #v.lines[i]
@@ -356,7 +356,7 @@ function textBox.input( key, unicode )
 			elseif key == "tab" then
 
 				if lobby.active() and descriptionWord and #descriptionWord > 0 then
-					if (stringWidth(v.lines[#v.lines] .. curGameWord,v.font) < v.width or #v.lines < v.maxLines) and #v.lines <= v.maxLines then
+					if (v.font:getWidth(v.lines[#v.lines] .. curGameWord) < v.width or #v.lines < v.maxLines) and #v.lines <= v.maxLines then
 						absCursorPos = 0
 						for i = 1,v.cursorLine-1,1 do
 							absCursorPos = absCursorPos + #v.lines[i]
@@ -366,7 +366,7 @@ function textBox.input( key, unicode )
 						v.cursorPos = v.cursorPos + #descriptionWord
 					end
 				elseif curGameWord and #curGameWord > 0 then
-					if (stringWidth(v.lines[#v.lines] .. curGameWord,v.font) < v.width or #v.lines < v.maxLines) and #v.lines <= v.maxLines then
+					if (v.font:getWidth(v.lines[#v.lines] .. curGameWord) < v.width or #v.lines < v.maxLines) and #v.lines <= v.maxLines then
 						absCursorPos = 0
 						for i = 1,v.cursorLine-1,1 do
 							absCursorPos = absCursorPos + #v.lines[i]

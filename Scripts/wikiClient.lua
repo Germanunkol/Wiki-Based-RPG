@@ -175,7 +175,7 @@ end
 
 function wikiClient.firstWordSet()
 	--only allow letters, digits and spaces:
-	if textBox.getContent( firstWordInputBox ):match( "[%d%a%s]+" ) == textBox.getContent( firstWordInputBox ) then
+	if textBox.getContent( firstWordInputBox ):match( "[%d%a%s]+" ) == textBox.getContent( firstWordInputBox ) then		--check if the input is valid
 		found, multiple, urlTable = wikiClient.newWord( textBox.getContent( firstWordInputBox ) )
 		if multiple == true then
 			statusMsg.new( ERROR_MULTIPLE_ARTICLES_STR )
@@ -189,7 +189,7 @@ function wikiClient.firstWordSet()
 					titleStr = ""
 					for char in v.title:gfind("([%z\1-\127\194-\244][\128-\191]*)") do
 						titleStr = titleStr .. char
-						if stringWidth( titleStr,buttonFont ) >= fieldWidth-30 then
+						if buttonFont:getWidth( titleStr ) >= fieldWidth-30 then
 							 break
 						end
 					end

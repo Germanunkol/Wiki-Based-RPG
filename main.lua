@@ -81,12 +81,13 @@ setStatistics = {}
 
 function love.load( arg )
 
-	print(strLen("Halleluja"))
+	--[[print(strLen("Halleluja"))
 	print(strLen("Hällélüjä Hällélüjä"))
-	print(string.find("Löve2d", "ve2d", 1))
-
-	print(string.find("ällélüjä Hällélüjä", "([%z\1-\127\194-\244][\128-\191]*)"))
-	print(stringFind("Hällélüjä", "üj"))
+	print(stringWidth("Halléluja", mainFont))
+	print(stringWidth("Hällélüjä", mainFont))
+	print(string.find("Löve2d", "ve2d", 1))]]--
+ print( string.gsub("Exze(nt)rizität (Mat(ssd)hematik)", "%(.*%)" , "") )
+	print(string.find("Hällélüjä", "j"))
 
 	love.graphics.setBackgroundColor( colMainBg.r, colMainBg.g, colMainBg.b )
 	success = love.graphics.setMode( 1024, 680, false, false, 0 )
@@ -167,6 +168,13 @@ function love.draw()
 		end
 		statusMsg.display()
 	end
+	
+		love.graphics.setFont( mainFont )
+	love.graphics.print("Erzäm",0,20)
+	love.graphics.print("|", mainFont:getWidth("Erzäm"), 20)
+	love.graphics.print("Erzahler",0,30)
+	love.graphics.print("|", mainFont:getWidth("Erzahler"), 30)
+	
 end
 
 local inputRead
@@ -218,7 +226,6 @@ function startClient()
 		love.graphics.setCaption( "Wiki-Based RPG - " .. plName)
 	end
 end
-
 
 function love.quit()
 	if server then

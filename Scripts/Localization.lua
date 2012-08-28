@@ -214,7 +214,7 @@ function localization.display()		-- show all flags and languages found, so the p
 		love.graphics.setColor( 0,0,0, 100)
 		love.graphics.draw( flag, x+5, y+7)
 		love.graphics.setColor( 0,0,0, 255)
-		love.graphics.print( lang, x - stringWidth(lang,mainFont)/2 + flag:getWidth()/2, y-25 )
+		love.graphics.print( lang, x - mainFont:getWidth(lang)/2 + flag:getWidth()/2, y-25 )
 		love.graphics.setColor( 255,255,255, 255)
 		love.graphics.draw( flag, x, y)
 		i = i + 1

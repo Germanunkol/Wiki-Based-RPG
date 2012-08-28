@@ -11,7 +11,7 @@ function drawButton( theButton )
 	love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b, 255)
 	love.graphics.rectangle( "fill", theButton.x + 3, theButton.y + 3, theButton.w-6, theButton.h-6 )
 	love.graphics.setColor( 0, 0, 0 , 255)
-	love.graphics.print( theButton.label, theButton.x + theButton.w/2 - stringWidth(theButton.label,buttonFont)/2, theButton.y + (theButton.h - buttonFont:getHeight())/2)
+	love.graphics.print( theButton.label, theButton.x + theButton.w/2 - buttonFont:getWidth(theButton.label)/2, theButton.y + (theButton.h - buttonFont:getHeight())/2)
 end
 
 function highlightButton( theButton )
@@ -22,7 +22,7 @@ function highlightButton( theButton )
 	love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b, 255)
 	love.graphics.rectangle( "fill", theButton.x + 3, theButton.y + 3, theButton.w-6, theButton.h-6 )
 	love.graphics.setColor( 0, 0, 0 , 255)
-	love.graphics.print( theButton.label, theButton.x + theButton.w/2 - stringWidth(theButton.label,buttonFont)/2, theButton.y + (theButton.h - buttonFont:getHeight())/2 )
+	love.graphics.print( theButton.label, theButton.x + theButton.w/2 - buttonFont:getWidth(theButton.label)/2, theButton.y + (theButton.h - buttonFont:getHeight())/2 )
 end
 
 function drawPixel( theButton )
@@ -188,13 +188,13 @@ function safeSub(str, from, to)
 	return tmpStr
 end
 
-function stringWidth( str, font )
-	local tmpStr = ""
+--function stringWidth( str, font )
+	--[[local tmpStr = ""
 	for char in str:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
 		tmpStr = tmpStr .. char
-	end
-	return( font:getWidth( tmpStr ) )
-end
+	end]]--
+	--return( font:getWidth( str ) )
+--end
 
 function stringFind( str, pattern, start )
 	start = start or 1
