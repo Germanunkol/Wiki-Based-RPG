@@ -708,7 +708,7 @@ function game.show()		-- called once every frame
 	end
 	
 	if server and waitForPlayerActions then
-		textBox.setContent( gameStatusBox, WAITING_FOR_STR .. " " .. currentPlayer )
+		if textBox.getContent( gameStatusBox ) ~= WAITING_FOR_STR .. " " .. currentPlayer then textBox.setContent( gameStatusBox, WAITING_FOR_STR .. " " .. currentPlayer ) end
 		if allPlayersHaveReacted then
 			if chat.getActive() == false and nextWordChosen == true then
 				textBox.setAccess( gameInputBox, true )
@@ -725,7 +725,7 @@ function game.show()		-- called once every frame
 			addPlayerTurns()
 		end
 	elseif client and waitForPlayerActions then
-		textBox.setContent( gameStatusBox, YOUR_TURN_STR )
+		if textBox.getContent( gameStatusBox ) ~=  YOUR_TURN_STR then textBox.setContent( gameStatusBox, YOUR_TURN_STR ) end
 		--[[if waitForPlayerActionsTimer >= REPLYTIME then
 			textBox.setAccess( gameInputBox, false )
 			scrollGameBox()

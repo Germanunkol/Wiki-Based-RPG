@@ -14,7 +14,7 @@ wikiClient = require("Scripts/wikiClient")
 --THIS PORT MUST BE FORWARDED ON YOUR ROUTER FOR INTERNET PLAY!
 PORT = 8080
 
-DEBUG = true
+DEBUG = false
 
 server = nil		-- server object. When not nil, then connection is established.
 client = nil		-- client object. When not nil, then connection is established.
@@ -46,7 +46,7 @@ fontMainHeader = love.graphics.newFont( "Fonts/AveriaSans-Bold.ttf",40 )
 fontChat = love.graphics.newFont( "Fonts/AveriaSans-Bold.ttf",14 )
 
 colMainBg = { r=230, g=190, b=134 }
-colBorder = { r=117, g=66, b=40 }
+colBorder = { r=110, g=66, b=44 }
 colLobby = { r=241, g=229, b=209 }
 colServerMsg = { r=200,g=120,b=80}
 colTextInput = { r=100, g=100, b=100 }
@@ -57,6 +57,8 @@ colSpeech = { r=0, g=0, b=0 }		-- for "/say" command
 colUse = { r=0, g=0, b=0 }		-- for "/use" command
 colHighlightWikiWord = { r=200, g=225, b=170 }
 colHighlightWikiWordNew = { r=225, g=250, b=190 }
+
+colShadow = { r=0,g=0,b=0 }
 
 colCharB = { r=240, g=210, b=150 }
 colCharM = { r=135, g=76, b=45 }
@@ -81,13 +83,12 @@ setStatistics = {}
 
 function love.load( arg )
 
-	--[[print(strLen("Halleluja"))
-	print(strLen("Hällélüjä Hällélüjä"))
-	print(stringWidth("Halléluja", mainFont))
-	print(stringWidth("Hällélüjä", mainFont))
-	print(string.find("Löve2d", "ve2d", 1))]]--
- print( string.gsub("Exze(nt)rizität (Mat(ssd)hematik)", "%(.*%)" , "") )
-	print(string.find("Hällélüjä", "j"))
+	for k, v in pairs(arg) do
+		if v == "--debug" or v == "-d" then
+			DEBUG = true
+			print("DEBUG mode set.")
+		end
+	end
 
 	love.graphics.setBackgroundColor( colMainBg.r, colMainBg.g, colMainBg.b )
 	success = love.graphics.setMode( 1024, 680, false, false, 0 )
@@ -168,12 +169,11 @@ function love.draw()
 		end
 		statusMsg.display()
 	end
-	
-		love.graphics.setFont( mainFont )
-	love.graphics.print("Erzäm",0,20)
-	love.graphics.print("|", mainFont:getWidth("Erzäm"), 20)
-	love.graphics.print("Erzahler",0,30)
-	love.graphics.print("|", mainFont:getWidth("Erzahler"), 30)
+	if DEBUG then
+		love.graphics.setFont( fontStatus )
+		love.graphics.setColor( 0,0,0,255 )
+		love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), love.graphics.getWidth()-60, 5)
+	end
 	
 end
 

@@ -98,6 +98,11 @@ ERROR_DOES_NOT_EXIST_STR = [[Objekt ist nicht im Inventar.]]
 ERROR_CHOOSE_NEXT_WORD_BEFORE_CONTINUING_STR = [[Erst Wort wählen!]]
 ERROR_NOT_YOUR_TURN_STR = [[Du bist nicht dran!]]
 
+-- exporter:
+EXPORT_STR = [[Exportieren]]
+FILE_WRITTEN_TO_LOCATION_STR = [[in Datei geschrieben:]]
+ERROR_FILE_OPEN_STR = [[Fehler beim Öffnen der Datei!]]
+
 -- wiki
 NEW_WORD_SET_STR = [[Neues Wort gewählt.]]
 LOOKING_UP_WORD_STR = [[Durchsuche Wiki nach Wort...]]
@@ -110,10 +115,17 @@ ERROR_INVALID_CHARACTER_STR =  [[Nur Nummern, Leerzeichen und Buchstaben!]]
 ERROR_MULTIPLE_ARTICLES_STR = [[Mehrere Artikel gefunden. Wähle einen.]]
 CHOOSE_ARTICLE_STR = [[Meintest du...]]
 
--- exporter:
-EXPORT_STR = [[Exportieren]]
-FILE_WRITTEN_TO_LOCATION_STR = [[in Datei geschrieben:]]
-ERROR_FILE_OPEN_STR = [[Fehler beim Öffnen der Datei!]]
+-- Special characters. (remove the "--" at the beginning of the lines to make the lines work. Check Deutsch.txt for examples.
+SPECIAL_CHARACTERS[228] = "ä"
+SPECIAL_CHARACTERS[196] = "Ä"
+SPECIAL_CHARACTERS[246] = "ö"
+SPECIAL_CHARACTERS[214] = "Ö"
+SPECIAL_CHARACTERS[252] = "ü"
+SPECIAL_CHARACTERS[220] = "Ü"
+SPECIAL_CHARACTERS[223] = "ß"
+
+
+
 
 -- this help text will be displayed on the main screen:
 HELP_MAIN = [[Deutsche Hilfe 1]]

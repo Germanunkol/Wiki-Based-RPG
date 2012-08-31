@@ -175,7 +175,7 @@ end
 
 function wikiClient.firstWordSet()
 	--only allow letters, digits and spaces:
-	if textBox.getContent( firstWordInputBox ):match( "[%d%a%s]+" ) == textBox.getContent( firstWordInputBox ) then		--check if the input is valid
+	--if textBox.getContent( firstWordInputBox ):match( "[%d%a%s]+" ) == textBox.getContent( firstWordInputBox ) then		--check if the input is valid
 		found, multiple, urlTable = wikiClient.newWord( textBox.getContent( firstWordInputBox ) )
 		if multiple == true then
 			statusMsg.new( ERROR_MULTIPLE_ARTICLES_STR )
@@ -226,10 +226,10 @@ function wikiClient.firstWordSet()
 			returnEvent( word )
 		end
 		
-	else
-		textBox.setAccess( firstWordInputBox, true )
-		statusMsg.new( ERROR_INVALID_CHARACTER_STR )
-	end
+	--else
+		--textBox.setAccess( firstWordInputBox, true )
+		--statusMsg.new( ERROR_INVALID_CHARACTER_STR )
+--	end
 end
 
 function wikiClient.startFirstWordSet()

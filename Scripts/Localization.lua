@@ -7,7 +7,7 @@
 --			You can get nice, Public domain flags at: http://www.pdclipart.org/thumbnails.php?album=41
 --		d) Start the game and test it out!
 --		e) If it works, please send me the Flag and the Translated file, so I can include it in the official releases
-
+SPECIAL_CHARACTERS = {}
 
 -- Fallback Strings:
 WIKI_URL = [[http://en.wikipedia.org]]
@@ -127,6 +127,18 @@ ERROR_INVALID_CHARACTER_STR =  [[Only numbers, spaces and letters allowed!]]
 ERROR_MULTIPLE_ARTICLES_STR = [[Multiple articles found. Choose one.]]
 CHOOSE_ARTICLE_STR = [[Did you mean...]]
 
+
+
+-- Special characters. (remove the "--" at the beginning of the lines to make the lines work. Check Deutsch.txt for examples.
+--SPECIAL_CHARACTERS[228] = "ä"
+--SPECIAL_CHARACTERS[196] = "Ä"
+--SPECIAL_CHARACTERS[246] = "ö"
+--SPECIAL_CHARACTERS[214] = "Ö"
+--SPECIAL_CHARACTERS[252] = "ü"
+--SPECIAL_CHARACTERS[220] = "Ü"
+--SPECIAL_CHARACTERS[223] = "ß"
+
+
 -- this help text will be displayed on the main screen:
 HELP_MAIN = [[Choose "Server" to start a game.
 You'll be the storywriter. Make sure to open/forward the port 8080 on your router if you're playing over the net! You can also change the port in "main.lua" in the game folder or .zip or .love.
@@ -170,9 +182,6 @@ Chat: Click on chat area or "c" or "enter". Type text, then press "enter".
 Write story/action: Click on Story/Action area or press "a" or "s". Type text, then press "enter".
 
 Tab: Press Tab to automatically insert the current Wiki word while typing.]]
-
-
-
 
 
 

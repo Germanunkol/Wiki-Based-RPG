@@ -98,6 +98,11 @@ ERROR_DOES_NOT_EXIST_STR = [[This object does not exist in your inventory!]]
 ERROR_CHOOSE_NEXT_WORD_BEFORE_CONTINUING_STR = [[Choose next word first!]]
 ERROR_NOT_YOUR_TURN_STR = [[It's not your turn!]]
 
+-- exporter:
+EXPORT_STR = [[Export]]
+FILE_WRITTEN_TO_LOCATION_STR = [[written to:]]
+ERROR_FILE_OPEN_STR = [[Error opening file!]]
+
 -- wiki
 NEW_WORD_SET_STR = [[New word set.]]
 LOOKING_UP_WORD_STR = [[Looking up word...]]
@@ -110,10 +115,29 @@ ERROR_INVALID_CHARACTER_STR =  [[Only numbers, spaces and letters allowed!]]
 ERROR_MULTIPLE_ARTICLES_STR = [[Multiple articles found. Choose one.]]
 CHOOSE_ARTICLE_STR = [[Did you mean...]]
 
--- exporter:
-EXPORT_STR = [[Export]]
-FILE_WRITTEN_TO_LOCATION_STR = [[written to:]]
-ERROR_FILE_OPEN_STR = [[Error opening file!]]
+
+-- Special characters. (remove the "--" at the beginning of the lines to make the lines work. Check Deutsch.txt for examples.
+--SPECIAL_CHARACTERS[228] = "ä"
+--SPECIAL_CHARACTERS[196] = "Ä"
+--SPECIAL_CHARACTERS[246] = "ö"
+--SPECIAL_CHARACTERS[214] = "Ö"
+--SPECIAL_CHARACTERS[252] = "ü"
+--SPECIAL_CHARACTERS[220] = "Ü"
+--SPECIAL_CHARACTERS[223] = "ß"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 -- this help text will be displayed on the main screen:
 HELP_MAIN = [[Choose "Server" to start a game.

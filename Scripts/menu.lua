@@ -30,6 +30,7 @@ local function displayHelp( theButton )
 	love.graphics.setFont( fontStatus )
 	love.graphics.printf( helpString, 20, 20, width-40, "left")
 
+	love.graphics.setFont( buttonFont )
 	highlightButton ( theButton )	-- also display button
 end
 
@@ -140,7 +141,12 @@ function menu.showMainMenu()
 		
 	--love.graphics.setColor( 0, 0, 0 , 255)
 	--love.graphics.rectangle("fill", 0, 50, love.graphics.getWidth(), 50)
-	love.graphics.setColor( colBorder.r, colBorder.g, colBorder.g, 255)
+	
+	
+	love.graphics.setColor( colShadow.r,colShadow.b, colShadow.r, 220)
+	love.graphics.rectangle("fill", 0, headerPos+4, love.graphics.getWidth(), 48)
+	
+	love.graphics.setColor( colBorder.r, colBorder.g, colBorder.b, 255)
 	love.graphics.rectangle("fill", 0, headerPos, love.graphics.getWidth(), 48)
 	
 	love.graphics.setFont( fontMainHeader )

@@ -330,15 +330,19 @@ local i
 function lobby.showPlayers()
 
 	-- print headers:
-	love.graphics.setColor( colBorder.r, colBorder.g, colBorder.g, 255)
+	
+	love.graphics.setColor( colShadow.r,colShadow.b, colShadow.r, 220)
+	love.graphics.rectangle("fill", 0, 51+4, love.graphics.getWidth(), 48)
+	
+	love.graphics.rectangle("fill", 0, 360+4, love.graphics.getWidth(), 38)
+	
+	love.graphics.setColor( colBorder.r, colBorder.g, colBorder.b, 255)
 	love.graphics.rectangle("fill", 0, 51, love.graphics.getWidth(), 48)
+	love.graphics.rectangle("fill", 0, 360, love.graphics.getWidth(), 38)
 	
 	love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b )
 	love.graphics.setFont( fontHeader )
 	love.graphics.print( HEROES_STR, 70, 65 )
-	
-	love.graphics.setColor( colBorder.r, colBorder.g, colBorder.g, 255)
-	love.graphics.rectangle("fill", 0, 360, love.graphics.getWidth(), 38)
 	
 	love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b )
 	love.graphics.setFont( fontInputHeader )
@@ -381,8 +385,7 @@ function lobby.showPlayers()
 		curY = 120 + 50*(cl.clientNumber-1)
 		
 		love.graphics.setColor( colLobby.r, colLobby.g, colLobby.g, 255)
-		if cl.playerName == plName then love.graphics.setColor( colLobby.r-20, colLobby.g-50, colLobby.g-70, 255) end
-		love.graphics.rectangle("fill", 0, curY-9 , love.graphics.getWidth(), 33)
+		love.graphics.rectangle("fill", 5, curY-9 , love.graphics.getWidth()-10, 33)
 		love.graphics.setColor( 0, 0, 0 , 255)
 		love.graphics.setFont( mainFont )
 		love.graphics.print(cl.playerName, 200, curY )
@@ -393,9 +396,9 @@ function lobby.showPlayers()
 		end
 		love.graphics.setColor( 60, 60, 60 , 255)
 		if cl.description then
-			love.graphics.print( cl.description, 220+mainFont:getWidth(cl.playerName), curY + 4 )
+			love.graphics.print( cl.description, 220+mainFont:getWidth(cl.playerName), curY )
 		end
-		if cl.statistics then
+		--[[if cl.statistics then
 			local x = 0
 			for i = 1,#abilities,1 do
 				if cl.statistics[i] then
@@ -403,7 +406,7 @@ function lobby.showPlayers()
 					x = x + mainFont:getWidth( abilities[i] .. ":  " .. cl.statistics[i] ) + 10
 				end
 			end
-		end
+		end]]--
 		if cl.avatar then
 			--love.graphics.setColor( colCharB.r,colCharB.g,colCharB.b )
 			--love.graphics.rectangle("fill", 30, curY -7, 3*AVATAR_PIXELS_X, 3*AVATAR_PIXELS_Y)

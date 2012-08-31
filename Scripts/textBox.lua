@@ -64,11 +64,19 @@ local function splitIntoLines( text )		-- will calculate line breaks for the tex
 		start, ending,char = text.content:find("([%z\1-\127\194-\244][\128-\191]*)", i)
 		if start then
 			if text.font:getWidth( partialStr .. char ) >= text.width or char == "\n" then
+				print("wider than line: " .. partialStr .. char, char)
 				if char ~= "\n" then
-					start, ending = partialStr:find( ".* " )		-- look for spaces.
-					if start then		--if spaces found, cut the string there.
-						i = i - (#partialStr - ending)-1
-						partialStr = safeSub(partialStr, start, ending )
+					local startFound = nil
+					start, ending = stringFind(partialStr, " ", startNew )		-- look for spaces.
+					while start do
+						startFound, endingFound = start, ending
+						start, ending = stringFind(partialStr, " ", start+1 )		-- look for spaces.
+					end
+					if startFound then		-- if spaces found, cut the string there.
+						print("Last space found @: " .. startFound, endingFound)
+						i = i - (strLen(partialStr) - endingFound)-1
+						partialStr = safeSub(partialStr, 1, startFound )
+						print("PartialStr: " .. partialStr)
 						char = ""
 					end
 				end
@@ -79,7 +87,7 @@ local function splitIntoLines( text )		-- will calculate line breaks for the tex
 				partialStr = partialStr .. char
 			end
 		end
-		i = i + math.max(#char, 1)
+		i = i + math.max( #char, 1)
 	end
 
 	if partialStr ~= "" then
@@ -154,11 +162,9 @@ function calculateHighlights( text )			-- calculate where things should be highl
 			yPos = text.font:getHeight()*(i-1)
 			if text.lines[i] then
 				lowerCaseLine = string.lower( text.lines[i] )
-				print(lowerCaseLine, string.lower(highLWord.w))
 				start, ending = stringFind(lowerCaseLine, string.lower(highLWord.w), 1 )	-- Find the position of the text to highlight
 				while start do
 					xPos = text.font:getWidth( safeSub(text.lines[i], 1, start-1) )
-					print("xPos", xPos, safeSub(text.lines[i], 1, start-1), text.lines[i], 1, start-1)
 					table.insert( text.highlights, { line=i, x=xPos, y=yPos, w=width, h=height, r=highLWord.r, g=highLWord.g, b=highLWord.b, a=highLWord.a} )
 					start, ending = stringFind(lowerCaseLine, string.lower(highLWord.w), start+1 )	--find pos of next word.
 				end
@@ -189,18 +195,18 @@ local function correctCursorPos( text )
 	if text.cursorPos < 0 then
 		if text.cursorLine > 1 then
 			text.cursorLine = text.cursorLine - 1
-			text.cursorPos = #text.lines[text.cursorLine] - 1		--move to the end of previous line
+			text.cursorPos = strLen(text.lines[text.cursorLine]) - 1		--move to the end of previous line
 		else
 			text.cursorPos = 0
 		end
 	elseif text.lines[text.cursorLine] then
-		if text.cursorPos > #text.lines[text.cursorLine] then
+		if text.cursorPos > strLen(text.lines[text.cursorLine]) then
 			if text.lines[text.cursorLine+1] then
-				text.cursorPos = text.cursorPos-#text.lines[text.cursorLine]
+				text.cursorPos = text.cursorPos-strLen(text.lines[text.cursorLine])
 				text.cursorLine = text.cursorLine + 1
 				
 			else
-				text.cursorPos = #text.lines[text.cursorLine]
+				text.cursorPos = strLen(text.lines[text.cursorLine])
 			end
 		end
 	else
@@ -208,7 +214,7 @@ local function correctCursorPos( text )
 			text.cursorLine = text.cursorLine - 1
 		end
 		if text.lines[text.cursorLine] then
-			text.cursorPos = #text.lines[text.cursorLine]
+			text.cursorPos = strLen(text.lines[text.cursorLine])
 		end
 	end
 end
@@ -288,31 +294,28 @@ function textBox.input( key, unicode )
 		if v.access == true and v.content then
 			inputUsed = true			
 			v.hasChanged = true
+			print("has changed 1")
 			if unicode > 31 and unicode < 127 then
 				if (v.font:getWidth(v.lines[#v.lines] .. string.char(unicode)) < v.width or #v.lines < v.maxLines) and #v.lines <= v.maxLines then
 					absCursorPos = 0
 					for i = 1,v.cursorLine-1,1 do
-						absCursorPos = absCursorPos + #v.lines[i]
+						absCursorPos = absCursorPos + strLen(v.lines[i])
 					end
 					absCursorPos = absCursorPos + v.cursorPos
-					v.content = safeSub(v.content, 1, absCursorPos) .. string.char(unicode) .. safeSub(v.content, absCursorPos+1, #v.content)
+					v.content = safeSub(v.content, 1, absCursorPos) .. string.char(unicode) .. safeSub(v.content, absCursorPos+1, strLen(v.content))
 					v.cursorPos = v.cursorPos + 1
 				end
 			elseif unicode == 8 then			-- backspace
 				absCursorPos = 0
 				for i = 1,v.cursorLine-1,1 do
-					absCursorPos = absCursorPos + #v.lines[i]
+					absCursorPos = absCursorPos + strLen(v.lines[i])
 				end
 				absCursorPos = absCursorPos + v.cursorPos
-				if #safeSub(v.content, 1, absCursorPos) > 0 then
+				if strLen(safeSub(v.content, 1, absCursorPos)) > 0 then
 					local front = safeSub(v.content, 1, absCursorPos-1)
-					local back = safeSub(v.content, absCursorPos+1, #v.content)
+					local back = safeSub(v.content, absCursorPos+1, strLen(v.content))
 --					v.content = safeSub(v.content, 1, absCursorPos-1) .. safeSub(v.content, absCursorPos+1, #v.content)
 					v.content = front .. back
-					print("absCursorPos: " .. absCursorPos)
-					print("v.cursorPos: " .. v.cursorPos)
-					print("front: " .. front)
-					print("back: " .. back)
 					
 					v.cursorPos = v.cursorPos-1
 					v.cursorBlinkTime = 0
@@ -334,12 +337,12 @@ function textBox.input( key, unicode )
 			elseif key == "delete" then
 				absCursorPos = 0
 				for i = 1,v.cursorLine-1,1 do
-					absCursorPos = absCursorPos + #v.lines[i]
+					absCursorPos = absCursorPos + strLen(v.lines[i])
 				end
 				absCursorPos = absCursorPos + v.cursorPos
 				v.cursorBlinkTime = 0
 				if #v.content > 0 then
-					v.content = safeSub(v.content, 1, absCursorPos) .. safeSub(v.content, absCursorPos+2, #v.content)
+					v.content = safeSub(v.content, 1, absCursorPos) .. safeSub(v.content, absCursorPos+2, strLen(v.content))
 				end
 			elseif key == "return" then
 				v.access = false
@@ -359,26 +362,39 @@ function textBox.input( key, unicode )
 					if (v.font:getWidth(v.lines[#v.lines] .. curGameWord) < v.width or #v.lines < v.maxLines) and #v.lines <= v.maxLines then
 						absCursorPos = 0
 						for i = 1,v.cursorLine-1,1 do
-							absCursorPos = absCursorPos + #v.lines[i]
+							absCursorPos = absCursorPos + strLen(v.lines[i])
 						end
 						absCursorPos = absCursorPos + v.cursorPos
-						v.content = safeSub(v.content, 1, absCursorPos) .. descriptionWord .. safeSub(v.content, absCursorPos+1, #v.content)
-						v.cursorPos = v.cursorPos + #descriptionWord
+						v.content = safeSub(v.content, 1, absCursorPos) .. descriptionWord .. safeSub(v.content, absCursorPos+1, strLen(v.content))
+						v.cursorPos = v.cursorPos + strLen(descriptionWord)
 					end
 				elseif curGameWord and #curGameWord > 0 then
 					if (v.font:getWidth(v.lines[#v.lines] .. curGameWord) < v.width or #v.lines < v.maxLines) and #v.lines <= v.maxLines then
 						absCursorPos = 0
 						for i = 1,v.cursorLine-1,1 do
-							absCursorPos = absCursorPos + #v.lines[i]
+							absCursorPos = absCursorPos + strLen(v.lines[i])
 						end
 						absCursorPos = absCursorPos + v.cursorPos
-						v.content = safeSub(v.content, 1, absCursorPos) .. curGameWord .. safeSub(v.content, absCursorPos+1, #v.content)
-						v.cursorPos = v.cursorPos + #curGameWord
+						v.content = safeSub(v.content, 1, absCursorPos) .. curGameWord .. safeSub(v.content, absCursorPos+1, strLen(v.content))
+						v.cursorPos = v.cursorPos + strLen(curGameWord)
+					end
+				end
+			else
+				if SPECIAL_CHARACTERS[unicode] then
+					if (v.font:getWidth(v.lines[#v.lines] .. SPECIAL_CHARACTERS[unicode]) < v.width or #v.lines < v.maxLines) and #v.lines <= v.maxLines then
+						absCursorPos = 0
+						for i = 1,v.cursorLine-1,1 do
+							absCursorPos = absCursorPos + strLen(v.lines[i])
+						end
+						absCursorPos = absCursorPos + v.cursorPos
+						v.content = safeSub(v.content, 1, absCursorPos) .. SPECIAL_CHARACTERS[unicode] .. safeSub(v.content, absCursorPos+1, strLen(v.content))
+						v.cursorPos = v.cursorPos + 1
 					end
 				end
 			end
 			--splitIntoLines( v )
 			--correctCursorPos( v )
+			print(v.content)
 		end
 	end
 	return inputUsed
@@ -387,11 +403,14 @@ end
 function textBox.clear( text )
 	text.content = "" 		-- let garbage collector do the rest
 	newText.hasChanged = true
+			print("has changed 2")
 end
 
 function textBox.setColourStart( text, from, red, green, blue )
 	text.colours[from] = {r=red, g=green, b=blue }
 	text.hasChanged = true
+	
+			print("has changed 3")
 end
 function textBox.setColour( text, red, green, blue )
 	text.colour = { r=red, g=green, b=blue }
@@ -436,6 +455,8 @@ end
 function textBox.setContent( textField, line )
 	textField.content = line
 	textField.hasChanged = true
+	
+			print("has changed 4", line)
 --	splitIntoLines( textField )
 	return #textField.lines
 end
