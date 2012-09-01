@@ -1,3 +1,10 @@
+-------------------------------------------
+-- Created by Germanunkol
+-- Licensed under the Do What The Fuck You Want To Public License (See Readme for Details).
+-------------------------------------------
+-- For updates and info, see http://www.indiedb.com/members/germanunkol
+-- Get the newest source from: https://github.com/Germanunkol/Wiki-Based-RPG
+-------------------------------------------
 
 socket = require("socket")
 connection = require("Scripts/connection")
@@ -12,7 +19,7 @@ sound = require("Scripts/sound")
 
 wikiClient = require("Scripts/wikiClient")
 
---THIS PORT MUST BE FORWARDED ON YOUR ROUTER FOR INTERNET PLAY!
+--THIS PORT MUST BE FORWARDED ON YOUR ROUTER FOR INTERNET PLAY! Otherwise, just use a service like hamachi.
 PORT = 8080
 
 DEBUG = false
@@ -86,6 +93,17 @@ MAX_ABILITIES = 10
 MAX_STATPOINTS_PER_ABILITY = 3
 statistics = {}
 setStatistics = {}
+
+creditsStr = [[Created by Germanunkol
+http://www.indiedb.com/members/germanunkol
+--------------------------------------
+Licenced under the "Do What The Fuck You Want To Public License" (See Readme for details).
+
+
+--------------------------------------
+Sound Effect by Luke Chalupowski: http://www.freesound.org/people/lukechalaudio/
+Powered by the unquestionably awesome Löve 2D Engine: https://love2d.org/
+]]
 
 function love.load( arg )
 

@@ -34,6 +34,23 @@ local function displayHelp( theButton )
 	highlightButton ( theButton )	-- also display button
 end
 
+local function displayCredits( theButton )
+	--love.graphics.setColor( 0, 0, 0 , 255)
+	width = love.graphics.getWidth()
+	height = theButton.y+theButton.h - 10
+	--love.graphics.rectangle( "fill", theButton.x, 10, width-20, height )
+	love.graphics.setColor( colBorder.r,colBorder.g,colBorder.b , 255)
+	love.graphics.rectangle( "fill", 10+1, 11, width-22, height-2)
+	love.graphics.setColor( colButton.r, colButton.g, colButton.b)
+	love.graphics.rectangle( "fill",  10+3, 13, width-26, height-6)
+	love.graphics.setColor( colText.r, colText.g, colText.b , 255)
+	love.graphics.setFont( fontStatus )
+	love.graphics.printf( creditsStr, 20, 20, width-40, "left")
+
+	love.graphics.setFont( buttonFont )
+	highlightButton ( theButton )	-- also display button
+end
+
 
 local function serverStart()
 	buttons.clear()
@@ -133,7 +150,7 @@ function menu.initMainMenu()
 	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 420, buttonWidth, buttonHeight, START_SERVER_BUTTON_STR, drawButton, highlightButton, serverStart)
 	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 420 + buttonHeight + 10, buttonWidth, buttonHeight, START_CLIENT_BUTTON_STR, drawButton, highlightButton, clientInitPlayernameInput )
 	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 420 + buttonHeight*2 + 20, buttonWidth, buttonHeight, QUIT_BUTTON_STR, drawButton, highlightButton, exitProgramm )
-	buttons.add( love.graphics.getWidth()-100, love.graphics.getHeight()-40, 90, 25, CREDITS_BUTTON_STR, drawButton, highlightButton)
+	buttons.add( love.graphics.getWidth()-100, love.graphics.getHeight()-40, 90, 25, CREDITS_BUTTON_STR, drawButton, displayCredits)
 	buttons.add( 10, love.graphics.getHeight()-40, 110, 25, HELP_BUTTON_STR, drawButton, displayHelp )
 end
 

@@ -27,3 +27,5 @@ TO DO Wiki-Based-RPG:
 [x] - Multilanguage Support
 [x] - Theme choosing
 [x] - Unicode support
+[x] - Up/Down cursor keys support added
+[x] - Clicking input boxes now moves cursor.

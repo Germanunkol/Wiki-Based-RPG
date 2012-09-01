@@ -270,11 +270,11 @@ function setServerButtons()
 	addAbilityRemoveButtons()
 	
 	if startingWord == nil then
-		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, CHOOSE_PATH_BUTTON_STR, drawButton, highlightButton, lobby.inputFirstWord )
+		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-15, buttonWidth, buttonHeight, CHOOSE_PATH_BUTTON_STR, drawButton, highlightButton, lobby.inputFirstWord )
 		--buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight*2-10, buttonWidth, buttonHeight, "Add Ability", drawButton, highlightButton, lobby.inputAbility )
 	else
 		--buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight*2-10, buttonWidth, buttonHeight, "Add Ability", drawButton, highlightButton, lobby.inputAbility )
-		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, CHANGE_FIRST_WORD_BUTTON_STR, drawButton, highlightButton, lobby.inputFirstWord )
+		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-15, buttonWidth, buttonHeight, CHANGE_FIRST_WORD_BUTTON_STR, drawButton, highlightButton, lobby.inputFirstWord )
 		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, BEGIN_JOURNEY_BUTTON_STR, drawButton, highlightButton, attemptGameStart )
 	end
 	buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10-buttonHeight-5, buttonWidth, buttonHeight, MODIFY_THEME_BUTTON_STR, drawButton, highlightButton, listThemes )
@@ -426,8 +426,8 @@ function lobby.showPlayers()
 		else
 			love.graphics.print("[ ]", 170, curY )
 		end
-		love.graphics.setColor( 60, 60, 60 , 255)
 		if cl.description then
+			love.graphics.setColor( colText.r, colText.g, colText.b , 200)
 			love.graphics.print( cl.description, 220+mainFont:getWidth(cl.playerName), curY )
 		end
 		--[[if cl.statistics then
