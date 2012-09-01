@@ -250,6 +250,7 @@ function wikiClient.inputWikiWord( xPos, yPos, width, height, event, title)
 	if firstWordHeaderBox == nil then
 		firstWordHeaderBox = textBox.new( x+10, y + 3, 2, fontInputHeader, w )
 	end
+	textBox.setColour( firstWordHeaderBox, colText.r, colText.g, colText.b )
 	textBox.setContent( firstWordHeaderBox, title )
 	if firstWordInputBox == nil then
 		firstWordInputBox = textBox.new( x+15, y + 23, 1, fontInput, 200 )

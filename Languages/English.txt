@@ -39,10 +39,10 @@ NEW_PLAYER_CONNECTED_STR = [[New player!]]
 PLAYER_LEFT_STR = [[has left the game.]]
 BEGIN_JOURNEY_BUTTON_STR = [[Begin journey]]
 
-CHOOSE_PATH_BUTTON_STR = [[Choose Path]]
-CHANGE_FIRST_WORD_BUTTON_STR = [[Change first Word]]
+CHOOSE_PATH_BUTTON_STR = [[Choose path]]
+CHANGE_FIRST_WORD_BUTTON_STR = [[Change first word]]
 DESCRIBE_CHARACTER_BUTTON_STR = [[Describe character]]
-CHANGE_DESCRIPTION_BUTTON_STR = [[Change Description]]
+CHANGE_DESCRIPTION_BUTTON_STR = [[Change description]]
 READY_BUTTON_STR = [[Ready]]
 
 CHOSEN_FIRST_WORD_STR = [[Start word set.]]
@@ -56,6 +56,7 @@ USE_DESCRIPTION_WORD = [[Tell us something about your character. Use the word:]]
 ERROR_AVATAR_CANNOT_CHANGE_STR = [[Cannot change avatar while you're "ready".]]
 ERROR_NO_COMMAS_ALLOWED = [[No Commas allowed!]]
 ERROR_MINIMUM_ONE_PLAYER_STR = [[Need at least one player!]]
+ERROR_COULD_NOT_SET_THEME_STR = [[Error: Failed to set new theme.]]
 
 -- in game:
 GAME_STARTING_STR = [[Game starting.]]

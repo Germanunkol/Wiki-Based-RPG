@@ -38,6 +38,7 @@ A_STORY_ABOUT_STR = [[Eine Geschichte über ]]
 NEW_PLAYER_CONNECTED_STR = [[Neuer Mitspieler!]]
 PLAYER_LEFT_STR = [[hat das Spiel verlassen.]]
 BEGIN_JOURNEY_BUTTON_STR = [[Abenteuer beginnen]]
+MODIFY_THEME_BUTTON_STR = [[Aussehen wählen]]
 
 CHOOSE_PATH_BUTTON_STR = [[Richtung aussuchen]]
 CHANGE_FIRST_WORD_BUTTON_STR = [[Erstes Wort ändern]]
@@ -55,7 +56,9 @@ USE_DESCRIPTION_WORD = [[Schreibe einen Satz über deinen Character. Benutze das
 
 -- lobby Error messages:
 ERROR_AVATAR_CANNOT_CHANGE_STR = [[Avatar nicht änderbar wenn "Bereit".]]
-ERROR_NO_COMMAS_ALLOWED = [[Keine Kommas!]]
+ERROR_NO_COMMAS_ALLOWED_STR = [[Keine Kommas!]]
+ERROR_MINIMUM_ONE_PLAYER_STR = [[Mindestens ein Spieler muss eingeloggt sein!]]
+ERROR_COULD_NOT_SET_THEME_STR = [[Fehler beim auswählen des neuen Themas.]]
 
 -- in game:
 GAME_STARTING_STR = [[Spiel beginnt.]]

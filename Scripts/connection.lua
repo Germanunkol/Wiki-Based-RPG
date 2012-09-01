@@ -74,6 +74,9 @@ function handleNewClient( newClient )
 			if startingWord then 
 				newClient:send("CURWORD:" .. startingWord .. "\n")
 			end
+			if themes.getCurrentTheme() then
+				newClient:send("THEME:" .. themes.getCurrentTheme() .. "\n")
+			end
 			
 			local toSend = "ABILITIES:"
 			for k, v in pairs(abilities) do
@@ -378,6 +381,11 @@ function connection.runClient( cl )				--handle all messages that come from the 
 			start, ending = msg:find( "CHARDESCRIPTION:" )
 			if start == 1 then
 				connection.receiveDiscription( safeSub(msg, ending+1, #msg) )
+			end
+			
+			start, ending = msg:find( "THEME:" )
+			if start == 1 then
+				themes.set( safeSub(msg, ending+1, #msg) )
 			end
 			
 			start, ending = msg:find( "READY:" )

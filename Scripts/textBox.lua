@@ -470,12 +470,15 @@ function textBox.handleClick()
 				text.cursorBlinkTime = 0
 				text.cursorPos = 0
 				local tmpStr = ""
-				for char in text.lines[text.cursorLine]:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
-					if text.font:getWidth( tmpStr .. char ) - text.font:getWidth( char )/2 <= deltaX then 
-						text.cursorPos = text.cursorPos + 1
-						tmpStr = tmpStr .. char
-					else
-						break
+				if text.lines[text.cursorLine] then
+					for char in text.lines[text.cursorLine]:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
+						print("char:", char)
+						if text.font:getWidth( tmpStr .. char ) - text.font:getWidth( char )/2 <= deltaX then 
+							text.cursorPos = text.cursorPos + 1
+							tmpStr = tmpStr .. char
+						else
+							break
+						end
 					end
 				end
 			end

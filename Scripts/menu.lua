@@ -9,7 +9,7 @@ local ipHeader = nil
 local ipInputBox = nil
 local logoIMG = nil
 
-local	headerPos = 335
+local headerPos = 335
 
 local function exitProgramm()
 	love.event.quit()
@@ -24,9 +24,9 @@ local function displayHelp( theButton )
 	--love.graphics.rectangle( "fill", theButton.x, 10, width-20, height )
 	love.graphics.setColor( colBorder.r,colBorder.g,colBorder.b , 255)
 	love.graphics.rectangle( "fill", theButton.x+1, 11, width-22, height-2)
-	love.graphics.setColor( colLobby.r, colLobby.g, colLobby.g)
+	love.graphics.setColor( colButton.r, colButton.g, colButton.b)
 	love.graphics.rectangle( "fill",  theButton.x+3, 13, width-26, height-6)
-	love.graphics.setColor( 0, 0, 0 , 255)
+	love.graphics.setColor( colText.r, colText.g, colText.b , 255)
 	love.graphics.setFont( fontStatus )
 	love.graphics.printf( helpString, 20, 20, width-40, "left")
 
@@ -78,6 +78,7 @@ local function clientInitIpInput()
 		
 		ipHeader = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-10, headerPos+120, 1, fontInputHeader, 200)
 		textBox.setContent( ipHeader, ENTER_IP_STR )
+		textBox.setColour( ipHeader, colText.r, colText.g, colText.b )
 		ipInputBox = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-5, headerPos+140, 1, fontInput, 200)
 		textBox.setColour( ipInputBox, colTextInput.r, colTextInput.g, colTextInput.b )
 		textBox.setContent( ipInputBox, ipStr )		-- if there's something already in ip string, then place that text in the input box.
@@ -96,6 +97,7 @@ local function clientInitPlayernameInput()
 	buttons.clear()
 	plNameHeader = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-10, headerPos+70, 1, fontInputHeader, 200)
 	textBox.setContent( plNameHeader, ENTER_PLAYERNAME_STR )
+	textBox.setColour( plNameHeader, colText.r, colText.g, colText.b )
 	plNameInputBox = textBox.new( love.graphics.getWidth()/2-buttonWidth/2-5, headerPos+90, 1, fontInput, 200)
 	textBox.setColour( plNameInputBox, colTextInput.r, colTextInput.g, colTextInput.b )
 	
@@ -150,11 +152,12 @@ function menu.showMainMenu()
 	love.graphics.rectangle("fill", 0, headerPos, love.graphics.getWidth(), 48)
 	
 	love.graphics.setFont( fontMainHeader )
-	love.graphics.setColor( colLobby.r,colLobby.g,colLobby.b )
+	love.graphics.setColor( colText.r,colText.g,colText.b )
 	love.graphics.print( "WB-RPG", 30, headerPos+1 )
 	love.graphics.setFont( mainFont )
 	love.graphics.print( GAME_TITLE_STR, 190, headerPos+15 )
 	
+	love.graphics.setColor( 255,255,255 )
 	love.graphics.draw( logoIMG, (love.graphics.getWidth()-logoIMG:getWidth()*imgScale)/2, 20, 0, imgScale, imgScale )
 
 	textBox.display( plNameHeader )

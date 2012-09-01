@@ -23,3 +23,7 @@ TO DO Wiki-Based-RPG:
 	- logo not displayed?	(can't reproduce)
 [x]	- fixed inventory capacity
 [x] - fix joker buttons?
+------------------------
+[x] - Multilanguage Support
+[x] - Theme choosing
+[x] - Unicode support

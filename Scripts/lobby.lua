@@ -107,6 +107,7 @@ function lobby.chooseDescriptionWord( index )
 				descriptionHeaderBox = textBox.new( avatarPicX+AVATAR_PIXELS_X*AVATAR_PIXELS_WIDTH+10, 400 + 3, 2, fontInputHeader, love.graphics.getWidth() )
 			end
 			textBox.setContent( descriptionHeaderBox, USE_DESCRIPTION_WORD .. " " .. descriptionWord )
+			textBox.setColour( descriptionHeaderBox, colText.r, colText.g, colText.b )
 			if descriptionInputBox == nil then
 				descriptionInputBox = textBox.new( avatarPicX+AVATAR_PIXELS_X*AVATAR_PIXELS_WIDTH+15, 400 + 23, 6, fontInput, love.graphics.getWidth()/2-20 )
 				textBox.setColour( descriptionInputBox, colTextInput.r, colTextInput.g, colTextInput.b )
@@ -236,6 +237,35 @@ function addAbilityRemoveButtons()
 	end
 end
 
+local function chooseTheme(str)
+	if themes.set(str) then
+		connection.serverBroadcast( "THEME:" .. str )
+	else
+		statusMsg.new(ERROR_COULD_NOT_SET_THEME_STR)
+	end
+	buttons.clear()
+	setServerButtons()
+end
+
+local function listThemes()
+	buttons.clear()
+	local titleStr, i = "", 0
+	for k, t in pairs(themes.getList()) do
+		titleStr = ""
+		for char in t:gfind("([%z\1-\127\194-\244][\128-\191]*)") do
+			titleStr = titleStr .. char
+			if buttonFont:getWidth( titleStr ) >= love.graphics.getWidth()/2-70 then
+				 break
+			end
+		end
+		if titleStr ~= t then
+			titleStr = titleStr .. "..."
+		end
+		buttons.add( love.graphics.getWidth()/2+10, 400 + 25 + i*(buttonHeight-10), love.graphics.getWidth()/2-40, buttonHeight/2+5, titleStr, drawButton, highlightButton , chooseTheme, t )
+		i = i + 1
+	end
+end
+
 function setServerButtons()
 	addAbilityRemoveButtons()
 	
@@ -247,6 +277,7 @@ function setServerButtons()
 		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10, buttonWidth, buttonHeight, CHANGE_FIRST_WORD_BUTTON_STR, drawButton, highlightButton, lobby.inputFirstWord )
 		buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15, buttonWidth, buttonHeight, BEGIN_JOURNEY_BUTTON_STR, drawButton, highlightButton, attemptGameStart )
 	end
+	buttons.add( love.graphics.getWidth()-buttonWidth-10, love.graphics.getHeight()-buttonHeight-15-buttonHeight-10-buttonHeight-5, buttonWidth, buttonHeight, MODIFY_THEME_BUTTON_STR, drawButton, highlightButton, listThemes )
 end
 
 function setClientButtons()
@@ -273,7 +304,7 @@ function lobby.abilityEntered()
 	abilityInputBox = nil
 	
 	if str:find(",") then
-		statusMsg.new( ERROR_NO_COMMAS_ALLOWED )
+		statusMsg.new( ERROR_NO_COMMAS_ALLOWED_STR )
 		setServerButtons()
 		return
 	end
@@ -292,6 +323,7 @@ function lobby.inputAbility()
 	if abilityHeaderBox == nil then
 		abilityHeaderBox = textBox.new( x+10, y + 3, 2, fontInputHeader, w )
 	end
+			textBox.setColour( abilityHeaderBox, colText.r, colText.g, colText.b )
 	textBox.setContent( abilityHeaderBox, "Enter a new Ability:" )
 	if abilityInputBox == nil then
 		abilityInputBox = textBox.new( x+15, y + 23, 1, fontInput, 200 )
@@ -340,11 +372,11 @@ function lobby.showPlayers()
 	love.graphics.rectangle("fill", 0, 51, love.graphics.getWidth(), 48)
 	love.graphics.rectangle("fill", 0, 360, love.graphics.getWidth(), 38)
 	
-	love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b )
+	love.graphics.setColor( colText.r, colText.g, colText.b )
 	love.graphics.setFont( fontHeader )
 	love.graphics.print( HEROES_STR, 70, 65 )
 	
-	love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b )
+	love.graphics.setColor( colText.r, colText.g, colText.b )
 	love.graphics.setFont( fontInputHeader )
 	love.graphics.print( OPTIONS_STR, 70, 370 )
 	
@@ -364,7 +396,7 @@ function lobby.showPlayers()
 	
 	if startingWord then
 		love.graphics.setFont( buttonFont )
-		love.graphics.setColor( 0,0,0 )
+		love.graphics.setColor( colText.r, colText.g, colText.b )
 		love.graphics.print( A_STORY_ABOUT_STR, (love.graphics.getWidth() - fontHeader:getWidth(startingWord))/2-buttonFont:getWidth( A_STORY_ABOUT_STR ) , 24 )
 		love.graphics.setFont( fontHeader )
 		love.graphics.setColor( colWikiWord.r,colWikiWord.g,colWikiWord.b )
@@ -372,7 +404,7 @@ function lobby.showPlayers()
 	end
 	
 	if not descriptionHeaderBox then
-		love.graphics.setColor( 0,0,0 )
+		love.graphics.setColor( colText.r, colText.g, colText.b )
 		i = 0
 		for k, v in pairs(abilities) do
 			love.graphics.setFont( buttonFont )
@@ -386,7 +418,7 @@ function lobby.showPlayers()
 		
 		love.graphics.setColor( colLobby.r, colLobby.g, colLobby.g, 255)
 		love.graphics.rectangle("fill", 5, curY-9 , love.graphics.getWidth()-10, 33)
-		love.graphics.setColor( 0, 0, 0 , 255)
+		love.graphics.setColor( colText.r, colText.g, colText.b , 255)
 		love.graphics.setFont( mainFont )
 		love.graphics.print(cl.playerName, 200, curY )
 		if cl.ready then

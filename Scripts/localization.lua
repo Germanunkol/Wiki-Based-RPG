@@ -50,11 +50,12 @@ A_STORY_ABOUT_STR = [[A story of ]]
 NEW_PLAYER_CONNECTED_STR = [[New player!]]
 PLAYER_LEFT_STR = [[has left the game.]]
 BEGIN_JOURNEY_BUTTON_STR = [[Begin journey]]
+MODIFY_THEME_BUTTON_STR = [[Choose theme]]
 
-CHOOSE_PATH_BUTTON_STR = [[Choose Path]]
-CHANGE_FIRST_WORD_BUTTON_STR = [[Change first Word]]
+CHOOSE_PATH_BUTTON_STR = [[Choose path]]
+CHANGE_FIRST_WORD_BUTTON_STR = [[Change first word]]
 DESCRIBE_CHARACTER_BUTTON_STR = [[Describe character]]
-CHANGE_DESCRIPTION_BUTTON_STR = [[Change Description]]
+CHANGE_DESCRIPTION_BUTTON_STR = [[Change description]]
 READY_BUTTON_STR = [[Ready]]
 
 CHOSEN_FIRST_WORD_STR = [[Start word set.]]
@@ -66,8 +67,9 @@ USE_DESCRIPTION_WORD = [[Tell us something about your character. Use the word:]]
 
 -- lobby Error messages:
 ERROR_AVATAR_CANNOT_CHANGE_STR = [[Cannot change avatar while you're "ready".]]
-ERROR_NO_COMMAS_ALLOWED = [[No Commas allowed!]]
+ERROR_NO_COMMAS_ALLOWED_STR = [[No Commas allowed!]]
 ERROR_MINIMUM_ONE_PLAYER_STR = [[Need at least one player!]]
+ERROR_COULD_NOT_SET_THEME_STR = [[Error: Failed to set new theme.]]
 
 -- in game:
 GAME_STARTING_STR = [[Game starting.]]
@@ -222,7 +224,7 @@ function localization.display()		-- show all flags and languages found, so the p
 		y = j*love.graphics.getHeight()/7 - love.graphics.getHeight()/20
 		love.graphics.setColor( 0,0,0, 100)
 		love.graphics.draw( flag, x+5, y+7)
-		love.graphics.setColor( 0,0,0, 255)
+		love.graphics.setColor( colText.r,colText.g,colText.b, 255)
 		love.graphics.print( lang, x - mainFont:getWidth(lang)/2 + flag:getWidth()/2, y-25 )
 		love.graphics.setColor( 255,255,255, 255)
 		love.graphics.draw( flag, x, y)

@@ -578,7 +578,7 @@ function game.sendAction( )
 
 		textBox.setContent( gameInputBox, "" )
 		textBox.setContent( gameStatusBox, WAITING_FOR_HEROES_STR )
-		textBox.setColour( gameStatusBox, 0, 0, 0 )
+		textBox.setColour( gameStatusBox, colText.r, colText.g, colText.b )
 		waitForPlayerActions = false
 	else
 		textBox.setAccess( gameInputBox, true )
@@ -654,7 +654,7 @@ function game.show()		-- called once every frame
 		love.graphics.rectangle( "fill",nextPlayerAreaX+4, nextPlayerAreaY+4, nextPlayerAreaWidth-8, fontStatus:getHeight() )
 		love.graphics.print( playerTurnsStrings[1].ID, nextPlayerAreaX+5, nextPlayerAreaY+5 + (1-1)*fontStatus:getHeight() )
 	end
-	love.graphics.setColor( 0,0,0,255 )
+	love.graphics.setColor( colText.r, colText.g, colText.b, 255 )
 	for i=1,#playerTurnsStrings,1 do
 		love.graphics.print( playerTurnsStrings[i].str, nextPlayerAreaX+5, nextPlayerAreaY+5 + (i-1)*fontStatus:getHeight() )
 		if (i+1)*fontStatus:getHeight() > nextPlayerAreaHeight then
@@ -719,7 +719,7 @@ function game.show()		-- called once every frame
 			else
 				textBox.setContent( gameStatusBox, CHOOSE_A_WORD_STR )
 			end
-			textBox.setColour( gameStatusBox, 0, 0, 0 )
+			textBox.setColour( gameStatusBox, colText.r, colText.g, colText.b )
 			waitForPlayerActions = false
 			sound.playNotification()
 			addPlayerTurns()
@@ -736,6 +736,7 @@ function game.show()		-- called once every frame
 end
 
 function gameAreaClicked()
+	if DEBUG then print("game area clicked.") end
 	if wikiClient.getFirstWordActive() or textBox.getAccess( gameInputBox ) then return end
 	if server then
 		if waitForPlayerActions then
@@ -759,6 +760,7 @@ function gameAreaClicked()
 end
 
 function chatAreaClicked()
+	if DEBUG then print("chat area clicked.") end
 	if wikiClient.getFirstWordActive() or chat.getActive() then return end
 	chat.setAccess( true )
 	textBox.setAccess( gameInputBox, false )
@@ -793,6 +795,7 @@ function game.init()
 	gameInputAreaWdith = gameAreaWidth - 20
 	gameInputAreaHeight = gameAreaHeight * 0.3 - 10
 	gameInputBox = textBox.new( gameInputAreaX + 5, gameInputAreaY + 2, math.floor(gameInputAreaHeight/fontInput:getHeight()) , fontInput, gameInputAreaWdith - 15)
+	textBox.setColour( gameInputBox, colText.r, colText.g, colText.b )
 	gameTextBox = textBox.new( gameAreaX + 5, gameAreaY + 5, math.floor(gameAreaHeight/fontInput:getHeight()) , fontInput, gameAreaWidth - 15)
 	textBox.setEscapeEvent( gameInputBox, game.inputEscape )		--called when "escape" is pressed during input
 	
@@ -805,6 +808,7 @@ function game.init()
 	end
 
 	inventoryFieldHeader = textBox.new( chatAreaX+2, chatAreaY+chatAreaHeight+8, 1, fontInputHeader, 300 )
+	textBox.setColour( inventoryFieldHeader, colText.r, colText.g, colText.b ) 
 	--textBox.setMaxVisibleLines( gameInputBox, math.floor(gameInputAreaHeight/fontInput:getHeight()) )
 	buttons.clear()
 	game.setButtons()
@@ -821,9 +825,10 @@ function game.init()
 		game.setJokerButtons()
 		curGameWord = startingWord		-- the current game's word will be the word the server chose as start word
 		
+		textBox.setColourStart( gameStatusBox,1, colText.r, colText.g, colText.b )
 		textBox.setContent( gameStatusBox, START_STORY_USE_WORD_STR1 .. " \"" .. curGameWord .. "\" " .. START_STORY_USE_WORD_STR2 )
 		textBox.setColourStart( gameStatusBox, #START_STORY_USE_WORD_STR1+4 , colWikiWord.r, colWikiWord.g, colWikiWord.b )
-		textBox.setColourStart( gameStatusBox, #START_STORY_USE_WORD_STR1 + #startingWord + 4 , 0,0,0 )
+		textBox.setColourStart( gameStatusBox, #START_STORY_USE_WORD_STR1 + #startingWord + 4 , colText.r, colText.g, colText.b )
 		textBox.setAccess( gameInputBox, true, true )
 		scrollGameBox()
 		textBox.setReturnEvent( gameInputBox, game.sendStory )

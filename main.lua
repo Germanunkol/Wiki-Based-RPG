@@ -3,7 +3,8 @@ socket = require("socket")
 connection = require("Scripts/connection")
 export = require("Scripts/export")
 
-localization = require("Scripts/Localization")
+localization = require("Scripts/localization")
+themes = require("Scripts/themes")
 
 lobby = require("Scripts/lobby")
 sound = require("Scripts/sound")
@@ -47,9 +48,13 @@ fontChat = love.graphics.newFont( "Fonts/AveriaSans-Bold.ttf",14 )
 
 colMainBg = { r=230, g=190, b=134 }
 colBorder = { r=110, g=66, b=44 }
+colButton = { r=241, g=229, b=209 }
+colButtonText = { r=0, g=0, b=0 }
 colLobby = { r=241, g=229, b=209 }
 colServerMsg = { r=200,g=120,b=80}
+colText = { r=0, g=0, b=0 }
 colTextInput = { r=100, g=100, b=100 }
+colTextStatusMessage = { r=100, g=0, b=0 }
 colWikiWord = { r=20, g=64, b=160 }
 colStory = { r=100, g=80, b=60 }
 colAction = { r=80, g=60, b=40 }		-- for "/do" command
@@ -60,6 +65,7 @@ colHighlightWikiWordNew = { r=225, g=250, b=190 }
 
 colShadow = { r=0,g=0,b=0 }
 
+--Avatar Colours: (B=Bright, M=Medium, D=Dark)
 colCharB = { r=240, g=210, b=150 }
 colCharM = { r=135, g=76, b=45 }
 colCharD = { r=50, g=20, b=10 }
@@ -89,11 +95,6 @@ function love.load( arg )
 			print("DEBUG mode set.")
 		end
 	end
-	
-	files = love.filesystem.enumerate(".")
-	for k, file in pairs(files) do
-		print(file)
-	end
 
 	love.graphics.setBackgroundColor( colMainBg.r, colMainBg.g, colMainBg.b )
 	success = love.graphics.setMode( 1024, 680, false, false, 0 )
@@ -102,6 +103,9 @@ function love.load( arg )
 	export.init()
 	
 	localization.init("Languages")
+	
+	themes.init( "Themes" )
+	--themes.set( "Dark" )
 	
 	love.keyboard.setKeyRepeat( 0.3, 0.03 )
 	testingConnection = true
@@ -153,7 +157,7 @@ function love.draw()
 
 	if testingConnection then
 		love.graphics.setFont( fontStatus )
-		love.graphics.setColor( 0,0,0,255 )
+		love.graphics.setColor( colText.r, colText.g, colText.b ,255 )
 		love.graphics.print( ATTEMPT_WIKI_CONNECT_STR, (love.graphics.getWidth()-fontStatus:getWidth( ATTEMPT_WIKI_CONNECT_STR ))/2, love.graphics.getHeight()-30 )
 	else
 		if not language then
@@ -176,7 +180,7 @@ function love.draw()
 	end
 	if DEBUG then
 		love.graphics.setFont( fontStatus )
-		love.graphics.setColor( 0,0,0,255 )
+		love.graphics.setColor( colText.r, colText.g, colText.b ,255 )
 		love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), love.graphics.getWidth()-60, 5)
 	end
 	
