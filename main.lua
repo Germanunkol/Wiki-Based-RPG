@@ -89,6 +89,11 @@ function love.load( arg )
 			print("DEBUG mode set.")
 		end
 	end
+	
+	files = love.filesystem.enumerate(".")
+	for k, file in pairs(files) do
+		print(file)
+	end
 
 	love.graphics.setBackgroundColor( colMainBg.r, colMainBg.g, colMainBg.b )
 	success = love.graphics.setMode( 1024, 680, false, false, 0 )
