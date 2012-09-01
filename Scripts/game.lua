@@ -549,9 +549,9 @@ function game.sendAction( )
 			insertAction( "/skip" )
 		else
 			--the following code splits the string at the different commands (/do, /say and later /use)
-			local posStart1, posEnd1 = str:find( "/say" )
-			local posStart2, posEnd2 = str:find( "/do" )
-			local posStart3, posEnd3 = str:find( "/use" )
+			local posStart1, posEnd1 = stringFind( str, "/say" )
+			local posStart2, posEnd2 = stringFind( str, "/do" )
+			local posStart3, posEnd3 = stringFind( str, "/use" )
 			local posStart, posEnd, posStartNew, posEndNew
 			posStart, posEnd = minimum( posStart1, posStart2, posStart3, posEnd1, posEnd2, posEnd3 )
 			if posStart == nil then
@@ -560,9 +560,9 @@ function game.sendAction( )
 				insertAction( "/say " .. safeSub(str,1, posStart-1) )		-- if it doesn't start with a command, /say the beginning.
 			end
 			while posStart do
-				posStart1, posEnd1 = str:find( "/say", posStart+1 )
-				posStart2, posEnd2 = str:find( "/do", posStart+1 )
-				posStart3, posEnd3 = str:find( "/use", posStart+1 )
+				posStart1, posEnd1 = stringFind( str, "/say", posStart+1 )
+				posStart2, posEnd2 = stringFind( str, "/do", posStart+1 )
+				posStart3, posEnd3 = stringFind( str, "/use", posStart+1 )
 				posStartNew, posEndNew = minimum( posStart1, posStart2, posStart3, posEnd1, posEnd2, posEnd3 )
 				if posStartNew then
 					insertAction( safeSub(str, posStart, posStartNew-1) )
