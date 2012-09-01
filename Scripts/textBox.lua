@@ -14,6 +14,7 @@ function textBox.new( xPos, yPos, newLines, newFont, newWidth )
 	newText.activeLine = 1
 	newText.cursorPos = 1
 	newText.cursorLine = 1
+	newText.cursorXPos = 0
 	newText.hasChanged = true
 	newText.maxLines = newLines
 	newText.showOnlyPart = nil
@@ -64,7 +65,6 @@ local function splitIntoLines( text )		-- will calculate line breaks for the tex
 		start, ending,char = text.content:find("([%z\1-\127\194-\244][\128-\191]*)", i)
 		if start then
 			if text.font:getWidth( partialStr .. char ) >= text.width or char == "\n" then
-				print("wider than line: " .. partialStr .. char, char)
 				if char ~= "\n" then
 					local startFound = nil
 					start, ending = stringFind(partialStr, " ", startNew )		-- look for spaces.
@@ -73,10 +73,11 @@ local function splitIntoLines( text )		-- will calculate line breaks for the tex
 						start, ending = stringFind(partialStr, " ", start+1 )		-- look for spaces.
 					end
 					if startFound then		-- if spaces found, cut the string there.
-						print("Last space found @: " .. startFound, endingFound)
-						i = i - (strLen(partialStr) - endingFound)-1
+						
+						tmpStr = safeSub( partialStr, startFound, strLen(partialStr))
+						i = i - #tmpStr
+						--i = i - (strLen(partialStr) - endingFound)-1
 						partialStr = safeSub(partialStr, 1, startFound )
-						print("PartialStr: " .. partialStr)
 						char = ""
 					end
 				end
@@ -326,6 +327,12 @@ function textBox.input( key, unicode )
 			elseif key == "right" then
 				v.cursorPos = v.cursorPos + 1
 				v.cursorBlinkTime = 0
+			elseif key == "up" then
+				if v.cursorLine > 1 then v.cursorLine = v.cursorLine - 1 end
+				v.cursorBlinkTime = 0
+			elseif key == "down" then
+				if v.cursorLine < v.maxLines then v.cursorLine = v.cursorLine + 1 end
+				v.cursorBlinkTime = 0
 			elseif key == "end" then
 				if v.lines[v.cursorLine] then
 					v.cursorPos = #v.lines[v.cursorLine]
@@ -450,6 +457,30 @@ end
 
 function textBox.getAccess( text )
 	return text.access
+end
+
+function textBox.handleClick()
+	for k, text in pairs( fields ) do
+		if text.access == true and text.content then			-- loop through all text boxes that have access enabled (you can type in them)
+			local x, y = love.mouse.getPosition()
+			if x >= text.x and x <= text.x+text.width and y >= text.y and y <= text.y+text.maxLines*text.font:getHeight() then
+				local deltaY, deltaX = y - text.y, x - text.x
+				local lineNum = math.floor( deltaY/text.font:getHeight() )
+				text.cursorLine = math.min( lineNum+1, text.maxLines, #text.lines )
+				text.cursorBlinkTime = 0
+				text.cursorPos = 0
+				local tmpStr = ""
+				for char in text.lines[text.cursorLine]:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
+					if text.font:getWidth( tmpStr .. char ) - text.font:getWidth( char )/2 <= deltaX then 
+						text.cursorPos = text.cursorPos + 1
+						tmpStr = tmpStr .. char
+					else
+						break
+					end
+				end
+			end
+		end
+	end
 end
 
 function textBox.setContent( textField, line )

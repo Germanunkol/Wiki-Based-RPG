@@ -202,6 +202,7 @@ function love.mousepressed()
 		end
 	else
 		buttons.handleClick()
+		textBox.handleClick()
 	end
 end
 
