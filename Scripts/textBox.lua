@@ -83,8 +83,8 @@ local function splitIntoLines( text )		-- will calculate line breaks for the tex
 					end
 				end
 				text.lines[#text.lines+1] = partialStr
-				if text.colours[#text.lines+1] == nil then text.colours[#text.lines+1] = prevColour
-				else prevColour = text.colours[#text.lines+1] end
+				--if text.colours[#text.lines+1] == nil then text.colours[#text.lines+1] = prevColour
+				--else prevColour = text.colours[#text.lines+1] end
 				
 				partialStr = ""
 			end
@@ -97,8 +97,8 @@ local function splitIntoLines( text )		-- will calculate line breaks for the tex
 
 	if partialStr ~= "" then
 		text.lines[#text.lines+1] = partialStr
-		if text.colours[#text.lines+1] == nil then text.colours[#text.lines+1] = prevColour
-		else prevColour = text.colours[#text.lines+1] end
+		--if text.colours[#text.lines+1] == nil then text.colours[#text.lines+1] = prevColour
+		--else prevColour = text.colours[#text.lines+1] end
 	end
 	if text.lines[1] == nil then
 		text.lines[1] = ""
@@ -252,7 +252,6 @@ function textBox.display( text )
 	
 		for i = 1,#text.lines,1 do
 			if text.colours[i] then
-				print("found colour for: " .. text.lines[i])
 				love.graphics.setColor( text.colours[i].r, text.colours[i].g, text.colours[i].b )
 			end
 			love.graphics.print( text.lines[i], text.x, text.y + text.font:getHeight()*(i-1) )
@@ -271,6 +270,15 @@ function textBox.display( text )
 			end
 		end
 		love.graphics.setColor( text.colour.r, text.colour.g, text.colour.b )
+		
+		if not text.colours[text.showStartLine] then
+			for i = text.showStartLine-1,0,-1 do		-- look for previous colour, to find out what the current colour should be.
+				if text.colours[i] then
+					love.graphics.setColor( text.colours[i].r, text.colours[i].g, text.colours[i].b )
+					break
+				end
+			end
+		end
 		for i = text.showStartLine,text.showOnlyPart+text.showStartLine,1 do		--display lines between showStartLine and showOnlyPart
 			if text.lines[i] then
 				if text.colours[i] then
@@ -417,10 +425,12 @@ function textBox.clear( text )
 	newText.hasChanged = true
 end
 
+--[[
 function textBox.setColourStart( text, from, red, green, blue )
 	text.colours[from] = {r=red, g=green, b=blue }
 	text.hasChanged = true
-end
+end]]--
+
 function textBox.setColour( text, red, green, blue )
 	text.colour = { r=red, g=green, b=blue }
 	text.colours = {}		--reset all colours

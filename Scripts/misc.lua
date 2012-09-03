@@ -220,3 +220,28 @@ function stringFind( str, pattern, start )
 	end
 	return nil
 end
+
+function stringReplace( baseStr, toReplace, replaceWith )
+	if DEBUG then print("replacing: " .. toReplace) end
+	local parts = {}
+	local s, e = stringFind( baseStr, toReplace )
+	local prev = 1
+	while s do
+		if DEBUG then print("found " .. toReplace .. " @ " .. s) end
+		table.insert( parts, safeSub( baseStr, prev, s-1 ) )
+		prev = e+1
+		s, e = stringFind( baseStr, toReplace, e+1 )
+	end
+	table.insert( parts, safeSub( baseStr, prev, strLen(baseStr) ) )
+	local resultStr = ""
+	local firstPartAdded = false
+	for k, part in pairs(parts) do
+		if firstPartAdded then 
+			resultStr = resultStr .. replaceWith
+		end
+		resultStr = resultStr .. part
+		firstPartAdded = true
+	end
+	return resultStr
+end
+

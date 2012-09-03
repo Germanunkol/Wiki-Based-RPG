@@ -167,9 +167,18 @@ function game.startMyTurn()
 end
 
 local chosenURLs
+local usingJoker = false
 
 function chooseNextWord( index )
 	if chosenURLs then
+	
+		if usingJoker then
+			usingJoker = false
+			curGameWord = chosenURLs[index].title
+			wikiClient.setNewWord( chosenURLs[index] )
+			game.serverChooseNextWord()
+			return
+		end
 		-- nextWordChosen = true
 		
 		-- change colour of last curGameWord:
@@ -295,6 +304,8 @@ function game.useJoker()
 	
 	-- wikiClient.inputFirstWord( chatAreaX, chatAreaY+chatAreaHeight+10, chatAreaWidth, gameAreaHeight - chatAreaHeight-20, game.newWordSet, "Choose new direction:")
 	chosenURLs = wikiClient.randomPreviousWords()
+	
+	usingJoker = true
 	
 	if chosenURLs then
 	
@@ -426,7 +437,12 @@ end
 local inventoryAddCue = {}
 
 function game.addToInventory( playerID, object )
-	table.insert( inventoryAddCue, { ID = playerID, item = object } )
+	for k, cl in pairs( connectedClients ) do
+		if ID == cl.clientNumber then
+			table.insert( inventoryAddCue, { ID = playerID, item = object, name = cl.playerName } )
+			return
+		end
+	end
 end
 
 local firstStoryPartSent = false
@@ -469,7 +485,7 @@ function game.sendStory()
 			
 			textBox.setContent( gameInputBox, "" )
 			textBox.setContent( gameStatusBox, WAITING_FOR_HEROES_STR )
-			textBox.setColour( gameStatusBox, 0, 0, 0 )
+			textBox.setColour( gameStatusBox, colText.r,colText.g,colText.b )
 			waitForPlayerActions = true
 			nextWordChosen = false
 			statusMsg.new( LOADING_STR )
@@ -663,7 +679,7 @@ function game.show()		-- called once every frame
 		local r,g,b = getClientColour(playerTurnsStrings[1].ID)
 		love.graphics.setColor( r,g,b , 35 )
 		love.graphics.rectangle( "fill",nextPlayerAreaX+4, nextPlayerAreaY+4, nextPlayerAreaWidth-8, fontStatus:getHeight() )
-		love.graphics.print( playerTurnsStrings[1].ID, nextPlayerAreaX+5, nextPlayerAreaY+5 + (1-1)*fontStatus:getHeight() )
+		love.graphics.print( playerTurnsStrings[1].ID, nextPlayerAreaX+5, nextPlayerAreaY+5 )
 	end
 	love.graphics.setColor( colText.r, colText.g, colText.b, 255 )
 	for i=1,#playerTurnsStrings,1 do
@@ -718,23 +734,35 @@ function game.show()		-- called once every frame
 		end
 	end
 	
-	if server and waitForPlayerActions then
-		if textBox.getContent( gameStatusBox ) ~= WAITING_FOR_STR .. " " .. currentPlayer then textBox.setContent( gameStatusBox, WAITING_FOR_STR .. " " .. currentPlayer ) end
-		if allPlayersHaveReacted then
-			if chat.getActive() == false and nextWordChosen == true then
-				textBox.setAccess( gameInputBox, true )
+	if server then
+		if waitForPlayerActions then
+			if textBox.getContent( gameStatusBox ) ~= WAITING_FOR_STR .. " " .. currentPlayer then textBox.setContent( gameStatusBox, WAITING_FOR_STR .. " " .. currentPlayer ) end
+			if allPlayersHaveReacted then
+				if chat.getActive() == false and nextWordChosen == true then
+					textBox.setAccess( gameInputBox, true )
+				end
+				scrollGameBox()
+				if nextWordChosen == true then
+					textBox.setContent( gameStatusBox, CONTINUE_STORY_USE_WORD_STR1 .. " \"" .. curGameWord .. "\" " .. CONTINUE_STORY_USE_WORD_STR2 )
+				else
+					textBox.setContent( gameStatusBox, CHOOSE_A_WORD_STR )
+				end
+				textBox.setColour( gameStatusBox, colText.r, colText.g, colText.b )
+				waitForPlayerActions = false
+				sound.playNotification()
+				addPlayerTurns()
 			end
-			scrollGameBox()
-			if nextWordChosen == true then
-				textBox.setContent( gameStatusBox, CONTINUE_STORY_USE_WORD_STR1 .. " \"" .. curGameWord .. "\" " .. CONTINUE_STORY_USE_WORD_STR2 )
-			else
-				textBox.setContent( gameStatusBox, CHOOSE_A_WORD_STR )
-			end
-			textBox.setColour( gameStatusBox, colText.r, colText.g, colText.b )
-			waitForPlayerActions = false
-			sound.playNotification()
-			addPlayerTurns()
 		end
+		
+		love.graphics.setFont( fontStatus )
+		love.graphics.setColor( colText.r, colText.g, colText.b, 255 )
+		
+		local i = 0
+		for k, v in pairs(inventoryAddCue) do
+			love.graphics.print( v.name .. ": " .. v.item, nextPlayerAreaX+5, nextPlayerAreaY+10 + nextPlayerAreaHeight + (i)*fontStatus:getHeight() )
+			i = i+1
+		end
+		
 	elseif client and waitForPlayerActions then
 		if textBox.getContent( gameStatusBox ) ~=  YOUR_TURN_STR then textBox.setContent( gameStatusBox, YOUR_TURN_STR ) end
 		--[[if waitForPlayerActionsTimer >= REPLYTIME then
@@ -844,7 +872,7 @@ function game.init()
 		game.setJokerButtons()
 		curGameWord = startingWord		-- the current game's word will be the word the server chose as start word
 		
-		textBox.setColour( gameStatusBox, 1, colText.r, colText.g, colText.b )
+		textBox.setColour( gameStatusBox, colText.r, colText.g, colText.b )
 		textBox.setContent( gameStatusBox, START_STORY_USE_WORD_STR1 .. " \"" .. curGameWord .. "\" " .. START_STORY_USE_WORD_STR2 )
 		--textBox.setColourStart( gameStatusBox, #START_STORY_USE_WORD_STR1+4 , colWikiWord.r, colWikiWord.g, colWikiWord.b )
 		--textBox.setColourStart( gameStatusBox, #START_STORY_USE_WORD_STR1 + #startingWord + 4 , colText.r, colText.g, colText.b )

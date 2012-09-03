@@ -40,7 +40,7 @@ function export.toHtmlFile( text )
 		local curTime = os.date("*t")
 		local fileName
 		if curTime then
-			fileName = curTime.year .."-".. curTime.month .."-".. curTime.day .. "_" .. curTime.hour .."-".. curTime.min .."-".. curTime.sec .. ".html"
+			fileName = startingWord .. "_" .. curTime.year .."-".. curTime.month .."-".. curTime.day .. "_" .. curTime.hour .."-".. curTime.min .."-".. curTime.sec .. ".html"
 		else
 			math.randomseed(os.time())
 			fileName = math.random(99999)
@@ -54,10 +54,14 @@ function export.toHtmlFile( text )
 			--define the two indentation styles, one for player actions, one for chat:
 			file:write("<STYLE TYPE=\"text/css\">\n<!--\n.story\n\t{\n\tfont-style:italic\n\t}\n-->\n</STYLE>\n")
 			file:write("<STYLE TYPE=\"text/css\">\n<!--\n.player\n\t{\n\tpadding-left: 10pt;\n\t}\n-->\n</STYLE>\n")
-			file:write("<STYLE TYPE=\"text/css\">\n<!--\n.chat\n\t{\n\tpadding-left: 40pt;\n\tfont-size:80%;\n\t}\n-->\n</STYLE>\n\n\n")
+			file:write("<STYLE TYPE=\"text/css\">\n<!--\n.chat\n\t{\n\tpadding-left: 40pt;\n\tcolor:grey;\n\tfont-size:80%;\n\t}\n-->\n</STYLE>\n\n\n")
 			
 			--write heading:
-			file:write("<h2>" .. "Room" .. "</h2>")
+			local header = startingWord
+			for unicode, specialCharacter in pairs(SPECIAL_CHARACTERS) do
+				header = stringReplace( header, specialCharacter, "&#" .. tostring(unicode) .. ";" )
+			end
+			file:write("<h2>" .. header .. "</h2>")
 			file:write("<font color=\"grey\">(A story influenced by " .. wikiClient.getWikiURL() .. " and a fair bit of randomness)\n<br />(Bold words were dictated by the wiki)</font><br />")
 			
 			
@@ -65,12 +69,14 @@ function export.toHtmlFile( text )
 			
 			local s, e
 			for k, v in pairs( text.highlightWords ) do
-				s, e = stringToWrite:upper():find( v.w:upper(), 1, true)
+				s, e = stringFind( stringToWrite:upper(), v.w:upper(), 1 )
 				while s do
-					stringToWrite = safeSub(stringToWrite,1, s-1) .. "<b>" .. safeSub(stringToWrite, s,e) .. "</b>" .. safeSub(stringToWrite, e+1, #stringToWrite)
-					s, e = stringToWrite:upper():find( v.w:upper(), e+7, true)
+					stringToWrite = safeSub(stringToWrite, 1, s-1) .. "<b>" .. safeSub(stringToWrite, s, e) .. "</b>" .. safeSub(stringToWrite, e+1, #stringToWrite)
+					s, e = stringFind( stringToWrite:upper(), v.w:upper(), e+7 )
 				end
 			end
+			
+			
 			
 			local lines = {}
 			local pos = 1
@@ -135,8 +141,15 @@ function export.toHtmlFile( text )
 						line = line .. "\n</p>\n"
 					end
 				end
+				
+				for unicode, specialCharacter in pairs(SPECIAL_CHARACTERS) do
+					line = stringReplace( line, specialCharacter, "&#" .. tostring(unicode) .. ";" )
+				end
+				
 				file:write(line)
-			end 
+			end
+			
+			
 --[[
 			stringToWrite = stringToWrite:gsub( "\n" .. STORYTELLER_STR .. ":([^\n]*)", "\n</p><i>%1</i><p CLASS=\"indent\">" )
 			
