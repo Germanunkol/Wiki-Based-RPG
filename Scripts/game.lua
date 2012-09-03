@@ -30,6 +30,7 @@ local gameInputAreaHeight = 0
 local gameInputBox = nil
 local gameStatusBox = nil
 gameTextBox = nil
+exportText = nil
 
 local inventoryFieldHeader
 
@@ -171,6 +172,7 @@ function chooseNextWord( index )
 		
 		-- change colour of last curGameWord:
 		textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWord.r, colHighlightWikiWord.g, colHighlightWikiWord.b )
+		textBox.highlightText( exportText, curGameWord, colHighlightWikiWord.r, colHighlightWikiWord.g, colHighlightWikiWord.b )
 		curGameWord = chosenURLs[index].title
 		--local start, ending = stringFind(curGameWord, " (" )
 		--if start then
@@ -190,6 +192,7 @@ function chooseNextWord( index )
 		textBox.highlightClearAll( gameInputBox )
 		textBox.highlightText( gameInputBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
 		textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
+		textBox.highlightText( exportText, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
 		
 		wikiClient.setNewWord( chosenURLs[index] )
 		
@@ -260,11 +263,13 @@ function game.clientReceiveNewWord( word )
 		--change colour of previous words:
 		if gameTextBox then
 			textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWord.r, colHighlightWikiWord.g, colHighlightWikiWord.b)
+			textBox.highlightText( exportText, curGameWord, colHighlightWikiWord.r, colHighlightWikiWord.g, colHighlightWikiWord.b)
 		end
 	end
 	curGameWord = word
 	if gameTextBox then
 		textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
+		textBox.highlightText( exportText, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
 	end
 end
 
@@ -469,6 +474,7 @@ function game.sendStory()
 			table.insert( nextFrameEvent, {func = game.serverChooseNextWord, frames = 2 } )
 			table.insert( nextFrameEvent, {func = statusMsg.new, frames = 3, arg = HOW_SHOULD_STORY_CONTINUE_STR } )
 			textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
+			textBox.highlightText( exportText, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
 		else
 			textBox.setAccess( gameInputBox, true )
 			scrollGameBox()
@@ -612,6 +618,8 @@ function game.receiveAction( msg, typ, clientID )
 		if typ ~= "skip" then
 			-- if all that was sent was a "skip" command, don't write anything to the game window.
 			textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) ..  msg .. "\n" )
+			textBox.setContent( exportText, textBox.getContent( exportText ) ..  msg .. "\n" )
+			print("receive reason 1")
 		end
 		
 	end
@@ -624,8 +632,12 @@ function game.receiveStory( msg, noPrefix )
 		textBox.setLineColour( gameTextBox,  textBox.numLines( gameTextBox ) + 1, colStory.r, colStory.g, colStory.b )
 		if noPrefix then
 			textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .. msg .. "\n")
+			textBox.setContent( exportText, textBox.getContent( exportText ) .. msg .. "\n")
+			print("receive reason 2")
 		else
 			textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .. STORYTELLER_STR .. ": " .. msg .. "\n")
+			textBox.setContent( exportText, textBox.getContent( exportText ) .. STORYTELLER_STR .. ": " .. msg .. "\n")
+			print("receive reason 3")
 		end		
 	end
 	if client then
@@ -762,9 +774,13 @@ end
 function chatAreaClicked()
 	if DEBUG then print("chat area clicked.") end
 	if wikiClient.getFirstWordActive() or chat.getActive() then return end
+	print("1")
 	chat.setAccess( true )
+	print("2")
 	textBox.setAccess( gameInputBox, false )
+	print("3")
 	scrollGameBox()
+	print("4")
 end
 
 function game.init()
@@ -797,14 +813,17 @@ function game.init()
 	gameInputBox = textBox.new( gameInputAreaX + 5, gameInputAreaY + 2, math.floor(gameInputAreaHeight/fontInput:getHeight()) , fontInput, gameInputAreaWdith - 15)
 	textBox.setColour( gameInputBox, colText.r, colText.g, colText.b )
 	gameTextBox = textBox.new( gameAreaX + 5, gameAreaY + 5, math.floor(gameAreaHeight/fontInput:getHeight()) , fontInput, gameAreaWidth - 15)
+	exportText = textBox.new( gameAreaX + 5, gameAreaY + 5, math.floor(gameAreaHeight/fontInput:getHeight()) , fontInput, gameAreaWidth - 15)
 	textBox.setEscapeEvent( gameInputBox, game.inputEscape )		--called when "escape" is pressed during input
 	
 	textBox.highlightText( gameTextBox, startingWord, colHighlightWikiWordNew.r,colHighlightWikiWordNew.g,colHighlightWikiWordNew.b )
+	textBox.highlightText( exportText, startingWord, colHighlightWikiWordNew.r,colHighlightWikiWordNew.g,colHighlightWikiWordNew.b )
 	
 	local r,g,b
 	for key, cl in pairs( connectedClients ) do
 		r,g,b = getClientColour( cl.clientNumber )
 		textBox.highlightTextName( gameTextBox, cl.playerName, r,g,b , 35 )
+		textBox.highlightTextName( exportText, cl.playerName, r,g,b , 35 )
 	end
 
 	inventoryFieldHeader = textBox.new( chatAreaX+2, chatAreaY+chatAreaHeight+8, 1, fontInputHeader, 300 )
@@ -849,13 +868,14 @@ function game.setButtons()
 	buttons.add( gameAreaX+gameAreaWidth-50, gameAreaY + gameAreaHeight, 50, 20, "Down", drawButton, highlightButton, textBox.scrollDown, gameTextBox )
 	buttons.add( chatAreaX+chatAreaWidth-100, chatAreaY - 20, 50, 20, "Up", drawButton, highlightButton, textBox.scrollUp, chatBox )
 	buttons.add( chatAreaX+chatAreaWidth-50, chatAreaY - 20, 50, 20, "Down", drawButton, highlightButton, textBox.scrollDown, chatBox )
-	buttons.add( love.graphics.getWidth()-100, love.graphics.getHeight()-40, 90, 25, EXPORT_STR, drawButton, highlightButton, export.toHtmlFile, gameTextBox )
+	buttons.add( love.graphics.getWidth()-100, love.graphics.getHeight()-40, 90, 25, EXPORT_STR, drawButton, highlightButton, export.toHtmlFile, exportText )
 end
 
 function game.receiveServerMessage( msg )
 	if gameTextBox then
 		textBox.setLineColour( gameTextBox,  textBox.numLines( gameTextBox ) + 1, colServerMsg.r, colServerMsg.g, colServerMsg.b )
 		textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .."[" .. msg .. "]\n")
+		textBox.setContent( exportText, textBox.getContent( gameTextBox ) .."[" .. msg .. "]\n")
 	end
 end
 

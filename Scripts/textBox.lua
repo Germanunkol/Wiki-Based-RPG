@@ -295,7 +295,6 @@ function textBox.input( key, unicode )
 		if v.access == true and v.content then
 			inputUsed = true			
 			v.hasChanged = true
-			print("has changed 1")
 			if unicode > 31 and unicode < 127 then
 				if (v.font:getWidth(v.lines[#v.lines] .. string.char(unicode)) < v.width or #v.lines < v.maxLines) and #v.lines <= v.maxLines then
 					absCursorPos = 0
@@ -410,14 +409,11 @@ end
 function textBox.clear( text )
 	text.content = "" 		-- let garbage collector do the rest
 	newText.hasChanged = true
-			print("has changed 2")
 end
 
 function textBox.setColourStart( text, from, red, green, blue )
 	text.colours[from] = {r=red, g=green, b=blue }
 	text.hasChanged = true
-	
-			print("has changed 3")
 end
 function textBox.setColour( text, red, green, blue )
 	text.colour = { r=red, g=green, b=blue }
@@ -463,15 +459,19 @@ function textBox.handleClick()
 	for k, text in pairs( fields ) do
 		if text.access == true and text.content then			-- loop through all text boxes that have access enabled (you can type in them)
 			local x, y = love.mouse.getPosition()
+			print("5")
 			if x >= text.x and x <= text.x+text.width and y >= text.y and y <= text.y+text.maxLines*text.font:getHeight() then
+			print("6")
 				local deltaY, deltaX = y - text.y, x - text.x
 				local lineNum = math.floor( deltaY/text.font:getHeight() )
-				text.cursorLine = math.min( lineNum+1, text.maxLines, #text.lines )
+				text.cursorLine = math.max(math.min( lineNum+1, text.maxLines, #text.lines ), 1)
 				text.cursorBlinkTime = 0
 				text.cursorPos = 0
 				local tmpStr = ""
+				print("7")
 				if text.lines[text.cursorLine] then
 					for char in text.lines[text.cursorLine]:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
+					print("8")
 						print("char:", char)
 						if text.font:getWidth( tmpStr .. char ) - text.font:getWidth( char )/2 <= deltaX then 
 							text.cursorPos = text.cursorPos + 1
@@ -480,17 +480,22 @@ function textBox.handleClick()
 							break
 						end
 					end
+					print("9")
 				end
+				print("10")
 			end
 		end
+		print("line:", text.cursorLine, text.cursorPos)
 	end
+	print("11")
 end
 
 function textBox.setContent( textField, line )
+	if textField == exportText then
+		print("export field received: '" .. line .. "'")
+	end
 	textField.content = line
 	textField.hasChanged = true
-	
-			print("has changed 4", line)
 --	splitIntoLines( textField )
 	return #textField.lines
 end

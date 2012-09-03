@@ -231,6 +231,7 @@ function love.mousepressed()
 		buttons.handleClick()
 		textBox.handleClick()
 	end
+	print("12")
 end
 
 

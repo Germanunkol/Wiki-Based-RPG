@@ -12,8 +12,8 @@ colStory = { r=60, g=140, b=60 }
 colAction = { r=100, g=120, b=100 }		-- for "/do" command
 colSpeech = { r=120, g=120, b=120 }		-- for "/say" command
 colUse = { r=120, g=120, b=100 }				-- for "/use" command
-colHighlightWikiWord = { r=30, g=80, b=44 }
-colHighlightWikiWordNew = { r=30, g=100, b=44 }
+colHighlightWikiWord = { r=20, g=70, b=50 }
+colHighlightWikiWordNew = { r=30, g=80, b=50 }
 
 colShadow = { r=0,g=0,b=0 }
 

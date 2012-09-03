@@ -33,8 +33,11 @@ end
 
 function chat.receive( msg )
 	if chatInputBox then
+		print("chat received: " .. msg)
 		textBox.setContent( chatBox, textBox.getContent( chatBox ) .. msg .. "\n")
-		
+		if exportText then
+			textBox.setContent( exportText, textBox.getContent( exportText ) .. "&CHAT:" .. msg .. "\n")
+		end
 		table.insert( nextFrameEvent, {func = scrollChat, frames = 2} )		
 	end
 end
@@ -69,6 +72,8 @@ function chat.init( xPos, yPos, lines, font, width)
 	chatInputBox = textBox.new( xPos, yPos + 2*hInput, math.floor(hInput/font:getHeight()), font, width )
 	textBox.setReturnEvent( chatInputBox, chat.send )
 	textBox.setEscapeEvent( chatInputBox, chat.escape )
+	textBox.setColour(chatBox, colText.r, colText.g, colText.b )
+	textBox.setColour(chatInputBox, colText.r, colText.g, colText.b )
 end
 
 function chat.show()
