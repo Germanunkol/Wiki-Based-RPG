@@ -142,6 +142,17 @@ function game.sendNextTurn()
 	return false
 end
 
+local function scrollGameBox()
+	local linesFittingOnScreen
+	if textBox.getAccess( gameInputBox ) then
+		linesFittingOnScreen = math.floor( (gameAreaHeight - gameInputAreaHeight)/textBox.getFont( gameTextBox ):getHeight() ) - 1
+	else
+		linesFittingOnScreen = math.floor( gameAreaHeight/textBox.getFont( gameTextBox ):getHeight() ) - 1
+	end
+	textBox.setVisibleLines( gameTextBox, textBox.numLines( gameTextBox )-linesFittingOnScreen, linesFittingOnScreen )
+	if DEBUG then print(linesFittingOnScreen) end
+end
+
 function game.startMyTurn()
 	if client then
 		waitForPlayerActions = true
@@ -151,17 +162,8 @@ function game.startMyTurn()
 		sound.playNotification()
 		textBox.setContent( gameStatusBox, YOUR_TURN_STR)
 		textBox.setReturnEvent( gameInputBox, game.sendAction )
+		scrollGameBox()
 	end
-end
-
-local function scrollGameBox()
-	local linesFittingOnScreen
-	if textBox.getAccess( gameInputBox ) then
-		linesFittingOnScreen = math.floor( (gameAreaHeight - gameInputAreaHeight)/textBox.getFont( gameTextBox ):getHeight() ) - 1
-	else
-		linesFittingOnScreen = math.floor( gameAreaHeight/textBox.getFont( gameTextBox ):getHeight() ) - 1
-	end
-	textBox.setVisibleLines( gameTextBox, textBox.numLines( gameTextBox )-linesFittingOnScreen, linesFittingOnScreen )
 end
 
 local chosenURLs
@@ -619,7 +621,6 @@ function game.receiveAction( msg, typ, clientID )
 			-- if all that was sent was a "skip" command, don't write anything to the game window.
 			textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) ..  msg .. "\n" )
 			textBox.setContent( exportText, textBox.getContent( exportText ) ..  msg .. "\n" )
-			print("receive reason 1")
 		end
 		
 	end
@@ -633,11 +634,9 @@ function game.receiveStory( msg, noPrefix )
 		if noPrefix then
 			textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .. msg .. "\n")
 			textBox.setContent( exportText, textBox.getContent( exportText ) .. msg .. "\n")
-			print("receive reason 2")
 		else
 			textBox.setContent( gameTextBox, textBox.getContent( gameTextBox ) .. STORYTELLER_STR .. ": " .. msg .. "\n")
 			textBox.setContent( exportText, textBox.getContent( exportText ) .. STORYTELLER_STR .. ": " .. msg .. "\n")
-			print("receive reason 3")
 		end		
 	end
 	if client then
@@ -813,6 +812,7 @@ function game.init()
 	gameInputBox = textBox.new( gameInputAreaX + 5, gameInputAreaY + 2, math.floor(gameInputAreaHeight/fontInput:getHeight()) , fontInput, gameInputAreaWdith - 15)
 	textBox.setColour( gameInputBox, colText.r, colText.g, colText.b )
 	gameTextBox = textBox.new( gameAreaX + 5, gameAreaY + 5, math.floor(gameAreaHeight/fontInput:getHeight()) , fontInput, gameAreaWidth - 15)
+	textBox.setColour( gameTextBox, colText.r, colText.g, colText.b )
 	exportText = textBox.new( gameAreaX + 5, gameAreaY + 5, math.floor(gameAreaHeight/fontInput:getHeight()) , fontInput, gameAreaWidth - 15)
 	textBox.setEscapeEvent( gameInputBox, game.inputEscape )		--called when "escape" is pressed during input
 	
@@ -844,10 +844,10 @@ function game.init()
 		game.setJokerButtons()
 		curGameWord = startingWord		-- the current game's word will be the word the server chose as start word
 		
-		textBox.setColourStart( gameStatusBox,1, colText.r, colText.g, colText.b )
+		textBox.setColour( gameStatusBox, 1, colText.r, colText.g, colText.b )
 		textBox.setContent( gameStatusBox, START_STORY_USE_WORD_STR1 .. " \"" .. curGameWord .. "\" " .. START_STORY_USE_WORD_STR2 )
-		textBox.setColourStart( gameStatusBox, #START_STORY_USE_WORD_STR1+4 , colWikiWord.r, colWikiWord.g, colWikiWord.b )
-		textBox.setColourStart( gameStatusBox, #START_STORY_USE_WORD_STR1 + #startingWord + 4 , colText.r, colText.g, colText.b )
+		--textBox.setColourStart( gameStatusBox, #START_STORY_USE_WORD_STR1+4 , colWikiWord.r, colWikiWord.g, colWikiWord.b )
+		--textBox.setColourStart( gameStatusBox, #START_STORY_USE_WORD_STR1 + #startingWord + 4 , colText.r, colText.g, colText.b )
 		textBox.setAccess( gameInputBox, true, true )
 		scrollGameBox()
 		textBox.setReturnEvent( gameInputBox, game.sendStory )

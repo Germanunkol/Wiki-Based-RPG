@@ -53,12 +53,32 @@ ENTER_FIRST_WORD_STR = [[Von was soll die Geschichte handeln?]]
 
 USE_DESCRIPTION_WORD = [[Schreibe einen Satz über deinen Character. Benutze das Wort:]]
 
-
 -- lobby Error messages:
 ERROR_AVATAR_CANNOT_CHANGE_STR = [[Avatar nicht änderbar wenn "Bereit".]]
 ERROR_NO_COMMAS_ALLOWED_STR = [[Keine Kommas!]]
 ERROR_MINIMUM_ONE_PLAYER_STR = [[Mindestens ein Spieler muss eingeloggt sein!]]
 ERROR_COULD_NOT_SET_THEME_STR = [[Fehler beim auswählen des neuen Themas.]]
+
+-- players aren't ready messages: Invent something funny! You can add as many lines as you'd like (indices go from 1 to ... ? ):
+PLAYERS_NOT_READY_LINES[1] = "Die Helden packen noch ihre Sachen..."
+PLAYERS_NOT_READY_LINES[2] = "Es sind noch nicht alle Helden bereit."
+PLAYERS_NOT_READY_LINES[3] = "Irgendwer verabschiedet sich noch von seiner Mama."
+PLAYERS_NOT_READY_LINES[4] = "Die anderen sind immer noch nicht fertig..."
+PLAYERS_NOT_READY_LINES[5] = "Warte auf Helden."
+PLAYERS_NOT_READY_LINES[6] = "Moment... einer der Helden muss noch sein Mittagessen aufessen."
+
+-- these verbes are given as examples for the player's description:
+LOBBY_VERBS[1] = "mag"
+LOBBY_VERBS[2] = "kann"
+LOBBY_VERBS[3] = "weiß, dass"
+LOBBY_VERBS[4] = "hat gehört, dass"
+LOBBY_VERBS[5] = "besitzt"
+LOBBY_VERBS[6] = "liebt"
+LOBBY_VERBS[7] = "hasst"
+LOBBY_VERBS[8] = "ist bekannt für"
+LOBBY_VERBS[9] = "kommt aus"
+LOBBY_VERBS[10] = "ist"
+LOBBY_VERBS[11] = "kennt"
 
 -- in game:
 GAME_STARTING_STR = [[Spiel beginnt.]]
@@ -126,9 +146,6 @@ SPECIAL_CHARACTERS[214] = "Ö"
 SPECIAL_CHARACTERS[252] = "ü"
 SPECIAL_CHARACTERS[220] = "Ü"
 SPECIAL_CHARACTERS[223] = "ß"
-
-
-
 
 -- this help text will be displayed on the main screen:
 HELP_MAIN = [[Deutsche Hilfe 1]]

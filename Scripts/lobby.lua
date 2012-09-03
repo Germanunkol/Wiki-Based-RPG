@@ -12,15 +12,12 @@ function attemptGameStart()
 
 	for k, cl in pairs( connectedClients ) do
 		if cl.ready ~= true then
-			rand = math.random(7)
-			if rand == 1 then statusMsg.new( "Some heroes have not packed their lunchbags yet." )
-			elseif rand == 2 then statusMsg.new( "Still waiting for the heroes to dress..." )
-			elseif rand == 3 then statusMsg.new( "SOMEONE is still not ready!" )
-			elseif rand == 4 then statusMsg.new( "Waiting for the heroes to draw their little avatar-thingies..." )
-			elseif rand == 5 then statusMsg.new( "*Sigh*... nope. Someone's not ready yet." )
-			elseif rand == 6 then statusMsg.new( "Heroes are taking their time..." )
-			elseif rand == 7 then statusMsg.new( "A hero is still busy kissing his mum good-bye..." )
-			else statusMsg.new( "If only they were all ready..." )
+			local rand = math.random( #PLAYERS_NOT_READY_LINES )
+			
+			if PLAYERS_NOT_READY_LINES[rand] then
+				statusMsg.new( PLAYERS_NOT_READY_LINES[rand] )
+			else
+				statusMsg.new( "Still waiting for Heroes..." )
 			end
 			
 			return
@@ -112,11 +109,10 @@ function lobby.chooseDescriptionWord( index )
 				descriptionInputBox = textBox.new( avatarPicX+AVATAR_PIXELS_X*AVATAR_PIXELS_WIDTH+15, 400 + 23, 6, fontInput, love.graphics.getWidth()/2-20 )
 				textBox.setColour( descriptionInputBox, colTextInput.r, colTextInput.g, colTextInput.b )
 			end
-			local rand = math.random(4)
-			if rand == 1 then textBox.setContent( descriptionInputBox, plName .. " likes " )
-			elseif rand == 2 then textBox.setContent( descriptionInputBox, plName .. " has " )
+			local rand = math.random(#LOBBY_VERBS)
+			if LOBBY_VERBS[rand] then textBox.setContent( descriptionInputBox, plName .. " " .. LOBBY_VERBS[rand] .. " " )
 			else
-				textBox.setContent( descriptionInputBox, plName .. " is " )
+				textBox.setContent( descriptionInputBox, plName )
 			end
 			textBox.setAccess( descriptionInputBox, true, true )
 			table.insert( nextFrameEvent, {func = textBox.moveCursorToEnd, arg = descriptionInputBox, frames = 2 } )

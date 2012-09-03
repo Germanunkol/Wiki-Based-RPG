@@ -206,7 +206,7 @@ end
 
 local inputRead
 function love.keypressed(key, unicode)
-	print(key, unicode)
+	if DEBUG then print(key, unicode) end
 	inputRead = textBox.input( key, unicode )
 	if not inputRead then		--input has not been put into a chat box: use input as command
 		if ( string.char(unicode) == "c" or string.char(unicode) == "return" ) and game.active() then
@@ -231,7 +231,6 @@ function love.mousepressed()
 		buttons.handleClick()
 		textBox.handleClick()
 	end
-	print("12")
 end
 
 

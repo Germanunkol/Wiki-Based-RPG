@@ -8,6 +8,8 @@
 --		d) Start the game and test it out!
 --		e) If it works, please send me the Flag and the Translated file, so I can include it in the official releases
 SPECIAL_CHARACTERS = {}
+PLAYERS_NOT_READY_LINES = {}
+LOBBY_VERBS = {}
 
 -- Fallback Strings:
 WIKI_URL = [[http://en.wikipedia.org]]
@@ -70,6 +72,30 @@ ERROR_AVATAR_CANNOT_CHANGE_STR = [[Cannot change avatar while you're "ready".]]
 ERROR_NO_COMMAS_ALLOWED_STR = [[No Commas allowed!]]
 ERROR_MINIMUM_ONE_PLAYER_STR = [[Need at least one player!]]
 ERROR_COULD_NOT_SET_THEME_STR = [[Error: Failed to set new theme.]]
+
+-- players aren't ready messages: Invent something funny! You can add as many lines as you'd like (indices go from 1 to ... ? ):
+PLAYERS_NOT_READY_LINES[1] = "Some heroes have not packed their lunchbags yet."
+PLAYERS_NOT_READY_LINES[2] = "Still waiting for the heroes to dress..."
+PLAYERS_NOT_READY_LINES[3] = "SOMEONE is still not ready!"
+PLAYERS_NOT_READY_LINES[4] = "Waiting for the heroes to draw their little avatar-thingies..."
+PLAYERS_NOT_READY_LINES[5] = "*Sigh*... nope. Someone's not ready yet."
+PLAYERS_NOT_READY_LINES[6] = "Heroes are taking their time..."
+PLAYERS_NOT_READY_LINES[7] = "A hero is still busy kissing his mum good-bye..."
+
+-- these verbes are given as examples for the player's description:
+LOBBY_VERBS[1] = "has"
+LOBBY_VERBS[2] = "likes"
+LOBBY_VERBS[3] = "demands"
+LOBBY_VERBS[4] = "uses"
+LOBBY_VERBS[5] = "owns"
+LOBBY_VERBS[6] = "despises"
+LOBBY_VERBS[7] = "hates"
+LOBBY_VERBS[8] = "knows about"
+LOBBY_VERBS[9] = "dislikes"
+LOBBY_VERBS[10] = "likes to"
+LOBBY_VERBS[11] = "has been known to"
+LOBBY_VERBS[12] = "is"
+
 
 -- in game:
 GAME_STARTING_STR = [[Game starting.]]

@@ -61,6 +61,7 @@ local function splitIntoLines( text )		-- will calculate line breaks for the tex
 	local partialStr = ""
 	local i = 1
 	local lineNum, start, ending
+	local prevColour = text.colour
 	while i <= #text.content do
 		start, ending,char = text.content:find("([%z\1-\127\194-\244][\128-\191]*)", i)
 		if start then
@@ -82,6 +83,9 @@ local function splitIntoLines( text )		-- will calculate line breaks for the tex
 					end
 				end
 				text.lines[#text.lines+1] = partialStr
+				if text.colours[#text.lines+1] == nil then text.colours[#text.lines+1] = prevColour
+				else prevColour = text.colours[#text.lines+1] end
+				
 				partialStr = ""
 			end
 			if char ~= "\n" then
@@ -93,6 +97,8 @@ local function splitIntoLines( text )		-- will calculate line breaks for the tex
 
 	if partialStr ~= "" then
 		text.lines[#text.lines+1] = partialStr
+		if text.colours[#text.lines+1] == nil then text.colours[#text.lines+1] = prevColour
+		else prevColour = text.colours[#text.lines+1] end
 	end
 	if text.lines[1] == nil then
 		text.lines[1] = ""
@@ -246,6 +252,7 @@ function textBox.display( text )
 	
 		for i = 1,#text.lines,1 do
 			if text.colours[i] then
+				print("found colour for: " .. text.lines[i])
 				love.graphics.setColor( text.colours[i].r, text.colours[i].g, text.colours[i].b )
 			end
 			love.graphics.print( text.lines[i], text.x, text.y + text.font:getHeight()*(i-1) )
@@ -400,7 +407,6 @@ function textBox.input( key, unicode )
 			end
 			--splitIntoLines( v )
 			--correctCursorPos( v )
-			print(v.content)
 		end
 	end
 	return inputUsed
@@ -459,20 +465,15 @@ function textBox.handleClick()
 	for k, text in pairs( fields ) do
 		if text.access == true and text.content then			-- loop through all text boxes that have access enabled (you can type in them)
 			local x, y = love.mouse.getPosition()
-			print("5")
 			if x >= text.x and x <= text.x+text.width and y >= text.y and y <= text.y+text.maxLines*text.font:getHeight() then
-			print("6")
 				local deltaY, deltaX = y - text.y, x - text.x
 				local lineNum = math.floor( deltaY/text.font:getHeight() )
 				text.cursorLine = math.max(math.min( lineNum+1, text.maxLines, #text.lines ), 1)
 				text.cursorBlinkTime = 0
 				text.cursorPos = 0
 				local tmpStr = ""
-				print("7")
 				if text.lines[text.cursorLine] then
 					for char in text.lines[text.cursorLine]:gfind("([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
-					print("8")
-						print("char:", char)
 						if text.font:getWidth( tmpStr .. char ) - text.font:getWidth( char )/2 <= deltaX then 
 							text.cursorPos = text.cursorPos + 1
 							tmpStr = tmpStr .. char
@@ -480,20 +481,13 @@ function textBox.handleClick()
 							break
 						end
 					end
-					print("9")
 				end
-				print("10")
 			end
 		end
-		print("line:", text.cursorLine, text.cursorPos)
 	end
-	print("11")
 end
 
 function textBox.setContent( textField, line )
-	if textField == exportText then
-		print("export field received: '" .. line .. "'")
-	end
 	textField.content = line
 	textField.hasChanged = true
 --	splitIntoLines( textField )

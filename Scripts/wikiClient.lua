@@ -140,7 +140,7 @@ end
 function wikiClient.setNewWord( newWord )
 	fullURL = WIKI_URL .. newWord.url
 	table.insert( previousWikiWords, newWord )		-- remember, so player can jump back to an old word (using a joker)
-	print("URL chosen: " .. fullURL)
+	if DEBUG then print("URL chosen: " .. fullURL) end
 end
 
 
