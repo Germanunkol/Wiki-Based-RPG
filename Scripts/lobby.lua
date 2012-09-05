@@ -357,7 +357,9 @@ local i
 
 function lobby.showPlayers()
 
+	themes.drawBackgroundImages()
 	-- print headers:
+	
 	
 	love.graphics.setColor( colShadow.r,colShadow.b, colShadow.r, 220)
 	love.graphics.rectangle("fill", 0, 51+4, love.graphics.getWidth(), 48)
@@ -375,7 +377,7 @@ function lobby.showPlayers()
 	love.graphics.setColor( colText.r, colText.g, colText.b )
 	love.graphics.setFont( fontInputHeader )
 	love.graphics.print( OPTIONS_STR, 70, 370 )
-	
+
 	
 	if descriptionHeaderBox then
 		textBox.display( descriptionHeaderBox )

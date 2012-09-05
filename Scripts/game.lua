@@ -7,15 +7,15 @@ local active = false
 local NUMBER_OF_JOKERS = 3
 INVENTORY_CAPACITY = 5
 
-local gameAreaX = 0
-local gameAreaY = 0
-local gameAreaWidth = 0
-local gameAreaHeight = 0
+gameAreaX = 0
+gameAreaY = 0
+gameAreaWidth = 0
+gameAreaHeight = 0
 
-local chatAreaX = 0
-local chatAreaY = 0
-local chatAreaWidth = 0
-local chatAreaHeight = 0
+chatAreaX = 0
+chatAreaY = 0
+chatAreaWidth = 0
+chatAreaHeight = 0
 
 local nextPlayerAreaX = 0
 local nextPlayerAreaY = 0
@@ -545,7 +545,7 @@ function insertAction( newStr )
 			for k, cl in pairs(connectedClients) do
 				if cl.playerName == plName then
 					if cl.inventory[inventoryID] ~= nil then
-						actionStrings[#actionStrings+1] = { typ="use", str=cl.inventory[inventoryID] .. " on " .. safeSub(newStr, 8, #newStr) }
+						actionStrings[#actionStrings+1] = { typ="use", str=cl.inventory[inventoryID] .. " " .. USING_WORD2_STR .. " " .. safeSub(newStr, 8, #newStr) }
 						client:send("INVREMOVE:" .. cl.clientNumber .. cl.inventory[inventoryID] .. "\n")
 						found = true
 					end
@@ -663,14 +663,18 @@ function game.receiveStory( msg, noPrefix )
 end
 
 function game.show()		-- called once every frame
+
+	themes.drawBackgroundImages()
+	themes.drawOtherImages()
+
 	love.graphics.setColor( colBorder.r, colBorder.g, colBorder.b )
-	love.graphics.rectangle( "fill",gameAreaX, gameAreaY, gameAreaWidth, gameAreaHeight)
-	love.graphics.rectangle( "fill",chatAreaX, chatAreaY, chatAreaWidth, chatAreaHeight)
-	love.graphics.rectangle( "fill",nextPlayerAreaX, nextPlayerAreaY, nextPlayerAreaWidth, nextPlayerAreaHeight)
-	love.graphics.setColor( colMainBg.r, colMainBg.g, colMainBg.b )
-	love.graphics.rectangle( "fill",gameAreaX+2, gameAreaY+2, gameAreaWidth-4, gameAreaHeight-4)
-	love.graphics.rectangle( "fill",chatAreaX+2, chatAreaY+2, chatAreaWidth-4, chatAreaHeight-4)
-	love.graphics.rectangle( "fill",nextPlayerAreaX+2, nextPlayerAreaY+2, nextPlayerAreaWidth-4, nextPlayerAreaHeight-4)
+	love.graphics.rectangle( "line",gameAreaX, gameAreaY, gameAreaWidth, gameAreaHeight)
+	love.graphics.rectangle( "line",chatAreaX, chatAreaY, chatAreaWidth, chatAreaHeight)
+	love.graphics.rectangle( "line",nextPlayerAreaX, nextPlayerAreaY, nextPlayerAreaWidth, nextPlayerAreaHeight)
+	--love.graphics.setColor( colMainBg.r, colMainBg.g, colMainBg.b )
+	--love.graphics.rectangle( "fill",gameAreaX+2, gameAreaY+2, gameAreaWidth-4, gameAreaHeight-4)
+	--love.graphics.rectangle( "fill",chatAreaX+2, chatAreaY+2, chatAreaWidth-4, chatAreaHeight-4)
+	--love.graphics.rectangle( "fill",nextPlayerAreaX+2, nextPlayerAreaY+2, nextPlayerAreaWidth-4, nextPlayerAreaHeight-4)
 	
 	
 	-- display the list of players in the order in which they will be playing:
@@ -690,7 +694,7 @@ function game.show()		-- called once every frame
 	end
 	
 	if textBox.getAccess( gameInputBox ) then
-		love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b )
+		love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b, 150 )
 		love.graphics.rectangle( "fill",gameInputAreaX, gameInputAreaY, gameInputAreaWdith, gameInputAreaHeight)
 		textBox.display( gameInputBox )
 	end
@@ -886,7 +890,9 @@ function game.init()
 	end
 
 	helpString = HELP_GAME
-
+	
+	themes.setOtherImagesPositions()
+	
 end
 
 function game.setButtons()

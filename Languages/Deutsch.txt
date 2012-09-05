@@ -85,6 +85,9 @@ GAME_STARTING_STR = [[Spiel beginnt.]]
 WAITING_FOR_SERVER_BEGINNING_STR = [[Warte auf Erzähler...]]
 
 RECEIVED_STR = [[erhält]]
+USING_WORD1_STR = [[wendet]]		-- result: "CLIENTNAME wendet ITEM an auf: ARGUMENT"
+USING_WORD2_STR = [[an auf:]]
+
 WAITING_FOR_STR = [[Warte auf]]
 YOUR_TURN_STR = [[Du bist dran! Was willst du tun?]]
 
@@ -148,12 +151,40 @@ SPECIAL_CHARACTERS[220] = "Ü"
 SPECIAL_CHARACTERS[223] = "ß"
 
 -- this help text will be displayed on the main screen:
-HELP_MAIN = [[Deutsche Hilfe 1]]
+HELP_MAIN = [[Willkommen im Wiki-Based-RPG!
 
+Der "Server" ist der Spielleiter. Er erzählt die Geschichte. Wenn du server bist und du über's Internet spielen willst, muss Port 8080 bei deinem Router (wenn du einen hast) weitergeleitet werden, oder du spielst über einen Service wie Hamachi.
+
+Als Client spielst du einen Character in der Geschichte, die der Spielleiter erzählt. Hier musst du die IP des Servers angeben. Im Internet steht auf vielen Seiten, wie der Server diese IP herausbekommt.
+Der einfachste Fall ist, dass der Server auf dem gleichen PC gestartet wurde wie der Client, dann lässt du die IP-Zeile einfach leer (das Spiel ersetzt die IP dann durch 127.0.0.1, die Adresse des eigenen PCs).]]
 
 -- this is the help text displayed inside the Lobby:
-HELP_LOBBY = [[Deutsche Hilfe 2]]
+HELP_LOBBY = [[Lobby:
+Als Server:
+Hier musst du das Wort wählen, mit dem die Geschichte beginnt. Tipp ein Wort ein, dann sucht das Spiel nach dem entsprechenden Wiki-Artikel. Gibt es mehrere Artikel zum Wort, bietet das Spiel dir diese zur Auswahl an. Probier doch mal: "Schloss", "Gefängnis", "Schwert" oder "Batmobil". Oder wie wär's mit "Orangensaft"?
+Warte, bis alle Spieler im Spiel sind und starte dann das Spiel.
+Du kannst optional das Aussehen des Spiels ändern. Wie du eigene Themen erstellen kannst, erfährst du in der Readme. Das geht aber nicht während einem Spiel!
 
+Als Spieler:
+Gib ein Wort an, das deinen Character beschreibt. Das Spiel sucht aus dem entsprechenden Wiki-Artikel zufälige Wörter aus. Eins davon musst du in deiner Beschreibung verwenden. Wenn's dir nicht gefällt, klicke nach dem du die Beschreibung eingetippt hast einfach nochmal auf den Knopf und wähle ein neues Wort.
+Optional kannst du ein Logo für deinen Character erstellen. Sei kreativ!]]
 
 -- this help text will be displayed once players have started a game:
-HELP_GAME = [[Deutsche Hilfe 3]]
+HELP_GAME = [[
+Erzähler:
+Erzähle die Geschichte. Du musst nach jedem Textabschnitt ein neues Wort aus der Wiki wählen, das zufällig aus dem Artikel des letzten Wiki-Wortes gewählt wurde. Optional kannst du eines der Wörter, wenn es gerade passt, in die Inventare der Spieler geben. Die Spieler können diese Objekte aus ihrem Inventar dann einsetzen. Damit das nicht vom Himmel fällt, erwähne es am besten im Text. Beispiel: "Luke Skywalker findet ein Lichtschwert in der Truhe."
+Sollte es mal gar keine passenden Wörter geben, hast du immer noch die Möglichkeit, Joker einzusetzen. Die Joker geben dir früher ausgewählte Wörter zur Wahl. Nimm eines davon, und das Spiel springt zu diesem Artikel zurück und lässt dich aus dem Artikel ein neues, zufälliges Wort wählen.
+
+Spieler:
+Euer Job ist es, mit Aktionen und Gesrpächen auf die Geschichte zu antworten. Dafür stehen die folgenden Befehle zur Verfügung. Pro Runde kann jeder Spieler nur einen Text tippen, aber im Text können mehrere Befehle benutzt werden: (Wenn kein Befehl genutzt wird wird "/say" angenommen)
+/do Text				(Lässt die Anführungszeichen und den Doppelpunkt weg)
+/say Text				(Anführungszeichen werden automatisch hinzugefügt!)
+/use ITEM_ID Text		(ITEM_ID ist die Zahl neben dem Wort in deinem Inventar. "Text" ist das, auf das du das Wort anwenden willst)
+/skip					(Überspringt dich diese Runde. Auch die stärksten Helden brauchen mal eine Pause.)
+Beispiel: "/do hüpft im Kreis. /say Ich mag Orangensaft! /do lacht." wird zu: "Germanunkol hüpft im Kreis. Germanunkol: 'Ich mag Orangensaft!' Germanunkol lacht."
+Beispiel 2: "/use 1 Tür" wird zu: "Germanunkol wendet Schlüssel an auf Tür" (wenn Schlüssel das erste Objekt im Inventar ist).
+
+Tipp: durch drücken von "Tab" wird das aktuelle Geschichts-wort automatisch eingefügt. So wird das Wort dann auch immer richtig vom Spiel erkannt und es entstehen keine Tippfehler.
+
+Ich empfehle, immer im Präsens oder immer in der Vergangenheit zu schreiben. Einigt euch, oder lasst den Erzähler am Anfang entscheiden!
+]]

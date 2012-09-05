@@ -52,7 +52,7 @@ function export.toHtmlFile( text )
 		if file:open( 'w' ) then
 		
 			--define the two indentation styles, one for player actions, one for chat:
-			file:write("<STYLE TYPE=\"text/css\">\n<!--\n.story\n\t{\n\tfont-style:italic\n\t}\n-->\n</STYLE>\n")
+			file:write("<STYLE TYPE=\"text/css\">\n<!--\n.story\n\t{\n\tfont-style: italic;\n\t}\n-->\n</STYLE>\n")
 			file:write("<STYLE TYPE=\"text/css\">\n<!--\n.player\n\t{\n\tpadding-left: 10pt;\n\t}\n-->\n</STYLE>\n")
 			file:write("<STYLE TYPE=\"text/css\">\n<!--\n.chat\n\t{\n\tpadding-left: 40pt;\n\tcolor:grey;\n\tfont-size:80%;\n\t}\n-->\n</STYLE>\n\n\n")
 			

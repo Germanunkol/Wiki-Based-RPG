@@ -85,6 +85,9 @@ GAME_STARTING_STR = [[Game starting.]]
 WAITING_FOR_SERVER_BEGINNING_STR = [[Waiting for storyteller to beginn story...]]
 
 RECEIVED_STR = [[received]]
+USING_WORD1_STR = [[uses]]		-- result: "CLIENTNAME uses ITEM on ARGUMENT"
+USING_WORD2_STR = [[on]]
+
 WAITING_FOR_STR = [[Waiting for]]
 YOUR_TURN_STR = [[Your Turn! What would you like to do?]]
 
@@ -150,18 +153,6 @@ CHOOSE_ARTICLE_STR = [[Did you mean...]]
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 -- this help text will be displayed on the main screen:
 HELP_MAIN = [[Choose "Server" to start a game.
 You'll be the storywriter. Make sure to open/forward the port 8080 on your router if you're playing over the net! You can also change the port in "main.lua" in the game folder or .zip or .love.
@@ -175,7 +166,7 @@ HELP_LOBBY = [[Wait for all players to join.
 
 Server:
 Choose a first word. This word will be the one where the story beginns (or what the story is about).
-If you're unsure, you can try "Room", "Chest", "Monster", or "Dungeon". Or anything else, really. If there's no Wiki-Entry found for the word, it'll tell you so.
+If you're unsure, you can try "Room", "Chest", "Monster", or "Dungeon". Or anything else, really. (Try "Apple pie"! I dare you!) If there's no Wiki-Entry found for the word, it'll tell you so.
 
 Clients:
 Create your Avatar. Also, choose something that describes your character.
@@ -186,24 +177,22 @@ When you're done, press "Ready".]]
 
 -- this help text will be displayed once players have started a game:
 HELP_GAME = [[Server:
-If you are the server, you have to write the story which the heroes will play through. Write a piece of the story (you must use the current Wiki-Word), then press enter. Then the clients have time to reply with actions.
-In the meantime, you choose a new follow-up word which the Wiki has provided for you. Once the players are done answering (or the time is up), you continue the story. Again, you MUST use the word you picked in your story. You must also incorporate the actions that the heroes have done.
+If you are the server, you are to write the awesome story which the heroes will play through. Write a piece of the story (you must use the current Wiki-Word), then press enter. Then the clients have time to reply with actions.
+In the meantime, you choose a new follow-up word which the Wiki has provided for you. Once the players are done answering, you continue the story. Again, you MUST use the word you picked in your story. You must also incorporate the actions that the heroes have done.
 You have three jokers. If the words given to you absolutely don't fit with your story, click on the "1","2" or "3" buttons to go back to a previous word and choose a new path from there on.
-You can also choose to give put words directly into the clients' inventories. To do so, click the word, then click on "Give to ...".
+You can also choose to give put words directly into the clients' inventories. To do so, click the word, then click on "Give to ...". I recommend mentioning this in your text, so people aren't confused. For example, type: "Luke Skywalker finds a lightsabre in the chest."
 
 Hero:
-If you're one of the heroes, wait for the server to write the story. Once the story is sent to you, you can reply by doing something.
+If you're one of the heroes, wait for the server to write the story. Once the story is sent to you, you reply by doing or saying something (or both! You're a multi-talent-hero!)
 You can and should use commands in your text. Available commands are:
 /do	TEXT		(Write some action your character does)
-/say TEXT		(Will be written as speech. Quotation marks are automatically added.)
-/use ID TEXT	(If there's something in your inventory, the number next to it is the ID. If the first object in your inventory is "1) key" then /use 1 door will produce: "Germanunkol uses key on door".)
+/say TEXT		(Will be written as speech. Quotation marks are automatically added. /say is the default if you don't use any command.)
+/use ID TEXT	(If there's something in your inventory, the number next to it is the ID. If the first object in your inventory is "1) key" then "/use 1 door" will produce: "Germanunkol uses key on door".)
 /skip			(skip your turn)
 For example, if the storyteller writes about a chest, you could type: "/do opens the chest. /say Let's see what's in here! /use 1 chest's lock".
 
-Chat: Click on chat area or "c" or "enter". Type text, then press "enter".
+Press Tab to automatically insert the current Wiki word while typing.]]
 
-Write story/action: Click on Story/Action area or press "a" or "s". Type text, then press "enter".
-
-Tab: Press Tab to automatically insert the current Wiki word while typing.]]
+I recommend always sticking to the same tense (ideally the tense in which the storyteller started the story).
 
 

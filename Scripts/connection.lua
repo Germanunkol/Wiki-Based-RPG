@@ -288,7 +288,7 @@ function connection.runServer( tcpServer )		-- handle all messages that come fro
 				end
 				start, ending = msg:find( "ACTION:use" )
 				if start == 1 then
-					game.receiveAction( cl.playerName .. " uses " .. safeSub(msg, ending+1, #msg), "use", cl.clientNumber )
+					game.receiveAction( cl.playerName .. " " .. USING_WORD1_STR .. " " .. safeSub(msg, ending+1, #msg), "use", cl.clientNumber )
 					connection.serverBroadcast( "ACTION:use" .. cl.playerName .. " uses " .. safeSub(msg, ending+1, #msg) )
 				end
 				start, ending = msg:find( "ACTION:skip" )

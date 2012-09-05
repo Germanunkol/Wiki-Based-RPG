@@ -94,11 +94,12 @@ MAX_STATPOINTS_PER_ABILITY = 3
 statistics = {}
 setStatistics = {}
 
-creditsStr = [[Created by Germanunkol
+creditsStr = [[Created by M. "Germanunkol" Pfeiffer
 http://www.indiedb.com/members/germanunkol
 --------------------------------------
 Licenced under the "Do What The Fuck You Want To Public License" (See Readme for details).
 
+Images by R. Pfeiffer and M. Pfeiffer
 
 --------------------------------------
 Sound Effect by Luke Chalupowski: http://www.freesound.org/people/lukechalaudio/
@@ -123,7 +124,7 @@ function love.load( arg )
 	localization.init("Languages")
 	
 	themes.init( "Themes" )
-	--themes.set( "Dark" )
+	themes.set( "Standard" )
 	
 	love.keyboard.setKeyRepeat( 0.3, 0.03 )
 	testingConnection = true

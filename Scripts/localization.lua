@@ -102,6 +102,9 @@ GAME_STARTING_STR = [[Game starting.]]
 WAITING_FOR_SERVER_BEGINNING_STR = [[Waiting for storyteller to beginn story...]]
 
 RECEIVED_STR = [[received]]
+USING_WORD1_STR = [[uses]]		-- result: "CLIENTNAME uses ITEM on ARGUMENT"
+USING_WORD2_STR = [[on]]
+
 WAITING_FOR_STR = [[Waiting for]]
 YOUR_TURN_STR = [[Your Turn! What would you like to do?]]
 

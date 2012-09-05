@@ -222,12 +222,12 @@ function stringFind( str, pattern, start )
 end
 
 function stringReplace( baseStr, toReplace, replaceWith )
-	if DEBUG then print("replacing: " .. toReplace) end
+	--if DEBUG then print("replacing: " .. toReplace) end
 	local parts = {}
 	local s, e = stringFind( baseStr, toReplace )
 	local prev = 1
 	while s do
-		if DEBUG then print("found " .. toReplace .. " @ " .. s) end
+		--if DEBUG then print("found " .. toReplace .. " @ " .. s) end
 		table.insert( parts, safeSub( baseStr, prev, s-1 ) )
 		prev = e+1
 		s, e = stringFind( baseStr, toReplace, e+1 )

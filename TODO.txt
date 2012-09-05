@@ -33,3 +33,4 @@ TO DO Wiki-Based-RPG:
 	- Make unicode html export work
 	- Change Joker behaviour: Revert to a word and then choose new RANDOM! words from there.
 	- Maybe let clients get Wiki-Words to use in their text as well?
+	- Translate Help to German

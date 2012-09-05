@@ -79,7 +79,7 @@ end
 function chat.show()
 	textBox.display( chatBox )
 	if active then
-		love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b )
+		love.graphics.setColor( colLobby.r, colLobby.g, colLobby.b, 150 )
 		love.graphics.rectangle( "fill",x, y + 2*hInput, w, hInput-5)
 		textBox.display( chatInputBox )
 	end
