@@ -140,6 +140,7 @@ ERROR_NO_EMPTY_TEXT_STR = [[Write something first!]]
 ERROR_DOES_NOT_EXIST_STR = [[This object does not exist in your inventory!]]
 ERROR_CHOOSE_NEXT_WORD_BEFORE_CONTINUING_STR = [[Choose next word first!]]
 ERROR_NOT_YOUR_TURN_STR = [[It's not your turn!]]
+ERROR_NOT_YOUR_TURN_TO_CHOOSE_WORD_STR = [[It's not your turn to choose a word!]]		-- shown when a server clicks on a joker button while a client is choosing a word for him/her.
 
 -- exporter:
 EXPORT_STR = [[Export]]
@@ -266,6 +267,10 @@ function localization.display()		-- show all flags and languages found, so the p
 end
 
 function languageChosen( lang )
+	PLAYERS_NOT_READY_LINES = {}
+	LOBBY_VERBS = {}
+	SPECIAL_CHARACTERS = {}
+
 	local ok, chunk
 	ok, chunk = pcall( love.filesystem.load, "Languages/" .. lang .. ".txt" ) -- load the chunk safely
 	if not ok then

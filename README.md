@@ -24,6 +24,7 @@ Getting the game to run should be fairly simple, but there are many ways to do s
 3.	Open a commmand line/terminal and type:
 
 		love /path/to/WikiBasedRPG.love
+Note: For special characters to work correctly, you need a version later than 0.8.0. At the time of writing, the current stable version is 0.8.0, so you migth need to compile Löve2d yourself. For instructions, see the Löve Website.
 
 ###Windows###
 1. Get the .exe file from http://www.indiedb.com/games/wiki-based-rpg/downloads
@@ -41,7 +42,7 @@ How to Play
 
 ###Main Idea###
 The game is inspired by "Sleep is Death", a great game, where the story forms as you go along, and where the server creates a game for the client to play, in realtime.  
-In the Wiki-Based-Role-Playing-Game, the server writes a story and the players reply by saying or doing things.
+In the Wiki-Based-Role-Playing-Game, the server writes a story and the players reply by saying or doing things. The story is repeatedly influenced by words that are taken automatically from Wikipedia entries.
 ###Starting a server###
 Simply click on "Start Server". **If you want to play over the internet, make sure to either forward/open port 8080 on your router, or use a service like Hamachi.** Only the server has to port-forward, client's shouldn't need to.
 ###Starting client###
@@ -50,9 +51,10 @@ Enter your Playername and the IP address of the server. If you're in the same LA
 At the beginning, while the clients are joining, the server chooses a word he/she would like the story to beginn with. The game then looks for a Wikipedia entry of that word (Make sure you're connected to the internet!). It will give you a choice of 5 words if there were multiple entires found.  
 In the meantime, the players can create an avatar for themselves. They also need to write a sentence to describe their character, ideally fitting the theme which the server sets by choosing the Wiki word. To write this sentence, they need to enter a word, which is looked up on Wikipedia. Once the site is loaded in the background, words are randomly chosen for the player, from that page. The player then needs to pick one and use that word in his/her description. Example: if you enter "swimming", the wiki might give you the words: "Breaststroke", "Freestyle", "long course", "Snorkel" and "Summer Olympic Games". You can then write something like: "Germanunkol has never been to the Summer Olympic Games."
 If you don't like the words the game chooses for you, at this point, you can retry by clicking on "Change description" and entering a new word.
+Optionally, the server can choose a theme which suits the story he or she has in mind.
 ###Game###
 Once all players have created their avatar, chosen a description and have all clicked on "ready", the server can start the game. The first turn is the server's. He/She starts typing in the game window and writes the beginning of the story. He/She must use the wiki word previously chosen.  
-Once the server has finished writing the first part of the story, the clients take turns to reply. If a client doesn't want to write anything this turn, he/she can write "/skip" and press enter to skip their  turn. Otherwise, you can write a text containing one or more commands. Note: per turn you can only write one text, but you can use multiple commands in this text. These are the available commands:
+Once the server has finished writing the first part of the story, the clients take turns to reply. If a client doesn't want to write anything this round, he/she can write "/skip" and press enter to skip their  turn. Otherwise, you can write a text containing one or more commands. Note: per turn you can only write one text, but you can use multiple commands in this text. These are the available commands:
 
 - /do TEXT
 - /say TEXT

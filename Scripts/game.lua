@@ -48,6 +48,9 @@ playerTurnsStrings = {}
 local fullNumberOfTurns = 1
 local currentPlayer = ""
 
+local nextWordClientChoice = false		-- set on server if client gets to choose word
+local iChooseNextWord = false
+
 function addPlayerTurns()
 	playerTurns1 = playerTurns2
 	playerTurns2 = playerTurns3
@@ -68,8 +71,17 @@ end
 function sendNextPlayerTurns()
 	local str = ""
 	local j = fullNumberOfTurns
+	
 	for i=0,#playerTurns1,1 do 
 		if playerTurns1[i] then str = str .. j .. ":" .. playerTurns1[i].name .. "," .. playerTurns1[i].ID ..";" end
+		
+		if i == #playerTurns1 and i == 0 then			--if the upcoming player is the last one in the row
+			if nextWordClientChoice then			-- there's a chance that the last player of the next round gets to choose the next word for the server.
+				str = ";" .. playerTurns1[i].name .. ";" .. str
+				print("next word will be chosen by: " .. playerTurns1[i].name)
+			end
+		end
+		
 		j = j+1
 	end
 	for i=0,#playerTurns2,1 do 
@@ -99,22 +111,33 @@ end
 
 function displayNextPlayerTurns( str )
 	if nextPlayerAreaWidth <= 0 then return end
+	
+	local s,e
+	if str:sub(1,1) == ";" then
+		str = safeSub(str, 2, strLen(str))
+		s,e = stringFind(str,";", 1)
+		n = safeSub(str, 1, s-1)
+		print("Client " .. n .. " will choose next word for story!")
+		if n == plName then
+			iChooseNextWord = true
+			print("You get to choose next word!")
+		end
+		
+		str = safeSub(str, e+1, strLen(str))
+	end
+	
 	playerTurnsStrings = {}
-	local s,e = stringFind(str,";", 1)
 	local player, name
+	s,e = stringFind(str,";", 1)
 	i = 1
 	while s do
 		player = safeSub(str,1,e)
-	--	print("player: " .. player)
 		name = safeSub(player, 1, stringFind(player, ",", 1) - 1)
-	--	print("name: " .. name)
 		while fontStatus:getWidth(name) > nextPlayerAreaWidth - 10 do
 			name = safeSub(name, 1, strLen(name)-1)
-			--print("n: " .. name)
 		end
 		playerTurnsStrings[i] = {str=name, ID = tonumber(safeSub(player,stringFind(player,",", 1)+1, strLen(player)-1)) }
-		if playerTurnsStrings[i] == nil then print("error: " .. i)
-		else
+		if playerTurnsStrings[i] == nil then print("Error in player turns: " .. i)
 		end
 		i = i+1
 		str = safeSub(str,e+1, strLen(str))
@@ -126,7 +149,13 @@ function displayNextPlayerTurns( str )
 	end
 	if client then 
 		textBox.setContent( gameStatusBox, WAITING_FOR_STR .. " " .. currentPlayer )
+		print("checking...")
+		if iChooseNextWord then
+			print("yes!")
+			game.clientChooseNextWord( curGameWord )		-- if it's my job to choose the next word, do so now!
+		end
 	end
+	
 end
 
 function game.sendNextTurn()
@@ -172,7 +201,7 @@ local usingJoker = false
 function chooseNextWord( index )
 	if chosenURLs then
 	
-		if usingJoker then
+		if usingJoker and server then		-- only server may use jokers.
 			usingJoker = false
 			curGameWord = chosenURLs[index].title
 			wikiClient.setNewWord( chosenURLs[index] )
@@ -198,34 +227,44 @@ function chooseNextWord( index )
 		
 		statusMsg.new( CHOSE_WORD_STR .. " \"" .. curGameWord .."\"")
 		
-		textBox.setContent( inventoryFieldHeader, CHOOSE_WHAT_TO_DO_WITH_WORD_STR )
-		
-		textBox.highlightClearAll( gameInputBox )
-		textBox.highlightText( gameInputBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
-		textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
-		textBox.highlightText( exportText, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
-		
-		wikiClient.setNewWord( chosenURLs[index] )
-		
 		buttons.clear()
-		buttons.add( chatAreaX+10, chatAreaY+chatAreaHeight + 30, chatAreaWidth, buttonHeight/2+5, USE_WORD_FOR_STORY_STR, drawButton, highlightButton , game.useWord )
+		
+		if server then
+		
+			textBox.setContent( inventoryFieldHeader, CHOOSE_WHAT_TO_DO_WITH_WORD_STR )
+		
+			textBox.highlightClearAll( gameInputBox )
+			textBox.highlightText( gameInputBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
+			textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
+			textBox.highlightText( exportText, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
+		
+				
+			wikiClient.setNewWord( chosenURLs[index] )
+		
+			buttons.add( chatAreaX+10, chatAreaY+chatAreaHeight + 30, chatAreaWidth, buttonHeight/2+5, USE_WORD_FOR_STORY_STR, drawButton, highlightButton , game.useWord )
 	
-		local i = 1
-		for k, cl in pairs( connectedClients ) do
-			if i < 5 then
-				titleStr = GIVE_WORD_TO_PLAYER_STR .. " "
-				for char in cl.playerName:gfind("([%z\1-\127\194-\244][\128-\191]*)") do
-					titleStr = titleStr .. char
-					if buttonFont:getWidth( titleStr ) >= chatAreaWidth-30 then
-						 break
+			local i = 1
+			for k, cl in pairs( connectedClients ) do
+				if i < 5 then
+					titleStr = GIVE_WORD_TO_PLAYER_STR .. " "
+					for char in cl.playerName:gfind("([%z\1-\127\194-\244][\128-\191]*)") do
+						titleStr = titleStr .. char
+						if buttonFont:getWidth( titleStr ) >= chatAreaWidth-30 then
+							 break
+						end
 					end
+					if titleStr ~= cl.playerName then
+						titleStr = titleStr .. "..."
+					end
+					buttons.add( chatAreaX+10, chatAreaY+chatAreaHeight + 35 + i*(buttonHeight-10), chatAreaWidth, buttonHeight/2+5, titleStr, drawButton, highlightButton , game.giveCurWordToClient, k )
 				end
-				if titleStr ~= cl.playerName then
-					titleStr = titleStr .. "..."
-				end
-				buttons.add( chatAreaX+10, chatAreaY+chatAreaHeight + 35 + i*(buttonHeight-10), chatAreaWidth, buttonHeight/2+5, titleStr, drawButton, highlightButton , game.giveCurWordToClient, k )
+				i = i+1
 			end
-			i = i+1
+		elseif client then
+			client:send( "CHOSEYOURWORD:" .. curGameWord .. "\n" )
+			iChooseNextWord = false
+			game.setButtons()
+			textBox.setContent( inventoryFieldHeader, INVENTORY_STR )
 		end
 	end
 end
@@ -233,6 +272,13 @@ end
 
 function game.serverChooseNextWord()
 
+	chosenURLs = wikiClient.nextWord()
+	game.chooseWord()
+end
+
+function game.clientChooseNextWord( curWord )
+	print("Let client choose a word")
+	wikiClient.setNewWord( { url = "/wiki/" .. curWord })
 	chosenURLs = wikiClient.nextWord()
 	game.chooseWord()
 end
@@ -262,6 +308,7 @@ function game.chooseWord()
 			end
 			i = i+1
 		end
+		game.setButtons()
 	else
 		print("ERROR: Uhm... no urls found...?")
 	end
@@ -284,7 +331,32 @@ function game.clientReceiveNewWord( word )
 	end
 end
 
+function game.serverReceiveNewWord( word )
+	--change colour of previous words:
+	nextWordClientChoice = false		-- reset to make sure I choose the next word!
+
+	if gameTextBox then
+		textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWord.r, colHighlightWikiWord.g, colHighlightWikiWord.b)
+		textBox.highlightText( exportText, curGameWord, colHighlightWikiWord.r, colHighlightWikiWord.g, colHighlightWikiWord.b)
+	end
+	
+	curGameWord = word
+	if gameTextBox then
+		textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
+		textBox.highlightText( exportText, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
+	end
+	
+
+	wikiClient.setNewWord( { url = "/wiki/" .. word, title=word })
+	game.wordChoosingEnded()
+end
+
 function game.useJoker()
+
+	if clientChoosesWord then
+		statusMsg.new( ERROR_NOT_YOUR_TURN_TO_CHOOSE_WORD_STR )
+		return
+	end
 
 	if wikiClient.getNumOfPreviousWords() < 3 then
 		statusMsg.new( ERROR_AT_LEAST_4_WORDS_FOR_JOKER_STR )
@@ -332,6 +404,7 @@ function game.useJoker()
 			end
 			i = i+1
 		end
+		game.setButtons()
 	else
 		print("ERROR: Uhm... no urls found...?")
 	end
@@ -489,8 +562,14 @@ function game.sendStory()
 			waitForPlayerActions = true
 			nextWordChosen = false
 			statusMsg.new( LOADING_STR )
-			table.insert( nextFrameEvent, {func = game.serverChooseNextWord, frames = 2 } )
-			table.insert( nextFrameEvent, {func = statusMsg.new, frames = 3, arg = HOW_SHOULD_STORY_CONTINUE_STR } )
+			if math.floor(math.random(2)) == 1 then
+				-- table.insert( nextFrameEvent, { func = game.serverChooseNextWord, frames = 2 } )
+				print("Next word will be chosen by client.")
+				nextWordClientChoice = true
+			else
+				table.insert( nextFrameEvent, {func = game.serverChooseNextWord, frames = 2 } )
+				table.insert( nextFrameEvent, {func = statusMsg.new, frames = 3, arg = HOW_SHOULD_STORY_CONTINUE_STR } )
+			end
 			textBox.highlightText( gameTextBox, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
 			textBox.highlightText( exportText, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
 		else
@@ -565,9 +644,10 @@ function insertAction( newStr )
 end
 
 function game.sendAction( )
+	print("a...")
 	local str = textBox.getContent( gameInputBox )
 	if #str > 0 then
-
+		
 		actionStrings = {}		--reset previously sent actions
 		if str:lower() == string.lower("/skip") then
 			insertAction( "/skip" )
@@ -603,6 +683,7 @@ function game.sendAction( )
 		textBox.setContent( gameInputBox, "" )
 		textBox.setContent( gameStatusBox, WAITING_FOR_HEROES_STR )
 		textBox.setColour( gameStatusBox, colText.r, colText.g, colText.b )
+		
 		waitForPlayerActions = false
 	else
 		textBox.setAccess( gameInputBox, true )
@@ -749,7 +830,7 @@ function game.show()		-- called once every frame
 				if nextWordChosen == true then
 					textBox.setContent( gameStatusBox, CONTINUE_STORY_USE_WORD_STR1 .. " \"" .. curGameWord .. "\" " .. CONTINUE_STORY_USE_WORD_STR2 )
 				else
-					textBox.setContent( gameStatusBox, CHOOSE_A_WORD_STR )
+					if not nextWordClientChoice then textBox.setContent( gameStatusBox, CHOOSE_A_WORD_STR ) end
 				end
 				textBox.setColour( gameStatusBox, colText.r, colText.g, colText.b )
 				waitForPlayerActions = false

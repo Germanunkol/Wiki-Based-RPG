@@ -86,6 +86,8 @@ end
 
 function wikiClient.nextWord()		-- choose a few random links from the wiki source page of the current word
 	urlManipulation.log(fullURL)
+	
+	print("looking up: " .. fullURL)
 	pageSource = http.request(fullURL)
 
 	if pageSource == nil then

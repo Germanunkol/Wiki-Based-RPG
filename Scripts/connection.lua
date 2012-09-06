@@ -303,6 +303,13 @@ function connection.runServer( tcpServer )		-- handle all messages that come fro
 					return
 				end
 				
+				start, ending = msg:find( "CHOSEYOURWORD:" )
+				if start == 1 then
+					print( "Got new word: " .. safeSub(msg, ending+1, strLen( msg ) ) ) 
+					game.serverReceiveNewWord( safeSub(msg, ending+1, strLen( msg ) ) )
+					return
+				end
+				
 				start, ending = msg:find( "CHAT:" )
 				if start == 1 then
 					chat.receive( cl.playerName.. ": " .. safeSub(msg, ending+1, #msg) )
