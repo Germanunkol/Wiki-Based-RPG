@@ -144,7 +144,7 @@ Get the code from github, or extract the .love or .zip file you have downloaded.
 On windows, make sure to start the game with the --console option to get console output/debug output.
 Also start the game with the --debug option so that there is more output.
 
-**If you translate the game or add another wiki or create a new cool theme, make sure to send them to me via github or indieDB! I'd be very be very happy to add them to the next version!**
+**If you translate the game or add another wiki or create a new cool theme, make sure to send them to me via github or indieDB! I'd be very happy to add them to the next version!**
 
 ###Change Wikipedia###
 To get you started, look at the first few lines in wikiClient.lua. Modyfing these lines will allow you to play the game with another Wiki. For example, you could play with the Minecraft wiki or a Star Trek wiki. Or you could try using another language's Wikipedia or try http://simple.wikipedia.org  
