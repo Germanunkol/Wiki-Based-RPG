@@ -163,6 +163,7 @@ function receiveStats( cl, str )
 end
 
 function connection.inventoryAdd( playerID, object )
+	print("giving " .. object .. " to " .. playerID)
 	for k, cl in pairs( connectedClients ) do
 		if cl.clientNumber == tonumber(playerID) then
 			if #cl.inventory >= INVENTORY_CAPACITY then return end
@@ -452,6 +453,13 @@ function connection.runClient( cl )				--handle all messages that come from the 
 				displayNextPlayerTurns(safeSub(msg, ending+1, #msg))
 				return
 			end
+			
+			start, ending = msg:find( "YOUCHOOSENEXTWORD:" )
+			if start == 1 then
+				iChooseNextWord = true
+				return
+			end
+			
 			
 			start, ending = msg:find( "STORY:" )
 			if start == 1 then

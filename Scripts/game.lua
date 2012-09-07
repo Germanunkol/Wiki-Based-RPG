@@ -49,7 +49,8 @@ local fullNumberOfTurns = 1
 local currentPlayer = ""
 
 local nextWordClientChoice = false		-- set on server if client gets to choose word
-local iChooseNextWord = false
+iChooseNextWord = false
+local currentlyChoosingWord = false
 
 function addPlayerTurns()
 	playerTurns1 = playerTurns2
@@ -74,14 +75,6 @@ function sendNextPlayerTurns()
 	
 	for i=0,#playerTurns1,1 do 
 		if playerTurns1[i] then str = str .. j .. ":" .. playerTurns1[i].name .. "," .. playerTurns1[i].ID ..";" end
-		
-		if i == #playerTurns1 and i == 0 then			--if the upcoming player is the last one in the row
-			if nextWordClientChoice then			-- there's a chance that the last player of the next round gets to choose the next word for the server.
-				str = ";" .. playerTurns1[i].name .. ";" .. str
-				print("next word will be chosen by: " .. playerTurns1[i].name)
-			end
-		end
-		
 		j = j+1
 	end
 	for i=0,#playerTurns2,1 do 
@@ -112,23 +105,9 @@ end
 function displayNextPlayerTurns( str )
 	if nextPlayerAreaWidth <= 0 then return end
 	
-	local s,e
-	if str:sub(1,1) == ";" then
-		str = safeSub(str, 2, strLen(str))
-		s,e = stringFind(str,";", 1)
-		n = safeSub(str, 1, s-1)
-		print("Client " .. n .. " will choose next word for story!")
-		if n == plName then
-			iChooseNextWord = true
-			print("You get to choose next word!")
-		end
-		
-		str = safeSub(str, e+1, strLen(str))
-	end
-	
 	playerTurnsStrings = {}
 	local player, name
-	s,e = stringFind(str,";", 1)
+	local s,e = stringFind(str,";", 1)
 	i = 1
 	while s do
 		player = safeSub(str,1,e)
@@ -149,13 +128,7 @@ function displayNextPlayerTurns( str )
 	end
 	if client then 
 		textBox.setContent( gameStatusBox, WAITING_FOR_STR .. " " .. currentPlayer )
-		print("checking...")
-		if iChooseNextWord then
-			print("yes!")
-			game.clientChooseNextWord( curGameWord )		-- if it's my job to choose the next word, do so now!
-		end
 	end
-	
 end
 
 function game.sendNextTurn()
@@ -265,6 +238,7 @@ function chooseNextWord( index )
 			iChooseNextWord = false
 			game.setButtons()
 			textBox.setContent( inventoryFieldHeader, INVENTORY_STR )
+			currentlyChoosingWord = false
 		end
 	end
 end
@@ -309,6 +283,11 @@ function game.chooseWord()
 			i = i+1
 		end
 		game.setButtons()
+		
+		sound.playNotification()
+		
+		currentlyChoosingWord = true
+		
 	else
 		print("ERROR: Uhm... no urls found...?")
 	end
@@ -353,7 +332,7 @@ end
 
 function game.useJoker()
 
-	if clientChoosesWord then
+	if nextWordClientChoice then
 		statusMsg.new( ERROR_NOT_YOUR_TURN_TO_CHOOSE_WORD_STR )
 		return
 	end
@@ -448,6 +427,7 @@ function game.wordChoosingEnded()
 		if chat.getActive() == false then
 			textBox.setAccess( gameInputBox, true, true )
 			scrollGameBox()
+			sound.playNotification()
 		end
 	end
 end
@@ -510,8 +490,10 @@ end
 local inventoryAddCue = {}
 
 function game.addToInventory( playerID, object )
+	print("attempting to give: " .. object .. " to " .. playerID)
 	for k, cl in pairs( connectedClients ) do
-		if ID == cl.clientNumber then
+		if playerID == cl.clientNumber then
+			print("done")
 			table.insert( inventoryAddCue, { ID = playerID, item = object, name = cl.playerName } )
 			return
 		end
@@ -561,12 +543,26 @@ function game.sendStory()
 			textBox.setColour( gameStatusBox, colText.r,colText.g,colText.b )
 			waitForPlayerActions = true
 			nextWordChosen = false
-			statusMsg.new( LOADING_STR )
-			if math.floor(math.random(2)) == 1 then
-				-- table.insert( nextFrameEvent, { func = game.serverChooseNextWord, frames = 2 } )
-				print("Next word will be chosen by client.")
-				nextWordClientChoice = true
+			if math.random(4) == 1 then				
+				local numPlayers = 0
+				for k, cl in pairs(connectedClients) do
+					numPlayers = numPlayers + 1
+				end
+				
+				local nextWordChosenByID = math.random(numPlayers)
+				
+				for k, cl in pairs(connectedClients) do
+					if cl.clientNumber == nextWordChosenByID then
+						if DEBUG then print("Next word will be chosen by client:" .. cl.playerName) end
+						textBox.setContent( inventoryFieldHeader, CLIENT_GETS_TO_CHOOSE_WORD_STR .. " " .. cl.playerName )
+						nextWordClientChoice = true
+						cl.client:send("YOUCHOOSENEXTWORD:\n")
+					end
+				end
+				
 			else
+			
+				statusMsg.new( LOADING_STR )
 				table.insert( nextFrameEvent, {func = game.serverChooseNextWord, frames = 2 } )
 				table.insert( nextFrameEvent, {func = statusMsg.new, frames = 3, arg = HOW_SHOULD_STORY_CONTINUE_STR } )
 			end
@@ -644,7 +640,6 @@ function insertAction( newStr )
 end
 
 function game.sendAction( )
-	print("a...")
 	local str = textBox.getContent( gameInputBox )
 	if #str > 0 then
 		
@@ -685,6 +680,12 @@ function game.sendAction( )
 		textBox.setColour( gameStatusBox, colText.r, colText.g, colText.b )
 		
 		waitForPlayerActions = false
+		
+		if iChooseNextWord then		-- if it's my job to choose the next word, do so now!
+			if DEBUG then print("Client gets to choose next word...") end
+			statusMsg.new( LOADING_STR )
+			table.insert( nextFrameEvent, {func = game.clientChooseNextWord, frames = 2, arg = curGameWord } )
+		end
 	else
 		textBox.setAccess( gameInputBox, true )
 		scrollGameBox()
@@ -807,7 +808,7 @@ function game.show()		-- called once every frame
 		end
 	end
 	
-	if client then
+	if client and not currentlyChoosingWord then
 		for k, cl in pairs(connectedClients) do
 			if cl.playerName == plName then
 				love.graphics.setFont( fontStatus )
@@ -825,16 +826,20 @@ function game.show()		-- called once every frame
 			if allPlayersHaveReacted then
 				if chat.getActive() == false and nextWordChosen == true then
 					textBox.setAccess( gameInputBox, true )
+					sound.playNotification()
 				end
 				scrollGameBox()
 				if nextWordChosen == true then
 					textBox.setContent( gameStatusBox, CONTINUE_STORY_USE_WORD_STR1 .. " \"" .. curGameWord .. "\" " .. CONTINUE_STORY_USE_WORD_STR2 )
 				else
-					if not nextWordClientChoice then textBox.setContent( gameStatusBox, CHOOSE_A_WORD_STR ) end
+					if not nextWordClientChoice then
+						textBox.setContent( gameStatusBox, CHOOSE_A_WORD_STR )
+					else
+						textBox.setContent( gameStatusBox, CLIENT_STILL_CHOOSING_WORD_STR )
+					end
 				end
 				textBox.setColour( gameStatusBox, colText.r, colText.g, colText.b )
 				waitForPlayerActions = false
-				sound.playNotification()
 				addPlayerTurns()
 			end
 		end

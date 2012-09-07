@@ -98,6 +98,17 @@ function wikiClient.nextWord()		-- choose a few random links from the wiki sourc
 
 	print("Found " .. numberOfFoundLinks .. " wiki-internal urls")
 	print("Found " .. numberOfFoundLinks - doublesFound.. " unique wiki-internal urls")
+	
+	if numberOfFoundLinks - doublesFound == 0 then
+		print("ERROR: no follow-up links found! Using wiki's main page.")
+		statusMsg.new(ERROR_NO_LINKS_FOUND_STR)	
+		fullURL = WIKI_URL .. "/wiki/"
+		pageSource = http.request(fullURL)
+		urlTable, numberOfFoundLinks, doublesFound = urlManipulation.extractURLs(pageSource, WIKI_STARTOFCONTENTS)
+
+		print("Found " .. numberOfFoundLinks .. " wiki-internal urls")
+		print("Found " .. numberOfFoundLinks - doublesFound.. " unique wiki-internal urls")
+	end
 
 	local chosenURLIndecies = {}
 	local chosenURLs = {}

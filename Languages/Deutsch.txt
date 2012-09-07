@@ -97,6 +97,8 @@ USE_WORD_FOR_STORY_STR =  [[Für Geschichte verwenden]]
 GIVE_WORD_TO_PLAYER_STR = [[Geben an]]
 CHOSE_WORD_STR = [[Gewählt:]]
 WORD_GIVEN_TO_STR = [[Wird gegeben an:]]
+CLIENT_STILL_CHOOSING_WORD_STR = [[Spieler muss erst das nächste Wort wählen...]]
+CLIENT_GETS_TO_CHOOSE_WORD_STR = [[Das nächste Wort wird gewählt von:]]
 
 SERVER_USED_JOKER_STR = [[(Erzähler verwendet joker)]]
 
@@ -123,6 +125,8 @@ ERROR_NO_EMPTY_TEXT_STR = [[Du musst erst etwas schreiben!]]
 ERROR_DOES_NOT_EXIST_STR = [[Objekt ist nicht im Inventar.]]
 ERROR_CHOOSE_NEXT_WORD_BEFORE_CONTINUING_STR = [[Erst Wort wählen!]]
 ERROR_NOT_YOUR_TURN_STR = [[Du bist nicht dran!]]
+ERROR_NOT_YOUR_TURN_TO_CHOOSE_WORD_STR = [[Nächstes Wort wird von einem Spieler gewählt!]]		-- shown when a server clicks on a joker button while a client is choosing a word for him/her.
+ERROR_NO_LINKS_FOUND_Str = [[Keine Links gefunden. Springe zu Hauptseite.]]
 
 -- exporter:
 EXPORT_STR = [[Exportieren]]

@@ -13,5 +13,4 @@ end
 function sound.playNotification()
 	if notificationSound then love.audio.play( notificationSound ) end
 end
-
 return sound

@@ -114,6 +114,8 @@ USE_WORD_FOR_STORY_STR =  [[Use for story]]
 GIVE_WORD_TO_PLAYER_STR = [[Give to]]
 CHOSE_WORD_STR = [[Chose:]]
 WORD_GIVEN_TO_STR = [[Word will be given to: ]]
+CLIENT_STILL_CHOOSING_WORD_STR = [[Waiting for player to choose next word...]]
+CLIENT_GETS_TO_CHOOSE_WORD_STR = [[Next word will be chosen by:]]
 
 SERVER_USED_JOKER_STR = [[(Server used joker)]]
 
@@ -141,6 +143,7 @@ ERROR_DOES_NOT_EXIST_STR = [[This object does not exist in your inventory!]]
 ERROR_CHOOSE_NEXT_WORD_BEFORE_CONTINUING_STR = [[Choose next word first!]]
 ERROR_NOT_YOUR_TURN_STR = [[It's not your turn!]]
 ERROR_NOT_YOUR_TURN_TO_CHOOSE_WORD_STR = [[It's not your turn to choose a word!]]		-- shown when a server clicks on a joker button while a client is choosing a word for him/her.
+ERROR_NO_LINKS_FOUND_Str = [[No links found. Using wiki main page.]]
 
 -- exporter:
 EXPORT_STR = [[Export]]
