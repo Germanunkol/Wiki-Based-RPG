@@ -38,6 +38,7 @@ A_STORY_ABOUT_STR = [[A story of ]]
 NEW_PLAYER_CONNECTED_STR = [[New player!]]
 PLAYER_LEFT_STR = [[has left the game.]]
 BEGIN_JOURNEY_BUTTON_STR = [[Begin journey]]
+MODIFY_THEME_BUTTON_STR = [[Change theme]]
 
 CHOOSE_PATH_BUTTON_STR = [[Choose path]]
 CHANGE_FIRST_WORD_BUTTON_STR = [[Change first word]]
