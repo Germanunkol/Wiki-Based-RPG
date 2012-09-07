@@ -29,8 +29,9 @@ TO DO Wiki-Based-RPG:
 [x] - Up/Down cursor keys support added
 [x] - Clicking input boxes now moves cursor as well.
 [x]	- Chat export added.
-	- Show which words will be given to what player
-	- Make unicode html export work
-	- Change Joker behaviour: Revert to a word and then choose new RANDOM! words from there.
-	- Maybe let clients get Wiki-Words to use in their text as well?
-	- Translate Help to German
+[x]	- Show which words will be given to what player
+[x]	- Make unicode html export work
+[x]	- Change Joker behaviour: Revert to a word and then choose new RANDOM! words from there.
+[x]	- Maybe let clients get Wiki-Words to use in their text as well?
+[x]	- Translate Help to German
+[x]	- Random clients get to choose a word for the player

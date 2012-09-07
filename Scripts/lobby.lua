@@ -87,7 +87,7 @@ function lobby.descriptionAdded()
 			addedDescription = true
 			setClientButtons()
 		else
-			if descriptionWord then statusMsg.new( MMUST_USE_WORD_STR1 " " .. descriptionWord .. " " .. MUST_USE_WORD_STR2 ) end
+			if descriptionWord then statusMsg.new( MUST_USE_WORD_STR1 " " .. descriptionWord .. " " .. MUST_USE_WORD_STR2 ) end
 			textBox.setAccess( descriptionInputBox, true, true )
 			textBox.moveCursorToEnd( descriptionInputBox )
 		end
