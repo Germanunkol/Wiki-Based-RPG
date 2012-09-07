@@ -163,7 +163,7 @@ function receiveStats( cl, str )
 end
 
 function connection.inventoryAdd( playerID, object )
-	print("giving " .. object .. " to " .. playerID)
+	if DEBUG then print("Giving " .. object .. " to " .. playerID) end
 	for k, cl in pairs( connectedClients ) do
 		if cl.clientNumber == tonumber(playerID) then
 			if #cl.inventory >= INVENTORY_CAPACITY then return end

@@ -100,6 +100,9 @@ WORD_GIVEN_TO_STR = [[Wird gegeben an:]]
 CLIENT_STILL_CHOOSING_WORD_STR = [[Spieler muss erst das nächste Wort wählen...]]
 CLIENT_GETS_TO_CHOOSE_WORD_STR = [[Das nächste Wort wird gewählt von:]]
 
+CHOSE_STR = [[wählt]]		-- result: "(PLAYERNAME chooses WORD for storyteller)"
+FOR_STORYTELLER_STR = [[für den Erzähler.]]
+
 SERVER_USED_JOKER_STR = [[(Erzähler verwendet joker)]]
 
 START_STORY_USE_WORD_STR1 = [[Fang mit der Geschichte an. Nutze]]  -- result: "Start the story. Use (the current wiki word) in your text."

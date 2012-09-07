@@ -115,6 +115,9 @@ WORD_GIVEN_TO_STR = [[Word will be given to: ]]
 CLIENT_STILL_CHOOSING_WORD_STR = [[Waiting for player to choose next word...]]
 CLIENT_GETS_TO_CHOOSE_WORD_STR = [[Next word will be chosen by:]]
 
+CHOSE_STR = [[chooses]]		-- result: "(PLAYERNAME chooses WORD for storyteller)"
+FOR_STORYTELLER_STR = [[for storyteller.]]
+
 SERVER_USED_JOKER_STR = [[(Server used joker)]]
 
 START_STORY_USE_WORD_STR1 = [[Start the story. Use]]  -- result: "Start the story. Use (the current wiki word) in your text."

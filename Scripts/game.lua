@@ -251,7 +251,6 @@ function game.serverChooseNextWord()
 end
 
 function game.clientChooseNextWord( curWord )
-	print("Let client choose a word")
 	wikiClient.setNewWord( { url = "/wiki/" .. curWord })
 	chosenURLs = wikiClient.nextWord()
 	game.chooseWord()
@@ -325,6 +324,10 @@ function game.serverReceiveNewWord( word )
 		textBox.highlightText( exportText, curGameWord, colHighlightWikiWordNew.r, colHighlightWikiWordNew.g, colHighlightWikiWordNew.b)
 	end
 	
+	if clientWhoIsChoosingWord then
+		connection.serverBroadcast("CHAT:" .. "(" .. clientWhoIsChoosingWord .." ".. CHOSE_STR .. " '" .. word .."' "..  FOR_STORYTELLER_STR ..")")
+		chat.receive( "(" .. clientWhoIsChoosingWord .." ".. CHOSE_STR .. " '" .. word .."' "..  FOR_STORYTELLER_STR ..")" )
+	end
 
 	wikiClient.setNewWord( { url = "/wiki/" .. word, title=word })
 	game.wordChoosingEnded()
@@ -543,24 +546,29 @@ function game.sendStory()
 			textBox.setColour( gameStatusBox, colText.r,colText.g,colText.b )
 			waitForPlayerActions = true
 			nextWordChosen = false
+			
 			if math.random(4) == 1 then				
 				local numPlayers = 0
 				for k, cl in pairs(connectedClients) do
 					numPlayers = numPlayers + 1
 				end
 				
-				local nextWordChosenByID = math.random(numPlayers)
+				if numPlayers >= 1 then
+					local nextWordChosenByID = math.random(numPlayers)
 				
-				for k, cl in pairs(connectedClients) do
-					if cl.clientNumber == nextWordChosenByID then
-						if DEBUG then print("Next word will be chosen by client:" .. cl.playerName) end
-						textBox.setContent( inventoryFieldHeader, CLIENT_GETS_TO_CHOOSE_WORD_STR .. " " .. cl.playerName )
-						nextWordClientChoice = true
-						cl.client:send("YOUCHOOSENEXTWORD:\n")
+					for k, cl in pairs(connectedClients) do
+						if cl.clientNumber == nextWordChosenByID then
+							if DEBUG then print("Next word will be chosen by client:" .. cl.playerName) end
+							textBox.setContent( inventoryFieldHeader, CLIENT_GETS_TO_CHOOSE_WORD_STR .. " " .. cl.playerName )
+							nextWordClientChoice = true
+							cl.client:send("YOUCHOOSENEXTWORD:\n")
+							clientWhoIsChoosingWord = cl.playerName
+						end
 					end
 				end
+			end
 				
-			else
+			if not nextWordClientChoice then
 			
 				statusMsg.new( LOADING_STR )
 				table.insert( nextFrameEvent, {func = game.serverChooseNextWord, frames = 2 } )
