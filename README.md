@@ -115,8 +115,10 @@ Run from source:
 ================
 If you have downloaded the .love file from IndieDB, you already have the source code. The .love is a renamed .zip file, which you can rename back to .zip and then extract anywhere you wish.  
 Alternatively, get the current source code from git: https://github.com/Germanunkol/Wiki-Based-RPG  
+Windows users: the .exe is also a compressed file. To get to the data, uncompress it using a zip Program like 7zip (might also work with the windows standard zip Program).
 
 **(NOTE: as of Wiki-Based-RPG version 0.6, you can get secial character to work if you run a L&ouml;ve version higher than 0.8.0. At the time of writing, the current version is 0.8.0, so for getting special characters to work, you need to compile l&ouml;ve from source. Check its website for details on how to do this.)**
+
 ###Linux:###
 
 1. Install L&ouml;ve2D, either from your repositories (version 0.8.0 and up recommended!) or from https://love2d.org/ 
@@ -138,7 +140,7 @@ How to mod
 ================
 
 The game is open source. Modify as you wish. At this point, I should appologize for some pretty ugly code: This is the first larger project I have coded in love or lua. I DO need to add more comments, as well.  
-Get the code from github, or extract the .love or .zip file you have downloaded.
+Get the code from github, or extract the .love or .zip file you have downloaded. (.exe can also be extracted to get you to the code).
 On windows, make sure to start the game with the --console option to get console output/debug output.
 Also start the game with the --debug option so that there is more output.
 
