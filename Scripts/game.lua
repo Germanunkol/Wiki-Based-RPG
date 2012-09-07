@@ -427,10 +427,10 @@ function game.wordChoosingEnded()
 	textBox.setContent( inventoryFieldHeader, "" )
 	if waitForPlayerActions == false then 
 		textBox.setContent( gameStatusBox, CONTINUE_STORY_USE_WORD_STR1 .. " \"" .. curGameWord .. "\" " .. CONTINUE_STORY_USE_WORD_STR2 )
+		sound.playNotification()
 		if chat.getActive() == false then
 			textBox.setAccess( gameInputBox, true, true )
 			scrollGameBox()
-			sound.playNotification()
 		end
 	end
 end
@@ -834,6 +834,8 @@ function game.show()		-- called once every frame
 			if allPlayersHaveReacted then
 				if chat.getActive() == false and nextWordChosen == true then
 					textBox.setAccess( gameInputBox, true )
+				end
+				if nextWordChosen == true then
 					sound.playNotification()
 				end
 				scrollGameBox()
