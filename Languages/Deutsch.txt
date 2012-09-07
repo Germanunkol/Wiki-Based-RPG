@@ -60,25 +60,25 @@ ERROR_MINIMUM_ONE_PLAYER_STR = [[Mindestens ein Spieler muss eingeloggt sein!]]
 ERROR_COULD_NOT_SET_THEME_STR = [[Fehler beim auswählen des neuen Themas.]]
 
 -- players aren't ready messages: Invent something funny! You can add as many lines as you'd like (indices go from 1 to ... ? ):
-PLAYERS_NOT_READY_LINES[1] = "Die Helden packen noch ihre Sachen..."
-PLAYERS_NOT_READY_LINES[2] = "Es sind noch nicht alle Helden bereit."
-PLAYERS_NOT_READY_LINES[3] = "Irgendwer verabschiedet sich noch von seiner Mama."
-PLAYERS_NOT_READY_LINES[4] = "Die anderen sind immer noch nicht fertig..."
-PLAYERS_NOT_READY_LINES[5] = "Warte auf Helden."
-PLAYERS_NOT_READY_LINES[6] = "Moment... einer der Helden muss noch sein Mittagessen aufessen."
+PLAYERS_NOT_READY_LINES[1] = [[Die Helden packen noch ihre Sachen...]]
+PLAYERS_NOT_READY_LINES[2] = [[Es sind noch nicht alle Helden bereit.]]
+PLAYERS_NOT_READY_LINES[3] = [[Irgendwer verabschiedet sich noch von seiner Mama.]]
+PLAYERS_NOT_READY_LINES[4] = [[Die anderen sind immer noch nicht fertig...]]
+PLAYERS_NOT_READY_LINES[5] = [[Warte auf Helden.]]
+PLAYERS_NOT_READY_LINES[6] = [[Moment... einer der Helden muss noch sein Mittagessen aufessen.]]
 
 -- these verbes are given as examples for the player's description:
-LOBBY_VERBS[1] = "mag"
-LOBBY_VERBS[2] = "kann"
-LOBBY_VERBS[3] = "weiß, dass"
-LOBBY_VERBS[4] = "hat gehört, dass"
-LOBBY_VERBS[5] = "besitzt"
-LOBBY_VERBS[6] = "liebt"
-LOBBY_VERBS[7] = "hasst"
-LOBBY_VERBS[8] = "ist bekannt für"
-LOBBY_VERBS[9] = "kommt aus"
-LOBBY_VERBS[10] = "ist"
-LOBBY_VERBS[11] = "kennt"
+LOBBY_VERBS[1] = [[mag]]
+LOBBY_VERBS[2] = [[kann]]
+LOBBY_VERBS[3] = [[weiß, dass]]
+LOBBY_VERBS[4] = [[hat gehört, dass]]
+LOBBY_VERBS[5] = [[besitzt]]
+LOBBY_VERBS[6] = [[liebt]]
+LOBBY_VERBS[7] = [[hasst]]
+LOBBY_VERBS[8] = [[ist bekannt für]]
+LOBBY_VERBS[9] = [[kommt aus]]
+LOBBY_VERBS[10] = [[ist]]
+LOBBY_VERBS[11] = [[kennt]]
 
 -- in game:
 GAME_STARTING_STR = [[Spiel beginnt.]]
@@ -155,15 +155,18 @@ SPECIAL_CHARACTERS[220] = "Ü"
 SPECIAL_CHARACTERS[223] = "ß"
 
 -- this help text will be displayed on the main screen:
-HELP_MAIN = [[Willkommen im Wiki-Based-RPG!
+HELP_MAIN = [[
+Willkommen im Wiki-Based-RPG!
 
 Der "Server" ist der Spielleiter. Er erzählt die Geschichte. Wenn du server bist und du über's Internet spielen willst, muss Port 8080 bei deinem Router (wenn du einen hast) weitergeleitet werden, oder du spielst über einen Service wie Hamachi.
 
 Als Client spielst du einen Character in der Geschichte, die der Spielleiter erzählt. Hier musst du die IP des Servers angeben. Im Internet steht auf vielen Seiten, wie der Server diese IP herausbekommt.
-Der einfachste Fall ist, dass der Server auf dem gleichen PC gestartet wurde wie der Client, dann lässt du die IP-Zeile einfach leer (das Spiel ersetzt die IP dann durch 127.0.0.1, die Adresse des eigenen PCs).]]
+Der einfachste Fall ist, dass der Server auf dem gleichen PC gestartet wurde wie der Client, dann lässt du die IP-Zeile einfach leer (das Spiel ersetzt die IP dann durch 127.0.0.1, die Adresse des eigenen PCs).
+]]
 
 -- this is the help text displayed inside the Lobby:
-HELP_LOBBY = [[Lobby:
+HELP_LOBBY = [[
+Lobby:
 Als Server:
 Hier musst du das Wort wählen, mit dem die Geschichte beginnt. Tipp ein Wort ein, dann sucht das Spiel nach dem entsprechenden Wiki-Artikel. Gibt es mehrere Artikel zum Wort, bietet das Spiel dir diese zur Auswahl an. Probier doch mal: "Schloss", "Gefängnis", "Schwert" oder "Batmobil". Oder wie wär's mit "Orangensaft"?
 Warte, bis alle Spieler im Spiel sind und starte dann das Spiel.
@@ -171,7 +174,8 @@ Du kannst optional das Aussehen des Spiels ändern. Wie du eigene Themen erstell
 
 Als Spieler:
 Gib ein Wort an, das deinen Character beschreibt. Das Spiel sucht aus dem entsprechenden Wiki-Artikel zufälige Wörter aus. Eins davon musst du in deiner Beschreibung verwenden. Wenn's dir nicht gefällt, klicke nach dem du die Beschreibung eingetippt hast einfach nochmal auf den Knopf und wähle ein neues Wort.
-Optional kannst du ein Logo für deinen Character erstellen. Sei kreativ!]]
+Optional kannst du ein Logo für deinen Character erstellen. Sei kreativ!
+]]
 
 -- this help text will be displayed once players have started a game:
 HELP_GAME = [[

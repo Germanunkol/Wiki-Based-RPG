@@ -52,7 +52,6 @@ A_STORY_ABOUT_STR = [[A story of ]]
 NEW_PLAYER_CONNECTED_STR = [[New player!]]
 PLAYER_LEFT_STR = [[has left the game.]]
 BEGIN_JOURNEY_BUTTON_STR = [[Begin journey]]
-MODIFY_THEME_BUTTON_STR = [[Choose theme]]
 
 CHOOSE_PATH_BUTTON_STR = [[Choose path]]
 CHANGE_FIRST_WORD_BUTTON_STR = [[Change first word]]
@@ -69,33 +68,31 @@ USE_DESCRIPTION_WORD = [[Tell us something about your character. Use the word:]]
 
 -- lobby Error messages:
 ERROR_AVATAR_CANNOT_CHANGE_STR = [[Cannot change avatar while you're "ready".]]
-ERROR_NO_COMMAS_ALLOWED_STR = [[No Commas allowed!]]
+ERROR_NO_COMMAS_ALLOWED = [[No Commas allowed!]]
 ERROR_MINIMUM_ONE_PLAYER_STR = [[Need at least one player!]]
 ERROR_COULD_NOT_SET_THEME_STR = [[Error: Failed to set new theme.]]
 
 -- players aren't ready messages: Invent something funny! You can add as many lines as you'd like (indices go from 1 to ... ? ):
-PLAYERS_NOT_READY_LINES[1] = "Some heroes have not packed their lunchbags yet."
-PLAYERS_NOT_READY_LINES[2] = "Still waiting for the heroes to dress..."
-PLAYERS_NOT_READY_LINES[3] = "SOMEONE is still not ready!"
-PLAYERS_NOT_READY_LINES[4] = "Waiting for the heroes to draw their little avatar-thingies..."
-PLAYERS_NOT_READY_LINES[5] = "*Sigh*... nope. Someone's not ready yet."
-PLAYERS_NOT_READY_LINES[6] = "Heroes are taking their time..."
-PLAYERS_NOT_READY_LINES[7] = "A hero is still busy kissing his mum good-bye..."
+PLAYERS_NOT_READY_LINES[1] = [[Some heroes have not packed their lunchbags yet.]]
+PLAYERS_NOT_READY_LINES[2] = [[Still waiting for the heroes to dress...]]
+PLAYERS_NOT_READY_LINES[3] = [[SOMEONE is still not ready!]]
+PLAYERS_NOT_READY_LINES[4] = [[Waiting for the heroes to draw their little avatar-thingies...]]
+PLAYERS_NOT_READY_LINES[5] = [[*Sigh*... nope. Someone's not ready yet.]]
+PLAYERS_NOT_READY_LINES[6] = [[Heroes are taking their time...]]
+PLAYERS_NOT_READY_LINES[7] = [[A hero is still busy kissing his mum good-bye...]]
 
 -- these verbes are given as examples for the player's description:
-LOBBY_VERBS[1] = "has"
-LOBBY_VERBS[2] = "likes"
-LOBBY_VERBS[3] = "demands"
-LOBBY_VERBS[4] = "uses"
-LOBBY_VERBS[5] = "owns"
-LOBBY_VERBS[6] = "despises"
-LOBBY_VERBS[7] = "hates"
-LOBBY_VERBS[8] = "knows about"
-LOBBY_VERBS[9] = "dislikes"
-LOBBY_VERBS[10] = "likes to"
-LOBBY_VERBS[11] = "has been known to"
-LOBBY_VERBS[12] = "is"
-
+LOBBY_VERBS[1] = [[has]]
+LOBBY_VERBS[2] = [[likes]]
+LOBBY_VERBS[3] = [[demands]]
+LOBBY_VERBS[4] = [[uses]]
+LOBBY_VERBS[5] = [[owns]]
+LOBBY_VERBS[6] = [[despises]]
+LOBBY_VERBS[7] = [[hates]]
+LOBBY_VERBS[8] = [[knows about]]
+LOBBY_VERBS[9] = [[dislikes]]
+LOBBY_VERBS[10] = [[likes to]]
+LOBBY_VERBS[11] = [[has been known to]]
 
 -- in game:
 GAME_STARTING_STR = [[Game starting.]]
@@ -163,7 +160,6 @@ ERROR_MULTIPLE_ARTICLES_STR = [[Multiple articles found. Choose one.]]
 CHOOSE_ARTICLE_STR = [[Did you mean...]]
 
 
-
 -- Special characters. (remove the "--" at the beginning of the lines to make the lines work. Check Deutsch.txt for examples.
 --SPECIAL_CHARACTERS[228] = "ä"
 --SPECIAL_CHARACTERS[196] = "Ä"
@@ -174,49 +170,55 @@ CHOOSE_ARTICLE_STR = [[Did you mean...]]
 --SPECIAL_CHARACTERS[223] = "ß"
 
 
+
 -- this help text will be displayed on the main screen:
-HELP_MAIN = [[Choose "Server" to start a game.
+HELP_MAIN = [[
+Choose "Server" to start a game.
 You'll be the storywriter. Make sure to open/forward the port 8080 on your router if you're playing over the net! You can also change the port in "main.lua" in the game folder or .zip or .love.
 
 Choose "Client" to join a server.
-You need to know the server's IP to join, and you'll only be able to join while the server is in the lobby. As soon as the server has started the game, no more joining is possible.]]
+You need to know the server's IP to join, and you'll only be able to join while the server is in the lobby. As soon as the server has started the game, no more joining is possible.
+]]
 
 
 -- this is the help text displayed inside the Lobby:
-HELP_LOBBY = [[Wait for all players to join.
+HELP_LOBBY = [[
+Wait for all players to join.
 
 Server:
 Choose a first word. This word will be the one where the story beginns (or what the story is about).
-If you're unsure, you can try "Room", "Chest", "Monster", or "Dungeon". Or anything else, really. If there's no Wiki-Entry found for the word, it'll tell you so.
+If you're unsure, you can try "Room", "Chest", "Monster", or "Dungeon". Or anything else, really. (Try "Apple pie"! I dare you!) If there's no Wiki-Entry found for the word, it'll tell you so.
 
 Clients:
 Create your Avatar. Also, choose something that describes your character.
 If you don't like the words the wiki chooses for you, you can click "Change Description" as soon as you're done entering a description, to try again.
 Press tab to automatically fill in the Word chosen by the wiki while typing.
-When you're done, press "Ready".]]
+When you're done, press "Ready".
+]]
 
 
 -- this help text will be displayed once players have started a game:
-HELP_GAME = [[Server:
-If you are the server, you have to write the story which the heroes will play through. Write a piece of the story (you must use the current Wiki-Word), then press enter. Then the clients have time to reply with actions.
-In the meantime, you choose a new follow-up word which the Wiki has provided for you. Once the players are done answering (or the time is up), you continue the story. Again, you MUST use the word you picked in your story. You must also incorporate the actions that the heroes have done.
+HELP_GAME = [[
+Server:
+If you are the server, you are to write the awesome story which the heroes will play through. Write a piece of the story (you must use the current Wiki-Word), then press enter. Then the clients have time to reply with actions.
+In the meantime, you choose a new follow-up word which the Wiki has provided for you. Once the players are done answering, you continue the story. Again, you MUST use the word you picked in your story. You must also incorporate the actions that the heroes have done.
 You have three jokers. If the words given to you absolutely don't fit with your story, click on the "1","2" or "3" buttons to go back to a previous word and choose a new path from there on.
-You can also choose to give put words directly into the clients' inventories. To do so, click the word, then click on "Give to ...".
+You can also choose to give put words directly into the clients' inventories. To do so, click the word, then click on "Give to ...". I recommend mentioning this in your text, so people aren't confused. For example, type: "Luke Skywalker finds a lightsabre in the chest."
 
 Hero:
-If you're one of the heroes, wait for the server to write the story. Once the story is sent to you, you can reply by doing something.
+If you're one of the heroes, wait for the server to write the story. Once the story is sent to you, you reply by doing or saying something (or both! You're a multi-talent-hero!)
 You can and should use commands in your text. Available commands are:
 /do	TEXT		(Write some action your character does)
-/say TEXT		(Will be written as speech. Quotation marks are automatically added.)
-/use ID TEXT	(If there's something in your inventory, the number next to it is the ID. If the first object in your inventory is "1) key" then /use 1 door will produce: "Germanunkol uses key on door".)
+/say TEXT		(Will be written as speech. Quotation marks are automatically added. /say is the default if you don't use any command.)
+/use ID TEXT	(If there's something in your inventory, the number next to it is the ID. If the first object in your inventory is "1) key" then "/use 1 door" will produce: "Germanunkol uses key on door".)
 /skip			(skip your turn)
 For example, if the storyteller writes about a chest, you could type: "/do opens the chest. /say Let's see what's in here! /use 1 chest's lock".
 
-Chat: Click on chat area or "c" or "enter". Type text, then press "enter".
+Press Tab to automatically insert the current Wiki word while typing.
 
-Write story/action: Click on Story/Action area or press "a" or "s". Type text, then press "enter".
+I recommend always sticking to the same tense (ideally the tense in which the storyteller started the story).
+]]
 
-Tab: Press Tab to automatically insert the current Wiki word while typing.]]
 
 
 

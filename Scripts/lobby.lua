@@ -109,8 +109,14 @@ function lobby.chooseDescriptionWord( index )
 				descriptionInputBox = textBox.new( avatarPicX+AVATAR_PIXELS_X*AVATAR_PIXELS_WIDTH+15, 400 + 23, 6, fontInput, love.graphics.getWidth()/2-20 )
 				textBox.setColour( descriptionInputBox, colTextInput.r, colTextInput.g, colTextInput.b )
 			end
+			print("test")
+			if LOBBY_VERBS then
+				printTable (LOBBY_VERBS)
+			end
+			print(#LOBBY_VERBS)
 			local rand = math.random(#LOBBY_VERBS)
-			if LOBBY_VERBS[rand] then textBox.setContent( descriptionInputBox, plName .. " " .. LOBBY_VERBS[rand] .. " " )
+			if LOBBY_VERBS[rand] then
+				textBox.setContent( descriptionInputBox, plName .. " " .. LOBBY_VERBS[rand] .. " " )
 			else
 				textBox.setContent( descriptionInputBox, plName )
 			end
