@@ -1,15 +1,15 @@
-WIKI_URL = [[http://en.wikipedia.org]]
+WIKI_URL = [[http://pt.wikipedia.org]]
 
 WELCOME_STR = [[Bem-Vindo!]]
 
 ATTEMPT_WIKI_CONNECT_STR = [[Carregando. Tentando conectar-se com a wiki...]]
 STORYTELLER_STR = [[Narrador]]
-HEROES_STR = [[Heróis]]
+HEROES_STR = [[HerÃ³is]]
 ATTEMPT_CLIENT_CONNECT_STR = [[Tentando se conectar...]]
 CONNECTION_SUCCESS_STR = [[Conectado com o servidor.]]
 
-START_SERVER_BUTTON_STR = [[Iniciar áServidor]]
-START_CLIENT_BUTTON_STR = [[Iniciar ácliente]]
+START_SERVER_BUTTON_STR = [[Iniciar Servidor]]
+START_CLIENT_BUTTON_STR = [[Iniciar Cliente]]
 QUIT_BUTTON_STR = [[Sair]]
 CREDITS_BUTTON_STR = [[Creditos]]
 HELP_BUTTON_STR = [[Ajuda]]
@@ -25,48 +25,48 @@ ENTER_IP_STR = [[IP do servidor:]]
 
 
 -- menu error messages
-ERROR_INVALID_PLAYERNAME_STR = [[Apelido inválido!]]
-ERROR_INVALID_IP_STR = [[IP Inválido!]]
+ERROR_INVALID_PLAYERNAME_STR = [[Apelido invÃ¡lido!]]
+ERROR_INVALID_IP_STR = [[IP InvÃ¡lido!]]
 ERROR_ABORTED_STR = [[Abortado.]]
-ERROR_SERVER_FULL_STR = [[Servidor está cheio!]]
-ERROR_DUPLICATE_PLAYERNAME_STR = [[Apelido já existe!]]
-ERROR_GAME_ALREADY_STARTED_STR = [[Impossível: o jogo já começou!]]
+ERROR_SERVER_FULL_STR = [[Servidor estÃ¡ cheio!]]
+ERROR_DUPLICATE_PLAYERNAME_STR = [[Apelido jÃ¡ existe!]]
+ERROR_GAME_ALREADY_STARTED_STR = [[ImpossÃ­vel: o jogo jÃ¡ comeÃ§ou!]]
 
 -- lobby:
-OPTIONS_STR = [[Optições:]]
-A_STORY_ABOUT_STR = [[A estória de ]]
+OPTIONS_STR = [[OptiÃ§Ãµes:]]
+A_STORY_ABOUT_STR = [[A estÃ³ria de ]]
 NEW_PLAYER_CONNECTED_STR = [[Novo jogador!]]
 PLAYER_LEFT_STR = [[saiu do jogo.]]
-BEGIN_JOURNEY_BUTTON_STR = [[Começar jornada]]
+BEGIN_JOURNEY_BUTTON_STR = [[ComeÃ§ar jornada]]
 MODIFY_THEME_BUTTON_STR = [[Trocar tema]]
 
 CHOOSE_PATH_BUTTON_STR = [[Escolher caminho]]
 CHANGE_FIRST_WORD_BUTTON_STR = [[Escolha a primeira palavra]]
 DESCRIBE_CHARACTER_BUTTON_STR = [[Descreva a personagem]]
-CHANGE_DESCRIPTION_BUTTON_STR = [[Trocar descrição]]
+CHANGE_DESCRIPTION_BUTTON_STR = [[Trocar descriÃ§Ã£o]]
 READY_BUTTON_STR = [[Pronto]]
 
 CHOSEN_FIRST_WORD_STR = [[Iniciar conjunto de palavras.]]
 
 ENTER_DESCRIPTION_WORD_STR = [[Coloque uma palavra para descrever sua personagem:]]
-ENTER_FIRST_WORD_STR = [[Do que se tratará a estória ?]]
+ENTER_FIRST_WORD_STR = [[Do que se tratarÃ¡ a estÃ³ria ?]]
 
 USE_DESCRIPTION_WORD = [[Conte-nos algo sobre sua personagem. Use a palavra:]]
 
 -- lobby Error messages:
-ERROR_AVATAR_CANNOT_CHANGE_STR = [[Não dá para trocar seu avatar enquanto estiveres "Pronto".]]
-ERROR_NO_COMMAS_ALLOWED = [[Sem vírgulas permitidas!]]
+ERROR_AVATAR_CANNOT_CHANGE_STR = [[NÃ£o dÃ¡ para trocar seu avatar enquanto estiveres "Pronto".]]
+ERROR_NO_COMMAS_ALLOWED = [[Sem vÃ­rgulas permitidas!]]
 ERROR_MINIMUM_ONE_PLAYER_STR = [[Necessita ao menos UM jogador!]]
 ERROR_COULD_NOT_SET_THEME_STR = [[Erro: Falha em escolher seu novo tema.]]
 
 -- players aren't ready messages: Invent something funny! You can add as many lines as you'd like (indices go from 1 to ... ? ):
-PLAYERS_NOT_READY_LINES[1] = [[Algums heróis não fizeram suas marmitas ainda!]]
+PLAYERS_NOT_READY_LINES[1] = [[Algums herÃ³is nÃ£o fizeram suas marmitas ainda!]]
 PLAYERS_NOT_READY_LINES[2] = [[Ainda esperando esses maricas vestirem-se...]]
-PLAYERS_NOT_READY_LINES[3] = [[ALGUÉM ainda não está pronto!]]
-PLAYERS_NOT_READY_LINES[4] = [[Esperando esses heróis pararem de peidar na farofa e ficarem PRONTOS...]]
-PLAYERS_NOT_READY_LINES[5] = [[*Suspiro*... não. Alguém está enrolando.]]
-PLAYERS_NOT_READY_LINES[6] = [[Os heróis estão descançando...]]
-PLAYERS_NOT_READY_LINES[7] = [[Alguns heróis ainda estão dando os beijinhos nas mamães...]]
+PLAYERS_NOT_READY_LINES[3] = [[ALGUÃ‰M ainda nÃ£o estÃ¡ pronto!]]
+PLAYERS_NOT_READY_LINES[4] = [[Esperando esses herÃ³is pararem de peidar na farofa e ficarem PRONTOS...]]
+PLAYERS_NOT_READY_LINES[5] = [[*Suspiro*... nÃ£o. AlguÃ©m estÃ¡ enrolando.]]
+PLAYERS_NOT_READY_LINES[6] = [[Os herÃ³is estÃ£o descanÃ§ando...]]
+PLAYERS_NOT_READY_LINES[7] = [[Alguns herÃ³is ainda estÃ£o dando os beijinhos nas mamÃ£es...]]
 
 -- these verbes are given as examples for the player's description:
 LOBBY_VERBS[1] = [[tem]]
@@ -77,59 +77,59 @@ LOBBY_VERBS[5] = [[tem]]
 LOBBY_VERBS[6] = [[despreza]]
 LOBBY_VERBS[7] = [[odeia]]
 LOBBY_VERBS[8] = [[conhece]]
-LOBBY_VERBS[9] = [[não gosta]]
+LOBBY_VERBS[9] = [[nÃ£o gosta]]
 LOBBY_VERBS[10] = [[gosta de]]
 LOBBY_VERBS[11] = [[tem sido conhecido a]]
 
 -- in game:
-GAME_STARTING_STR = [[jogo começando.]]
-WAITING_FOR_SERVER_BEGINNING_STR = [[Esperando narrador começar a estória...]]
+GAME_STARTING_STR = [[jogo comeÃ§ando.]]
+WAITING_FOR_SERVER_BEGINNING_STR = [[Esperando narrador comeÃ§ar a estÃ³ria...]]
 
 RECEIVED_STR = [[recebeu]]
 USING_WORD1_STR = [[usa]]		-- result: "CLIENTNAME uses ITEM on ARGUMENT"
 USING_WORD2_STR = [[no]]
 
 WAITING_FOR_STR = [[Esperando pelo]]
-YOUR_TURN_STR = [[Sua vez! O que você gostaria de fazer?]]
+YOUR_TURN_STR = [[Sua vez! O que vocÃª gostaria de fazer?]]
 
 CHOOSE_A_WORD_STR = [[Escolha uma palavra...]]
-CHOOSE_WHAT_TO_DO_WITH_WORD_STR = [[O que você gostaria de fazer?]]
-USE_WORD_FOR_STORY_STR =  [[Use para a estória]]
-GIVE_WORD_TO_PLAYER_STR = [[Dê para]]
+CHOOSE_WHAT_TO_DO_WITH_WORD_STR = [[O que vocÃª gostaria de fazer?]]
+USE_WORD_FOR_STORY_STR =  [[Use para a estÃ³ria]]
+GIVE_WORD_TO_PLAYER_STR = [[DÃª para]]
 CHOSE_WORD_STR = [[Escolha:]]
 WORD_GIVEN_TO_STR = [[A palavra vai ser dada para: ]]
-CLIENT_STILL_CHOOSING_WORD_STR = [[Esperando para o jogador escolher a próxima palavra...]]
-CLIENT_GETS_TO_CHOOSE_WORD_STR = [[Próxima palavra vai ser escolhida por:]]
+CLIENT_STILL_CHOOSING_WORD_STR = [[Esperando para o jogador escolher a prÃ³xima palavra...]]
+CLIENT_GETS_TO_CHOOSE_WORD_STR = [[PrÃ³xima palavra vai ser escolhida por:]]
 
 CHOSE_STR = [[Escolhe]]		-- result: "(PLAYERNAME chooses WORD for storyteller)"
 FOR_STORYTELLER_STR = [[para o narrador.]]
 
 SERVER_USED_JOKER_STR = [[(Servidor usou o coringa)]]
 
-START_STORY_USE_WORD_STR1 = [[Começe a estória. Use]]  -- result: "Start the story. Use (the current wiki word) in your text."
+START_STORY_USE_WORD_STR1 = [[ComeÃ§e a estÃ³ria. Use]]  -- result: "Start the story. Use (the current wiki word) in your text."
 START_STORY_USE_WORD_STR2 = [[no seu.]]
 
-CONTINUE_STORY_USE_WORD_STR1 = [[Continue a estória. Use]]  -- result: "Continue the story. Use (the current wiki word) in your text."
+CONTINUE_STORY_USE_WORD_STR1 = [[Continue a estÃ³ria. Use]]  -- result: "Continue the story. Use (the current wiki word) in your text."
 CONTINUE_STORY_USE_WORD_STR2 = [[no seu texto.]]
 
-MUST_USE_WORD_STR1 = [[Você deve usar]]		-- result: "You must use (the current wiki word) in your text!"
+MUST_USE_WORD_STR1 = [[VocÃª deve usar]]		-- result: "You must use (the current wiki word) in your text!"
 MUST_USE_WORD_STR2 = [[no seu texto!]]
 
-WAITING_FOR_HEROES_STR = [[Esperando os heróis responderem...]]
-HOW_SHOULD_STORY_CONTINUE_STR = [[Como deveria continuar a estória?]]
+WAITING_FOR_HEROES_STR = [[Esperando os herÃ³is responderem...]]
+HOW_SHOULD_STORY_CONTINUE_STR = [[Como deveria continuar a estÃ³ria?]]
 
 LOADING_STR = [[Carregando...]]
 
-INVENTORY_STR = [[Inventário]]
+INVENTORY_STR = [[InventÃ¡rio]]
 
 -- in game errors:
-ERROR_AT_LEAST_4_WORDS_FOR_JOKER_STR = [[Precisa jogar até 4 palavras!]]
-ERROR_CLIENT_NOT_FOUND_STR = [[Cliente não encontrado. Impossível dar objeto ao cliente.]]
+ERROR_AT_LEAST_4_WORDS_FOR_JOKER_STR = [[Precisa jogar atÃ© 4 palavras!]]
+ERROR_CLIENT_NOT_FOUND_STR = [[Cliente nÃ£o encontrado. ImpossÃ­vel dar objeto ao cliente.]]
 ERROR_NO_EMPTY_TEXT_STR = [[Escreva algo antes!]]
-ERROR_DOES_NOT_EXIST_STR = [[Esse objeto não existe no seu inventário!]]
-ERROR_CHOOSE_NEXT_WORD_BEFORE_CONTINUING_STR = [[Escolha a próxima palavra primeiro!]]
-ERROR_NOT_YOUR_TURN_STR = [[Calme-se, não é a sua vez!]]
-ERROR_NOT_YOUR_TURN_TO_CHOOSE_WORD_STR = [[Não é a sua vez de escolher a palavra!]]		-- shown when a server clicks on a joker button while a client is choosing a word for him/her.
+ERROR_DOES_NOT_EXIST_STR = [[Esse objeto nÃ£o existe no seu inventÃ¡rio!]]
+ERROR_CHOOSE_NEXT_WORD_BEFORE_CONTINUING_STR = [[Escolha a prÃ³xima palavra primeiro!]]
+ERROR_NOT_YOUR_TURN_STR = [[Calme-se, nÃ£o Ã© a sua vez!]]
+ERROR_NOT_YOUR_TURN_TO_CHOOSE_WORD_STR = [[NÃ£o Ã© a sua vez de escolher a palavra!]]		-- shown when a server clicks on a joker button while a client is choosing a word for him/her.
 ERROR_NO_LINKS_FOUND_Str = [[Nenhum link encontrado. Use a pagina principal da Wiki.]]
 
 -- exporter:
@@ -143,33 +143,33 @@ LOOKING_UP_WORD_STR = [[Procurando palavra...]]
 
 -- wiki errors:
 ERROR_WIKI_CONNECTION_STR = [[Erro conectando a wiki.]]
-ERROR_WIKI_CONNECTION_LONG_STR = [[Não foi possível conectar-se com a wiki. Sua internet está ligada ?]]
-ERROR_NO_WIKI_ARTICLE_STR = [[Sem artigo na wiki. Tente outro artigo ou conecte-se à internet.]]
-ERROR_INVALID_CHARACTER_STR =  [[Apenas números, espaços e letras permitidas!]]
+ERROR_WIKI_CONNECTION_LONG_STR = [[NÃ£o foi possÃ­vel conectar-se com a wiki. Sua internet estÃ¡ ligada ?]]
+ERROR_NO_WIKI_ARTICLE_STR = [[Sem artigo na wiki. Tente outro artigo ou conecte-se Ã  internet.]]
+ERROR_INVALID_CHARACTER_STR =  [[Apenas nÃºmeros, espaÃ§os e letras permitidas!]]
 ERROR_MULTIPLE_ARTICLES_STR = [[Muitos artigos encontrados, escolha um.]]
-CHOOSE_ARTICLE_STR = [[Você quis dizer...]]
+CHOOSE_ARTICLE_STR = [[VocÃª quis dizer...]]
 
 
 -- Special characters. (remove the "--" at the beginning of the lines to make the lines work. Check Deutsch.txt for examples.
---SPECIAL_CHARACTERS[228] = "ä"
---SPECIAL_CHARACTERS[196] = "Ä"
---SPECIAL_CHARACTERS[246] = "ö"
---SPECIAL_CHARACTERS[214] = "Ö"
---SPECIAL_CHARACTERS[252] = "ü"
---SPECIAL_CHARACTERS[220] = "Ü"
---SPECIAL_CHARACTERS[223] = "ß"-- 
-SPECIAL_CHARACTERS[255] = "ç"
-SPECIAL_CHARACTERS[253] = "ã"
-SPECIAL_CHARACTERS[254] = "Ã"
-SPECIAL_CHARACTERS[256] = "ó"
+--SPECIAL_CHARACTERS[228] = "Ã¤"
+--SPECIAL_CHARACTERS[196] = "Ã„"
+--SPECIAL_CHARACTERS[246] = "Ã¶"
+--SPECIAL_CHARACTERS[214] = "Ã–"
+--SPECIAL_CHARACTERS[252] = "Ã¼"
+--SPECIAL_CHARACTERS[220] = "Ãœ"
+--SPECIAL_CHARACTERS[223] = "ÃŸ"-- 
+SPECIAL_CHARACTERS[255] = "Ã§"
+SPECIAL_CHARACTERS[253] = "Ã£"
+SPECIAL_CHARACTERS[254] = "Ãƒ"
+SPECIAL_CHARACTERS[256] = "Ã³"
 
 
 -- this help text will be displayed on the main screen:
 HELP_MAIN = [[
-Clique em "Servidor" para começar .
-Você será o escritor. Tenha certeza da porta 8080 esteja aberta se estiveres jogando online! Você também pode abrir a porta em "main.lua" na pasta do jogo, ou zip ou .love.
+Clique em "Servidor" para comeÃ§ar.
+VocÃª serÃ¡ o escritor. Tenha certeza da porta 8080 esteja aberta se estiveres jogando online! VocÃª tambÃ©m pode abrir a porta em "main.lua" na pasta do jogo, ou zip ou .love.
 
- Escolha "Cliente" para entrar num servidor.Você vai precisar do IP do servidor para entrar e você só poderá jogar em servidores no lobby. Assim que o servidor começar o jogo será impossível entrar.
+ Escolha "Cliente" para entrar num servidor.VocÃª vai precisar do IP do servidor para entrar e vocÃª sÃ³ poderÃ¡ jogar em servidores no lobby. Assim que o servidor comeÃ§ar o jogo serÃ¡ impossÃ­vel entrar.
 ]]
 
 
@@ -178,12 +178,12 @@ HELP_LOBBY = [[
 Espere todos os jogadores entrar.
 
  Servidor:
- Escolha a primeira palavra. Essa palavra será a que começará a estória (ou o tema da mesma).
-Se não tens certeza, tente "Sala", "Armário", "Monstro", ou "Caverna". Ou qualquer outra coisa, mesmo. (Tente "torta de maçã"! Eu te desafio!) se não tiver nenhuma entrada na Wiki, ele vai te avisar.
+ Escolha a primeira palavra. Essa palavra serÃ¡ a que comeÃ§arÃ¡ a estÃ³ria (ou o tema da mesma).
+Se nÃ£o tens certeza, tente "Sala", "ArmÃ¡rio", "Monstro", ou "Caverna". Ou qualquer outra coisa, mesmo. (Tente "torta de maÃ§Ã£"! Eu te desafio!) se nÃ£o tiver nenhuma entrada na Wiki, ele vai te avisar.
 
  Clientes:
-Crie o seu avatar. Também, escolha algo que descreva sua personagem. 
-Se não gostares das palavras escolhidas pela a Wiki, podes clicar em "Trocar descrição" assim que estiveres terminado para tentar de novo. 
+Crie o seu avatar. TambÃ©m, escolha algo que descreva sua personagem. 
+Se nÃ£o gostares das palavras escolhidas pela a Wiki, podes clicar em "Trocar descriÃ§Ã£o" assim que estiveres terminado para tentar de novo. 
 Aperte tab para automaticamente preencher na Palavra escolhida pela Wiki enquanto estiveres digitando.
  Quando estiveres pronto, pressione "Pronto".
 ]]
@@ -191,12 +191,12 @@ Aperte tab para automaticamente preencher na Palavra escolhida pela Wiki enquant
 
 -- this help text will be displayed once players have started a game:
 HELP_GAME = [[
-Servidor: Se fores o servidor, você tem que escrever a maravilhosa estória a qual os heróis irão passar. Escreva um pedaço da estória (Você precisa usar a atual Palavra da Wiki), então aperte enter. Assim os clientes tem tempo para responder com ações. Enquanto isso, você escolhe uma nova palavra seguidora, a qual a Wiki te providenciou. Assim que os jogadores responderem, você continua a estória. De novo, você DEVE usar a palavra que escolheu na sua estória. Você deve também incorporar as ações que os heróis fizeram. Você tem 3 coringas. Se as palavras dadas a você não encaixarem na estória, clique nos botões "1","2" ou "3" para voltar a uma palavra anterior e escolher um novo caminho. Você também pode escolher colocar palavras diretamente nos inventários dos clientes. Para fazer isto, clique na palavra, então clique em "dar para ...". Eu recomendo mencionar isso no seu texto, assim, as pessoas não ficam confusas. Por exemplo, digite: "Luke Skywalker encontra uma sabre de luz no seu armário."Herói:Se você for um dos heróis, espere pelo servidor escrever uma estória. Assim que estória for enviada para você, você responde fazendo ou falando algo (ou ambos! Você é um heróis cheio de talento!) Você pode e deve usar comandos no seu texto.Os comandos são: 
-/do	TEXTO		(Escreva uma ação para a sua personagem) 
-/say TEXTO		(Será escrito um discurso. Aspas são automaticamentes adicionadas. /say será o padrão se não usares nenhum comando.)
-/use ID TEXTO	(Se tiver algo em seu inventário, o número próximo é o ID. Se o primeiro objeto for "1 key" então escreva "/use 1 door" produzirá: "Germanunkol usou a chave na porta".)
+Servidor: Se fores o servidor, vocÃª tem que escrever a maravilhosa estÃ³ria a qual os herÃ³is irÃ£o passar. Escreva um pedaÃ§o da estÃ³ria (VocÃª precisa usar a atual Palavra da Wiki), entÃ£o aperte enter. Assim os clientes tem tempo para responder com aÃ§Ãµes. Enquanto isso, vocÃª escolhe uma nova palavra seguidora, a qual a Wiki te providenciou. Assim que os jogadores responderem, vocÃª continua a estÃ³ria. De novo, vocÃª DEVE usar a palavra que escolheu na sua estÃ³ria. VocÃª deve tambÃ©m incorporar as aÃ§Ãµes que os herÃ³is fizeram. VocÃª tem 3 coringas. Se as palavras dadas a vocÃª nÃ£o encaixarem na estÃ³ria, clique nos botÃµes "1","2" ou "3" para voltar a uma palavra anterior e escolher um novo caminho. VocÃª tambÃ©m pode escolher colocar palavras diretamente nos inventÃ¡rios dos clientes. Para fazer isto, clique na palavra, entÃ£o clique em "dar para ...". Eu recomendo mencionar isso no seu texto, assim, as pessoas nÃ£o ficam confusas. Por exemplo, digite: "Luke Skywalker encontra uma sabre de luz no seu armÃ¡rio."HerÃ³i:Se vocÃª for um dos herÃ³is, espere pelo servidor escrever uma estÃ³ria. Assim que estÃ³ria for enviada para vocÃª, vocÃª responde fazendo ou falando algo (ou ambos! VocÃª Ã© um herÃ³is cheio de talento!) VocÃª pode e deve usar comandos no seu texto.Os comandos sÃ£o: 
+/do	TEXTO		(Escreva uma aÃ§Ã£o para a sua personagem) 
+/say TEXTO		(SerÃ¡ escrito um discurso. Aspas sÃ£o automaticamentes adicionadas. /say serÃ¡ o padrÃ£o se nÃ£o usares nenhum comando.)
+/use ID TEXTO	(Se tiver algo em seu inventÃ¡rio, o nÃºmero prÃ³ximo Ã© o ID. Se o primeiro objeto for "1 key" entÃ£o escreva "/use 1 door" produzirÃ¡: "Germanunkol usou a chave na porta".)
 /skip			(Pula seu turno)
- Exemplo, o narrador diz que você abriu o armário, você poderá digitar: "/do abrir o armário. /say Vamos ver o tque temos aqui! /use 1 chest's lock".
+ Exemplo, o narrador diz que vocÃª abriu o armÃ¡rio, vocÃª poderÃ¡ digitar: "/do abrir o armÃ¡rio. /say Vamos ver o tque temos aqui! /use 1 chest's lock".
  
 Pressione Tab para automaticamente inserir a palavra da Wiki enquanto digita. 
 Recomendo sempre manter o mesmo rumo (idealmente o rumo escolhido pelo narrador ).

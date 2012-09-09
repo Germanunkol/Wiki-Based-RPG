@@ -11,11 +11,7 @@ function drawButton( theButton )
 	love.graphics.setColor( colButton.r, colButton.g, colButton.b, 255)
 	love.graphics.rectangle( "fill", theButton.x + 3, theButton.y + 3, theButton.w-6, theButton.h-6 )
 	love.graphics.setColor( colButtonText.r, colButtonText.g, colButtonText.b , 255)
-	--print("label: " .. theButton.label)
-	theButton.label = [[Iniciar áServidor]]
-	--for char in string.gfind(theButton.label, "([%z\1-\127\194-\244][\128-\191]*)") do		-- make sure button title isn't larger than button
-	--	print(char)
-	--end
+
 	love.graphics.print( theButton.label, theButton.x + theButton.w/2 - buttonFont:getWidth(theButton.label)/2, theButton.y + (theButton.h - buttonFont:getHeight())/2)
 end
 

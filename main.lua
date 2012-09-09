@@ -101,6 +101,9 @@ Licenced under the "Do What The Fuck You Want To Public License" (See Readme for
 
 Images by R. Pfeiffer and M. Pfeiffer
 
+Special thanks to all Translators!
+	TyXo (Brazilian Portuguese)
+
 --------------------------------------
 Sound Effect by Luke Chalupowski: http://www.freesound.org/people/lukechalaudio/
 Powered by the unquestionably awesome Löve 2D Engine: https://love2d.org/
