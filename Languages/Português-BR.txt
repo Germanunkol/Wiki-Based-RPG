@@ -9,7 +9,7 @@ ATTEMPT_CLIENT_CONNECT_STR = [[Tentando se conectar...]]
 CONNECTION_SUCCESS_STR = [[Conectado com o servidor.]]
 
 START_SERVER_BUTTON_STR = [[Iniciar Servidor]]
-START_CLIENT_BUTTON_STR = [[Iniciar Cliente]]
+START_CLIENT_BUTTON_STR = [[Iniciar cliente]]
 QUIT_BUTTON_STR = [[Sair]]
 CREDITS_BUTTON_STR = [[Creditos]]
 HELP_BUTTON_STR = [[Ajuda]]
@@ -33,7 +33,7 @@ ERROR_DUPLICATE_PLAYERNAME_STR = [[Apelido já existe!]]
 ERROR_GAME_ALREADY_STARTED_STR = [[Impossível: o jogo já começou!]]
 
 -- lobby:
-OPTIONS_STR = [[Optições:]]
+OPTIONS_STR = [[Opções:]]
 A_STORY_ABOUT_STR = [[A estória de ]]
 NEW_PLAYER_CONNECTED_STR = [[Novo jogador!]]
 PLAYER_LEFT_STR = [[saiu do jogo.]]
@@ -72,7 +72,7 @@ PLAYERS_NOT_READY_LINES[7] = [[Alguns heróis ainda estão dando os beijinhos na
 LOBBY_VERBS[1] = [[tem]]
 LOBBY_VERBS[2] = [[gosta]]
 LOBBY_VERBS[3] = [[demanda]]
-LOBBY_VERBS[4] = [[usa]]
+LOBBY_VERBS[4] = [[]]
 LOBBY_VERBS[5] = [[tem]]
 LOBBY_VERBS[6] = [[despreza]]
 LOBBY_VERBS[7] = [[odeia]]
@@ -157,16 +157,49 @@ CHOOSE_ARTICLE_STR = [[Você quis dizer...]]
 --SPECIAL_CHARACTERS[214] = "Ö"
 --SPECIAL_CHARACTERS[252] = "ü"
 --SPECIAL_CHARACTERS[220] = "Ü"
---SPECIAL_CHARACTERS[223] = "ß"-- 
-SPECIAL_CHARACTERS[255] = "ç"
-SPECIAL_CHARACTERS[253] = "ã"
-SPECIAL_CHARACTERS[254] = "Ã"
-SPECIAL_CHARACTERS[256] = "ó"
+--SPECIAL_CHARACTERS[223] = "ß"
+SPECIAL_CHARACTERS[231] = "Ç"
+SPECIAL_CHARACTERS[199] = "ç"
+SPECIAL_CHARACTERS[192] = "À"
+SPECIAL_CHARACTERS[224] = "à"
+SPECIAL_CHARACTERS[200] = "È"
+SPECIAL_CHARACTERS[232] = "è"
+SPECIAL_CHARACTERS[204] = "Ì"
+SPECIAL_CHARACTERS[236] = "ì"
+SPECIAL_CHARACTERS[210] = "Ò"
+SPECIAL_CHARACTERS[242] = "ò" 
+SPECIAL_CHARACTERS[217] = "Ù"
+SPECIAL_CHARACTERS[249] = "ù"
+SPECIAL_CHARACTERS[193] = "Á"
+SPECIAL_CHARACTERS[225] = "á"
+SPECIAL_CHARACTERS[201] = "É"
+SPECIAL_CHARACTERS[233] = "é"
+SPECIAL_CHARACTERS[205] = "Í"
+SPECIAL_CHARACTERS[237] = "í"
+SPECIAL_CHARACTERS[211] = "Ó"
+SPECIAL_CHARACTERS[243] = "ó"
+SPECIAL_CHARACTERS[218] = "Ú"
+SPECIAL_CHARACTERS[250] = "ú"
+SPECIAL_CHARACTERS[194] = "Â"
+SPECIAL_CHARACTERS[202] = "Ê"
+SPECIAL_CHARACTERS[206] = "Î"
+SPECIAL_CHARACTERS[212] = "Ô"
+SPECIAL_CHARACTERS[219] = "Û"
+SPECIAL_CHARACTERS[226] = "â"
+SPECIAL_CHARACTERS[234] = "ê"
+SPECIAL_CHARACTERS[238] = "î"
+SPECIAL_CHARACTERS[244] = "ô"
+SPECIAL_CHARACTERS[251] = "û" 
+SPECIAL_CHARACTERS[195] = "Ã"
+SPECIAL_CHARACTERS[209] = "Ñ"
+SPECIAL_CHARACTERS[213] = "Õ" 
+SPECIAL_CHARACTERS [227] = "ã"
+SPECIAL_CHARACTERS[241] = "ñ"
+SPECIAL_CHARACTERS[245] = "õ" 
 
-
--- this help text will be displayed on the main screen:
+--  this help text will be displayed on the main screen:
 HELP_MAIN = [[
-Clique em "Servidor" para começar.
+Clique em "Servidor" para começar .
 Você será o escritor. Tenha certeza da porta 8080 esteja aberta se estiveres jogando online! Você também pode abrir a porta em "main.lua" na pasta do jogo, ou zip ou .love.
 
  Escolha "Cliente" para entrar num servidor.Você vai precisar do IP do servidor para entrar e você só poderá jogar em servidores no lobby. Assim que o servidor começar o jogo será impossível entrar.

@@ -290,7 +290,6 @@ function languageChosen( lang )
 			print("Error in '" .. lang .. ".txt': " .. tostring(chunk))
 		end
 	end
-	print(START_SERVER_BUTTON_STR)
 	statusMsg.new( WELCOME_STR )
 end
 

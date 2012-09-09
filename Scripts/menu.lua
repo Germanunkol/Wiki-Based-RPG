@@ -147,10 +147,6 @@ function menu.initMainMenu()
 	imgScale = 1
 	headerPos = 335
 	
-	print("START_SERVER_BUTTON_STR", START_SERVER_BUTTON_STR)
-	mainFont:getWidth("Iniciar �Servidor")
-	--mainFont:getWidth(START_SERVER_BUTTON_STR)
-	
 	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 420, buttonWidth, buttonHeight, START_SERVER_BUTTON_STR, drawButton, highlightButton, serverStart)
 	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 420 + buttonHeight + 10, buttonWidth, buttonHeight, START_CLIENT_BUTTON_STR, drawButton, highlightButton, clientInitPlayernameInput )
 	buttons.add( love.graphics.getWidth()/2 - buttonWidth/2, 420 + buttonHeight*2 + 20, buttonWidth, buttonHeight, QUIT_BUTTON_STR, drawButton, highlightButton, exitProgramm )
