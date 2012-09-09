@@ -241,10 +241,10 @@ function localization.init( path )
 		s,e = file:find(".*txt")
 		if s and e then
 			if e-s+1 == #file then
-				print("Found Language: " .. safeSub(file, 1, #file-4))
-				if love.filesystem.exists("Images/Flags/" .. safeSub(file, 1, #file-4) .. ".png" ) then
-					print("\tFound flag: " .. "Images/Flags/" .. safeSub(file, 1, #file-4) .. ".png" )
-					availableLanguages[safeSub(file, 1, #file-4)] = love.graphics.newImage( "Images/Flags/" .. safeSub(file, 1, #file-4) .. ".png" )
+				print("Found Language: " .. safeSub(file, 1, strLen(file)-4))
+				if love.filesystem.exists("Images/Flags/" .. safeSub(file, 1, strLen(file)-4) .. ".png" ) then
+					print("\tFound flag: " .. "Images/Flags/" .. safeSub(file, 1, strLen(file)-4) .. ".png" )
+					availableLanguages[safeSub(file, 1, strLen(file)-4)] = love.graphics.newImage( "Images/Flags/" .. safeSub(file, 1, strLen(file)-4) .. ".png" )
 				else
 					print("\tNo flag found for Language")
 				end
@@ -281,7 +281,7 @@ function languageChosen( lang )
 	SPECIAL_CHARACTERS = {}
 
 	local ok, chunk
-	ok, chunk = pcall( love.filesystem.load, "Languages/" .. lang .. ".txt" ) -- load the chunk safely
+	ok, chunk = pcall( love.filesystem.load, "Languages/" .. lang .. ".lua" ) -- load the chunk safely
 	if not ok then
 		print("Error loading '" .. lang .. ".txt': " .. tostring(chunk))
 	else
@@ -290,7 +290,7 @@ function languageChosen( lang )
 			print("Error in '" .. lang .. ".txt': " .. tostring(chunk))
 		end
 	end
-	
+	print(START_SERVER_BUTTON_STR)
 	statusMsg.new( WELCOME_STR )
 end
 

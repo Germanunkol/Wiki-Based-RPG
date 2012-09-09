@@ -202,7 +202,6 @@ function love.draw()
 		love.graphics.setColor( colText.r, colText.g, colText.b ,255 )
 		love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), love.graphics.getWidth()-60, 5)
 	end
-	
 end
 
 local inputRead

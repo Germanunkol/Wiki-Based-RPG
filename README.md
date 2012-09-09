@@ -146,7 +146,7 @@ Also start the game with the --debug option so that there is more output.
 
 **If you translate the game or add another wiki or create a new cool theme, make sure to send them to me via github or indieDB! I'd be very happy to add them to the next version!**
 
-###Change Wikipedia###
+###Change Wiki###
 To get you started, look at the first few lines in wikiClient.lua. Modyfing these lines will allow you to play the game with another Wiki. For example, you could play with the Minecraft wiki or a Star Trek wiki. Or you could try using another language's Wikipedia or try http://simple.wikipedia.org  
 The lines starting with "local WIKI\_" are the ones to modify. Note that they are given in Lua pattern style, see a Lua string.find tutorial (or similar) for details. There are plenty on the web. The strings given here are all part of the page source. In firefox, you can navigate to a page and then press CTRL+U to get the page's source. Then look for constant parts in the source. For example, on Wikipedia, it seems all words that have multiple meanings will lead to a "disambiguation" site. On that site, there's always (accross all languages that I checked) a "disambig.svg" or similar.  
 That's how the line:  
@@ -159,12 +159,12 @@ Note:
 
 - To get the language to be shown at the beginning of your game, simply create an image called [YourLanguage].png in /Images/Flags (Must be named exactly the same as the language, except for the file ending) which shows the flag of country you're translating for. The image should be about 50 px by 33 px. Now, when you start the game, it automatically loads your language.
 - Many languages have special characters. To get them to work, you need a l&ouml;ve version greater than 0.8.0 (otherwise they will not be recognized by the game). See "Run from source" on how to get that version (at the time of this writing, 0.8.0 is the latest stable release, so you'd need to compile it from source. Which is pretty easy, though).
-- To make sure the game recognizes the special characters, inside [YourLanguage].txt, you need to add them into the SPECIAL_CHARACTERS list. To do that: Run the game using the --debug option from the consol e. Example:  
-
+- To make sure the game recognizes the special characters, inside [YourLanguage].txt, you need to add them into the SPECIAL\_CHARACTERS list. To do that: Run the game using the --debug option from the consol e. Example:  
 	- Linux: /path/to/love /path/to/game/folder --debug
 	- Windows: \path\to\love.exe \path\to\game\folder --console --debug  
-Then simply press the keys and you'll see the unicode representations of them in the console. Open the [YourLanguage].txt and add the line: SPECIAL_CHARACTERS[UNICODE] = "CHARACTER", where CHARACTER is the character you want to be able to use and UNICODE is the number representing. Again, for examples, see Deutsch.txt.
+Then simply press the keys and you'll see the unicode representations of them in the console. Open the [YourLanguage].txt and add the line: SPECIAL\_CHARACTERS[UNICODE] = "CHARACTER", where CHARACTER is the character you want to be able to use and UNICODE is the number representing. Again, for examples, see Deutsch.txt.
 - Make sure to change the WIKI_URL as well. If you leave it as en.wikipedia.org, your game will work in your new language, but still use the same english wiki version.
+- **Important:** Files must be saved as UTF-8. Most standard text editors can do that, just choose the right encoding when saving.
 	
 ###Make Your Theme###
 Wiki-Based-RPG is now more colourful! Yay!  
