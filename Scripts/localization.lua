@@ -232,25 +232,147 @@ local localization = {}
 
 local availableLanguages = {}
 
+function copyFile(path, filename)
+	if love.filesystem.exists(path .. filename) then
+		love.filesystem.mkdir("Languages")
+		
+		content = love.filesystem.read( path ..  filename )
+		love.filesystem.write( "Languages/" .. filename, content)
+	end
+end
 
--- Load the folder "path" and search for translation files in there. for each file found, check if there's a flag file in /Images/Flags.
+-- Load the folder and search for translation files in there. For each file found, check if there's a flag file.
 -- If so, save the language and flag into the availableLanguages table.
-function localization.init( path )		
-	files = love.filesystem.enumerate(path)
+function localization.init( )
+	
+	print("Looking for available languages:")
+	if love.filesystem.exists("Languages/Languages.txt") then
+		for lang in love.filesystem.lines( "Languages/Languages.txt" ) do
+			path = "Languages/" .. lang
+			if love.filesystem.exists( path .. ".txt" ) then
+				print("\tFound Language:" , lang)
+				if love.filesystem.exists( path .. ".png" ) then
+					print("\t\tFound flag for " .. lang)
+					
+					availableLanguages[path] = love.graphics.newImage( path .. ".png" )
+				else
+					print("\t\t-> could not find flag for " .. lang .. "!")
+				end
+			end
+		end
+	else
+		print("\tFallback:")
+		if love.filesystem.exists("DefaultLanguages/Languages.txt") then
+			for lang in love.filesystem.lines( "DefaultLanguages/Languages.txt" ) do
+				path = "DefaultLanguages/" .. lang
+				if love.filesystem.exists( path .. ".txt" ) then
+					print("\tFound Language:" , lang .. " (fallback)")
+					if love.filesystem.exists( path .. ".png" ) then
+						print("\t\tFound flag for " .. lang)
+					
+						availableLanguages[path] = love.graphics.newImage( path .. ".png" )
+						copyFile( "DefaultLanguages/", lang .. ".txt")
+						copyFile( "DefaultLanguages/", lang .. ".png")
+					else
+						print("\t\t-> could not find flag for " .. lang .. "!")
+					end
+				end
+			end
+			copyFile("DefaultLanguages/", "Languages.txt")
+		else
+			error("\n\n !! No languages found! Aborting... Maybe reinstall the game?")
+			love.event.quit()
+		end
+	end
+
+
+
+	--[[
+	local foundLanguage = false
+	dir = "/home/micha/.local/share/love/WikiBasedRPG"
+	print("a", dir .. "/" , love.filesystem.mkdir(dir))
+	print("a", dir .. "/" , love.filesystem.isDirectory(love.filesystem.getSaveDirectory() ))
+	print("a", dir .. "/" , love.filesystem.exists(love.filesystem.getSaveDirectory() ))
+	files = love.filesystem.enumerate( dir )
 	for k, file in pairs(files) do
+		print(file)
 		s,e = file:find(".*txt")
 		if s and e then
 			if e-s+1 == #file then
 				print("Found Language: " .. safeSub(file, 1, strLen(file)-4))
-				if love.filesystem.exists("Images/Flags/" .. safeSub(file, 1, strLen(file)-4) .. ".png" ) then
-					print("\tFound flag: " .. "Images/Flags/" .. safeSub(file, 1, strLen(file)-4) .. ".png" )
-					availableLanguages[safeSub(file, 1, strLen(file)-4)] = love.graphics.newImage( "Images/Flags/" .. safeSub(file, 1, strLen(file)-4) .. ".png" )
+				if love.filesystem.exists( safeSub(file, 1, strLen(file)-4) .. ".png" ) then
+					print("\tFound flag: " .. safeSub(file, 1, strLen(file)-4) .. ".png" )
+					availableLanguages[safeSub(file, 1, strLen(file)-4)] = love.graphics.newImage( safeSub(file, 1, strLen(file)-4) .. ".png" )
+					
+					foundLanguage = true
 				else
 					print("\tNo flag found for Language")
 				end
 			end
 		end
 	end
+	
+	print("b")
+	if not foundLanguage then
+		files = love.filesystem.enumerate( fallbackPath )
+		for k, file in pairs(files) do
+			s,e = file:find(".*txt")
+			if s and e then
+				if e-s+1 == #file then
+					print("Found Language (fallback): " .. fallbackPath .. safeSub(file, 1, strLen(file)-4))
+					if love.filesystem.exists( fallbackPath .. safeSub(file, 1, strLen(file)-4) .. ".png" ) then
+						print("\tFound flag (fallback): " .. fallbackPath .. safeSub(file, 1, strLen(file)-4) .. ".png" )
+						availableLanguages[safeSub(file, 1, strLen(file)-4)] = love.graphics.newImage(  fallbackPath .. safeSub(file, 1, strLen(file)-4) .. ".png" )
+					
+						foundLanguage = true
+					
+						if not love.filesystem.exists( love.filesystem.getSaveDirectory( ) .. safeSub(file, 1, strLen(file)-4) .. ".png" ) then
+							flag = love.image.newImageData( fallbackPath .. safeSub(file, 1, strLen(file)-4) .. ".png" )
+							
+							
+							language = love.filesystem.read( fallbackPath .. file)
+							love.filesystem.write( safeSub(file, 1, strLen(file)-4) .. ".txt", language)
+							print(" -> extracted " .. file .. " to " .. love.filesystem.getSaveDirectory( ))
+							language = nil
+							
+							flag:encode( safeSub(file, 1, strLen(file)-4) .. ".png" )
+							print(" -> extracted " .. safeSub(file, 1, strLen(file)-4) .. ".png to " .. love.filesystem.getSaveDirectory( ))
+						end
+					
+					
+					else
+						print("\tNo flag found for Language")
+					end
+				end
+			end
+		end
+	
+	
+		
+	end
+	
+	if not foundLanguage then
+		print("ERROR: no languages found!")
+		love.event.quit()
+	end
+	--]]
+	--[[dir = io.popen("ls Languages", "r")
+	
+	for file in dir:lines() do
+		s,e = file:find(".*txt")
+		if s and e then
+			if e-s+1 == #file then
+				print("Found Language: " .. safeSub(file, 1, strLen(file)-4))
+				flag = io.open( "Languages/Flags/" .. safeSub(file, 1, strLen(file)-4) .. ".png" )
+				if flag then
+					print("\tFound flag: " .. "Languages/Flags/" .. safeSub(file, 1, strLen(file)-4) .. ".png" )
+					availableLanguages[safeSub(file, 1, strLen(file)-4)] = love.graphics.newImage( "Languages/Flags/" .. safeSub(file, 1, strLen(file)-4) .. ".png" )
+				else
+					print("\tNo flag found for Language")
+				end
+			end
+		end
+	end]]--
 end
 
 function localization.display()		-- show all flags and languages found, so the player can choose one.
@@ -258,13 +380,16 @@ function localization.display()		-- show all flags and languages found, so the p
 	local x, y
 	love.graphics.setFont( mainFont )
 	for lang, flag in pairs(availableLanguages) do
-		
+		_,__,langname = lang:find("/(.*)")
+		if not langname then
+			langname = lang
+		end
 		x = i*love.graphics.getWidth()/5 - 50
 		y = j*love.graphics.getHeight()/7 - love.graphics.getHeight()/20
 		love.graphics.setColor( 0,0,0, 100)
 		love.graphics.draw( flag, x+5, y+7)
 		love.graphics.setColor( colText.r,colText.g,colText.b, 255)
-		love.graphics.print( lang, x - mainFont:getWidth(lang)/2 + flag:getWidth()/2, y-25 )
+		love.graphics.print( langname, x - mainFont:getWidth(langname)/2 + flag:getWidth()/2, y-25 )
 		love.graphics.setColor( 255,255,255, 255)
 		love.graphics.draw( flag, x, y)
 		i = i + 1

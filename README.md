@@ -154,18 +154,32 @@ _local WIKI_DISAMBIGUATION = "\[D,d\]isambig\[^\"\]*%.svg%.png"_
 came to be.
 
 ###Translate###
-Wiki-Based-RPG is very easy to translate: In the Languages Folder, there is file called English.txt. Duplicate it (Copy and Paste), rename it to [YourLanguage].txt, open it in your favourite text editor and start translating the strings inside the quare brackets. For an example, see Deutsch.txt.
+Wiki-Based-RPG is very easy to translate:
+1. Create a translation file
+2. Create a flag image
+3. Add the language name to the file Languages.txt
+
+The first time the game is started it will create a Language folder in your user directory:
+
+	- Windows XP: C:\Documents and Settings\user\Application Data\Love\WikiBasedRPG or %appdata%\Love\WikiBasedRPG
+	- Windows Vista and 7: C:\Users\user\AppData\Roaming\LOVE\WikiBasedRPG or %appdata%\Love\WikiBasedRPG
+	- Linux: $XDG_DATA_HOME/love/ or ~/.local/share/love/WikiBasedRPG
+	- Mac: /Users/user/Library/Application Support/LOVE/WikiBasedRPG
+
+In the Languages Folder, there is file called English.txt. Duplicate it (Copy and Paste), rename it to [YourLanguage].txt, open it in your favourite text editor and start translating the strings inside the square brackets. For an example, see Deutsch.txt.
+Then load the file Languages.txt in the same folder and add your language as a new line.
 Note:
 
-- To get the language to be shown at the beginning of your game, simply create an image called [YourLanguage].png in /Images/Flags (Must be named exactly the same as the language, except for the file ending) which shows the flag of country you're translating for. The image should be about 50 px by 33 px. Now, when you start the game, it automatically loads your language.
+- To get the language to be shown at the beginning of your game, simply create an image called [YourLanguage].png in the same Languages folder (Must be named exactly the same as the language, except for the file ending) which shows the flag of the country you're translating for. The image should be about 50 px by 33 px. Now, when you start the game, it automatically loads your language.
 - Many languages have special characters. To get them to work, you need a l&ouml;ve version greater than 0.8.0 (otherwise they will not be recognized by the game). See "Run from source" on how to get that version (at the time of this writing, 0.8.0 is the latest stable release, so you'd need to compile it from source. Which is pretty easy, though).
-- To make sure the game recognizes the special characters, inside [YourLanguage].txt, you need to add them into the SPECIAL\_CHARACTERS list. To do that: Run the game using the --debug option from the consol e. Example:  
+- To make sure the game recognizes the special characters, inside [YourLanguage].txt, you need to add them into the SPECIAL\_CHARACTERS list. To do that: Run the game using the --debug option from the console. Example:  
 	- Linux: /path/to/love /path/to/game/folder --debug
 	- Windows: \path\to\love.exe \path\to\game\folder --console --debug  
 Then simply press the keys and you'll see the unicode representations of them in the console. Open the [YourLanguage].txt and add the line: SPECIAL\_CHARACTERS[UNICODE] = "CHARACTER", where CHARACTER is the character you want to be able to use and UNICODE is the number representing. Again, for examples, see Deutsch.txt.
 - Make sure to change the WIKI_URL as well. If you leave it as en.wikipedia.org, your game will work in your new language, but still use the same english wiki version.
 - **Important:** Files must be saved as UTF-8. Most standard text editors can do that, just choose the right encoding when saving.
-	
+- **If you translate, make sure to send me the results so I can include them in a future release!**
+
 ###Make Your Theme###
 Wiki-Based-RPG is now more colourful! Yay!  
 Making a theme is very simple. What you need to know:

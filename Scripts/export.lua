@@ -171,7 +171,7 @@ function export.toHtmlFile( text )
 			file:write(stringToWrite)]]--
 			file:close()
 			print(fileName .. " " .. FILE_WRITTEN_TO_LOCATION_STR .. " " .. love.filesystem.getSaveDirectory() )
-			statusMsg.new( "Exported to: " .. love.filesystem.getSaveDirectory() );
+			statusMsg.new( "Exported to: " .. love.filesystem.getSaveDirectory() )
 		else
 			statusMsg.new( ERROR_FILE_OPEN_STR );
 			print( "Error opening " .. filName .. "!" );

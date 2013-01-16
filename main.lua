@@ -124,7 +124,7 @@ function love.load( arg )
 	sound.init()
 	export.init()
 	
-	localization.init("Languages")
+	localization.init()
 	
 	themes.init( "Themes" )
 	themes.set( "Standard" )
