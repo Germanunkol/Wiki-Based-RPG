@@ -305,6 +305,7 @@ function textBox.moveCursorToEnd( text )
 end
 
 function textBox.input( key, unicode )
+	if DEBUG then print('textBox.input', key, unicode) end
 	inputUsed = false
 	for k, v in pairs( fields ) do
 		if v.access == true and v.content then
@@ -320,7 +321,7 @@ function textBox.input( key, unicode )
 					v.content = safeSub(v.content, 1, absCursorPos) .. string.char(unicode) .. safeSub(v.content, absCursorPos+1, strLen(v.content))
 					v.cursorPos = v.cursorPos + 1
 				end
-			elseif unicode == 8 then			-- backspace
+			elseif key == "backspace" then
 				absCursorPos = 0
 				for i = 1,v.cursorLine-1,1 do
 					absCursorPos = absCursorPos + strLen(v.lines[i])

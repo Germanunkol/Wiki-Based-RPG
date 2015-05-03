@@ -119,8 +119,8 @@ function love.load( arg )
 	end
 
 	love.graphics.setBackgroundColor( colMainBg.r, colMainBg.g, colMainBg.b )
-	success = love.graphics.setMode( 1024, 680, false, false, 0 )
-	love.graphics.setCaption( "Wiki-Based RPG" )
+	success = love.window.setMode( 1024, 540, { vsync = false } )
+	love.window.setTitle( "Wiki-Based RPG" )
 	sound.init()
 	export.init()
 	
@@ -208,21 +208,28 @@ function love.draw()
 end
 
 local inputRead
-function love.keypressed(key, unicode)
-	if DEBUG then print(key, unicode) end
-	inputRead = textBox.input( key, unicode )
+function love.keypressed(key, isrepeat)
+	if DEBUG then print('keypressed', key, isrepeat) end
+	inputRead = textBox.input( key, 0 )
 	if not inputRead then		--input has not been put into a chat box: use input as command
-		if ( string.char(unicode) == "c" or string.char(unicode) == "return" ) and game.active() then
+		if ( key == "c" or key == "return" ) and game.active() then
 			chatAreaClicked()
-		elseif ( string.char(unicode) == "s" or string.char(unicode) == "a" ) and game.active() then
+		elseif ( key == "s" or key == "a" ) and game.active() then
 			gameAreaClicked()
-		elseif ( string.char(unicode) == "1" or string.char(unicode) == "2"
-			or string.char(unicode) == "3" or string.char(unicode) == "4"
-			or string.char(unicode) == "5") and game.active() then
-			chooseNextWord( tonumber( string.char(unicode) ) )
+		elseif ( key == "1" or key == "2"
+			or key == "3" or key == "4"
+			or key == "5") and game.active() then
+			chooseNextWord( tonumber( key ) )
 		end
 	end
 end
+
+local utf8 = require("utf8")
+function love.textinput(text)
+	if DEBUG then print('textinput', text) end
+	inputRead = textBox.input( 0, utf8.codepoint( text ) )
+end
+
 
 function love.mousepressed()
 	if not language then
@@ -241,7 +248,7 @@ function startServer()
 	server = connection.initServer( "*", PORT, 4 )
 	if server then
 		lobby.init( buttons )
-		love.graphics.setCaption( "Wiki-Based RPG - " ..  STORYTELLER_STR)
+		love.window.setTitle( "Wiki-Based RPG - " ..  STORYTELLER_STR)
 	end
 end
 
@@ -254,7 +261,7 @@ function startClient()
 		statusMsg.new(CONNECTION_SUCCESS_STR)
 		print("Connected to server.")
 		lobby.init( buttons )
-		love.graphics.setCaption( "Wiki-Based RPG - " .. plName)
+		love.window.setTitle( "Wiki-Based RPG - " .. plName)
 	end
 end
 

@@ -234,7 +234,7 @@ local availableLanguages = {}
 
 function copyFile(path, filename)
 	if love.filesystem.exists(path .. filename) then
-		love.filesystem.mkdir("Languages")
+		love.filesystem.createDirectory("Languages")
 		
 		content = love.filesystem.read( path ..  filename )
 		love.filesystem.write( "Languages/" .. filename, content)
@@ -290,7 +290,7 @@ function localization.init( )
 	--[[
 	local foundLanguage = false
 	dir = "/home/micha/.local/share/love/WikiBasedRPG"
-	print("a", dir .. "/" , love.filesystem.mkdir(dir))
+	print("a", dir .. "/" , love.filesystem.createDirectory(dir))
 	print("a", dir .. "/" , love.filesystem.isDirectory(love.filesystem.getSaveDirectory() ))
 	print("a", dir .. "/" , love.filesystem.exists(love.filesystem.getSaveDirectory() ))
 	files = love.filesystem.enumerate( dir )

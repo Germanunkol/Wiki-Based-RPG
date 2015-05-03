@@ -18,11 +18,11 @@ IMAGE_CHAT = nil
 function themes.init( path )
 	print("Looking for available themes: ")
 	availableThemes = {}
-	local folderContent = love.filesystem.enumerate(path)
+	local folderContent = love.filesystem.getDirectoryItems(path)
 	for k, themeName in pairs( folderContent ) do
 		if love.filesystem.isDirectory( path .. "/" .. themeName ) then
 			print("\tFound Theme: " .. themeName)
-			local themeContent = love.filesystem.enumerate( path .. "/" .. themeName )
+			local themeContent = love.filesystem.getDirectoryItems( path .. "/" .. themeName )
 			for j, file in pairs( themeContent ) do
 				if file == "ThemeSettings.txt" then
 					print("\t\t(Theme looks valid.)")
