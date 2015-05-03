@@ -406,13 +406,13 @@ function languageChosen( lang )
 	SPECIAL_CHARACTERS = {}
 
 	local ok, chunk
-	ok, chunk = pcall( love.filesystem.load, "Languages/" .. lang .. ".txt" ) -- load the chunk safely
+	ok, chunk = pcall( love.filesystem.load, lang .. ".txt" ) -- load the chunk safely
 	if not ok then
 		print("Error loading '" .. lang .. ".txt': " .. tostring(chunk))
 	else
 		ok, result = pcall(chunk) -- execute the chunk safely
 		if not ok then -- will be false if there is an error
-			print("Error in '" .. lang .. ".txt': " .. tostring(chunk))
+			print("Error in '" .. lang .. ".txt': " .. tostring(result))
 		end
 	end
 	statusMsg.new( WELCOME_STR )
