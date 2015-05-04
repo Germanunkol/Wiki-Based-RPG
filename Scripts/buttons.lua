@@ -48,7 +48,8 @@ end
 
 function button.show()
 	love.graphics.setFont( buttonFont )
-	love.graphics.setLine( 3, "smooth" )
+	love.graphics.setLineWidth( 3 )
+	love.graphics.setLineStyle( "smooth" )
 	helpButton = nil
 	for key, button in pairs( buttons ) do
 		if mouseOver( button ) and button.drawHover then
