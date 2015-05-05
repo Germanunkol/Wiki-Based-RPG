@@ -119,7 +119,7 @@ function love.load( arg )
 	end
 
 	love.graphics.setBackgroundColor( colMainBg.r, colMainBg.g, colMainBg.b )
-	success = love.window.setMode( 1024, 540, { vsync = false } )
+	success = love.window.setMode( 1024, 680, { vsync = false, resizable = true } )
 	love.window.setTitle( "Wiki-Based RPG" )
 	sound.init()
 	export.init()
